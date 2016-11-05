@@ -51,9 +51,9 @@
         "wpackagist-plugin/yoast-seo-acf-analysis": "*",
         "wpackagist-plugin/w3-total-cache": "*",
         "wpackagist-plugin/timber-library": "*",
-        "elliotcondon/advanced-custom-fields-pro": "5.4.6",
-        "sitepress/wpml": "3.5.3.1",
-        "sitepress/wpml-sl": "2.4.2.1"
+        "elliotcondon/advanced-custom-fields-pro": "^5.4.6",
+        "sitepress/wpml": "^3.5.3.1",
+        "sitepress/wpml-sl": "^2.4.2.1"
     },
     "autoload"    : {
         "psr-4" : {
