@@ -13,6 +13,13 @@
         "mustangostang/spyc": "^0.6.1",
         "dflydev/dot-access-data": "^1.0"
     },
+    "extra": {
+        "installer-paths": {
+            "var/mu-plugins/{$name}/": ["type:wordpress-muplugin"],
+            "var/plugins/{$name}/": ["type:wordpress-plugin"]
+        },
+        "wordpress-install-dir": "vendor/wordpress"
+    },
     "autoload"    : {
         "psr-4" : {
             "Rocket\\" : "src/"
