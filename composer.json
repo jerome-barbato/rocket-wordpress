@@ -7,7 +7,7 @@
         {
             "type": "package",
             "package": {
-                "name": "elliotcondon/advanced-custom-fields-pro",
+                "name": "wpackagist-plugin/advanced-custom-fields-pro",
                 "version": "5.4.6",
                 "type": "wordpress-plugin",
                 "dist": {
@@ -19,7 +19,7 @@
         {
             "type": "package",
             "package": {
-                "name": "sitepress/wpml",
+                "name": "wpackagist-plugin/wpml",
                 "version": "3.5.3.1",
                 "type": "wordpress-plugin",
                 "dist": {
@@ -31,7 +31,7 @@
         {
             "type": "package",
             "package": {
-                "name": "sitepress/wpml-sl",
+                "name": "wpackagist-plugin/wpml-sl",
                 "version": "2.4.2.1",
                 "type": "wordpress-plugin",
                 "dist": {
@@ -51,9 +51,9 @@
         "wpackagist-plugin/yoast-seo-acf-analysis": "*",
         "wpackagist-plugin/w3-total-cache": "*",
         "wpackagist-plugin/timber-library": "*",
-        "elliotcondon/advanced-custom-fields-pro": "^5.4.6",
-        "sitepress/wpml": "^3.5.3.1",
-        "sitepress/wpml-sl": "^2.4.2.1"
+        "wpackagist-plugin/advanced-custom-fields-pro": "^5.4.6",
+        "wpackagist-plugin/wpml": "^3.5.3.1",
+        "wpackagist-plugin/wpml-sl": "^2.4.2.1"
     },
     "autoload"    : {
         "psr-4" : {
