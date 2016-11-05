@@ -1,11 +1,19 @@
 <?php
 
+
+if ( ! class_exists( 'Timber' ) ) {
+    add_action( 'admin_notices', function() {
+        echo '<div class="error"><p>Timber not activated. Make sure you activate the plugin in <a href="' . esc_url( admin_url( 'plugins.php#timber' ) ) . '">' . esc_url( admin_url( 'plugins.php' ) ) . '</a></p></div>';
+    } );
+    return;
+}
+
+
 use Timber\Timber;
 
 if (!defined('BASE_URI'))
     define('BASE_URI', str_replace('/vendor/metabolism/rocket-wordpress', '', dirname(__DIR__)));
 
-include BASE_URI . '/src/Helper/Twig.php';
 
 //path is relative from theme
 Timber::$dirname = '../../../../web/views';
@@ -20,12 +28,17 @@ class Site extends TimberSite
 
         add_filter('timber_context', array($this, 'add_to_context'));
         add_filter('get_twig', array($this, 'add_to_twig'));
+        add_filter('the_permalink', array($this, 'edit_the_permalink'));
 
         add_theme_support('post-thumbnails');
 
         $this->register_option_pages();
     }
 
+
+    function edit_the_permalink($url){
+        return str_replace('/wp/', '', $url);
+    }
 
     function register_post_types()
     {
@@ -77,6 +90,7 @@ class Site extends TimberSite
 
     function add_to_twig($twig)
     {
+        include BASE_URI . '/src/Helper/Twig.php';
 
         $twig->addExtension(new \Customer\Helper\Twig(get_bloginfo('url')));
         return $twig;

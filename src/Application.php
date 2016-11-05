@@ -2,7 +2,7 @@
 
 namespace Rocket;
 
-use Rocket\Helper\Route;
+use Rocket\Helper\Route, Rocket\Helper\ACF;
 use Dflydev\DotAccessData\Data;
 
 /**
@@ -64,6 +64,16 @@ abstract class Application
     protected function page($template, $context)
     {
         return [$template, $context];
+    }
+
+
+    /**
+     * Define route manager
+     */
+    public function acf_to_timber( $post_id )
+    {
+        $ACFHelper = new ACF( $post_id );
+        return $ACFHelper->process();
     }
 
 
