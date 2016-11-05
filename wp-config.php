@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 error_reporting(~0);
 
 if (!defined('BASE_URI'))
-    define('BASE_URI', str_replace('/vendor/metabolism/rocket-wordpress','', dirname(__DIR__)));
+    define('BASE_URI', str_replace('/vendor/metabolism','', dirname(__DIR__)));
 
 include BASE_URI.'/vendor/autoload.php';
 

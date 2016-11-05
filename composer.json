@@ -14,7 +14,8 @@
         "wpackagist-plugin/wordpress-seo": "*",
         "wpackagist-plugin/advanced-custom-fields": "*",
         "wpackagist-plugin/yoast-seo-acf-analysis": "*",
-        "wpackagist-plugin/w3-total-cache": "*"
+        "wpackagist-plugin/w3-total-cache": "*",
+        "wpackagist-plugin/timber": "*"
     },
     "autoload"    : {
         "psr-4" : {
