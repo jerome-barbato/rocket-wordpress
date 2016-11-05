@@ -3,7 +3,43 @@
     "version":"3.0.0",
     "repositories": [
         { "type": "composer", "url": "https://wpackagist.org"},
-        { "type": "vcs", "url": "ssh://git@git.metabolism.fr/rocket/wordpress.git"}
+        { "type": "vcs", "url": "ssh://git@git.metabolism.fr/rocket/wordpress.git"},
+        {
+            "type": "package",
+            "package": {
+                "name": "elliotcondon/advanced-custom-fields-pro",
+                "version": "5.4.6",
+                "type": "wordpress-plugin",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://connect.advancedcustomfields.com/index.php?p=pro&a=download&k=b3JkZXJfaWQ9NTgyNTZ8dHlwZT1kZXZlbG9wZXJ8ZGF0ZT0yMDE1LTA2LTE3IDEwOjA3OjI2"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "sitepress/wpml",
+                "version": "3.5.3.1",
+                "type": "wordpress-plugin",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://wpml.org/?download=6088&user_id=113187&subscription_key=e722b4051f018f7542f513c14850453e"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "sitepress/wpml-sl",
+                "version": "2.4.2.1",
+                "type": "wordpress-plugin",
+                "dist": {
+                    "type": "zip",
+                    "url": "https://wpml.org/?download=6092&user_id=113187&subscription_key=e722b4051f018f7542f513c14850453e"
+                }
+            }
+        }
     ],
     "require": {
         "php" : ">=5.6.0",
@@ -12,10 +48,12 @@
         "dflydev/dot-access-data": "^1.0",
         "wpackagist-plugin/better-wp-security": "*",
         "wpackagist-plugin/wordpress-seo": "*",
-        "wpackagist-plugin/advanced-custom-fields": "*",
         "wpackagist-plugin/yoast-seo-acf-analysis": "*",
         "wpackagist-plugin/w3-total-cache": "*",
-        "wpackagist-plugin/timber-library": "*"
+        "wpackagist-plugin/timber-library": "*",
+        "elliotcondon/advanced-custom-fields-pro": "*",
+        "sitepress/wpml": "*",
+        "sitepress/wpml-sl": "*"
     },
     "autoload"    : {
         "psr-4" : {

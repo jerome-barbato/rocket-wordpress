@@ -24,12 +24,16 @@ $config = new Data($data);
 
 
 define('WP_ENV', $config->get('environment', 'production'));
+define('WP_DEBUG', $config->get('debug.php_error', 0));
 
 /**
  * URLs
  */
-//define('WP_HOME', '/../');
-//define('WP_SITEURL', '/');
+if( defined('BASE_PATH') ){
+
+    define('WP_HOME', BASE_PATH);
+    define('WP_SITEURL', BASE_PATH);
+}
 
 /**
  * Custom Content Directory
