@@ -15,7 +15,7 @@
         "wpackagist-plugin/advanced-custom-fields": "*",
         "wpackagist-plugin/yoast-seo-acf-analysis": "*",
         "wpackagist-plugin/w3-total-cache": "*",
-        "wpackagist-plugin/timber": "*"
+        "wpackagist-plugin/timber-library": "*"
     },
     "autoload"    : {
         "psr-4" : {
