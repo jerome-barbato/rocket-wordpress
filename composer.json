@@ -10,14 +10,11 @@
         "johnpbloch/wordpress": "^4.6",
         "mustangostang/spyc": "^0.6.1",
         "dflydev/dot-access-data": "^1.0",
-        "wpackagist-plugin/better-wp-security": "*"
-    },
-    "extra": {
-        "installer-paths": {
-            "var/mu-plugins/{$name}/": ["type:wordpress-muplugin"],
-            "var/plugins/{$name}/": ["type:wordpress-plugin"]
-        },
-        "wordpress-install-dir": "vendor/wordpress"
+        "wpackagist-plugin/better-wp-security": "*",
+        "wpackagist-plugin/wordpress-seo": "*",
+        "wpackagist-plugin/advanced-custom-fields": "*",
+        "wpackagist-plugin/yoast-seo-acf-analysis": "*",
+        "wpackagist-plugin/w3-total-cache": "*"
     },
     "autoload"    : {
         "psr-4" : {
