@@ -33,7 +33,6 @@
         "johnpbloch/wordpress": "^4.6",
         "mustangostang/spyc": "^0.6.1",
         "dflydev/dot-access-data": "^1.0",
-        "wpackagist-plugin/better-wp-security": "*",
         "wpackagist-plugin/wordpress-seo": "*",
         "wpackagist-plugin/yoast-seo-acf-analysis": "*",
         "wpackagist-plugin/w3-total-cache": "*",
