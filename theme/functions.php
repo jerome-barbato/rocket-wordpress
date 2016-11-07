@@ -35,8 +35,17 @@ class Theme extends Site
 
         add_filter('timber_context', array($this, 'add_to_context'));
         add_filter('get_twig', array($this, 'add_to_twig'));
+        add_filter('wp_calculate_image_srcset_meta', '__return_null');
+        add_filter('wp_get_attachment_url',  array($this, 'rewrite_url'));
 
         add_theme_support('post-thumbnails');
+    }
+
+
+    function rewrite_url($rewrite)
+    {
+        $rewrite = str_replace('/wp/wp-content/uploads', '/public/upload', $rewrite);
+        return $rewrite;
     }
 
 

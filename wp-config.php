@@ -9,6 +9,7 @@ include BASE_URI . '/vendor/autoload.php';
 
 use Dflydev\DotAccessData\Data;
 
+
 /**
  * Load App configuration
  */
@@ -25,6 +26,7 @@ $config = new Data($data);
 
 define('WP_ENV', $config->get('environment', 'production'));
 define('WP_DEBUG', $config->get('debug.php_error', 0));
+
 
 /**
  * URLs
@@ -48,6 +50,7 @@ if (!defined('BASE_PATH')) {
 define('WP_HOME', $base_uri.BASE_PATH);
 define('WP_SITEURL', $base_uri.BASE_PATH . '/wp');
 
+
 /**
  * DB settings
  */
@@ -59,6 +62,7 @@ define('DB_CHARSET', $config->get('database.charset', 'utf8mb4'));
 define('DB_COLLATE', '');
 
 $table_prefix = $config->get('database.prefix', 'wp_');
+
 
 /**
  * Authentication Unique Keys and Salts
@@ -72,11 +76,13 @@ define('SECURE_AUTH_SALT', 'T7ntE>-j*2G3Qosn;0?|7{aqs&SU) }_S ~6f5k~PTedeX^jNe&T
 define('LOGGED_IN_SALT', 'w/iowiks]_i5b#/SqYuD2`28o</-L|P4H3vq@!<OrH 7Q!gxB[Q4m`/*CiVdylGs');
 define('NONCE_SALT', 'gelPRQb4NzO=4pOG_5YnuN(5G~YJCIutY*BL%!:ds(TqwDd;F[PsI,gT_1J-9;;D');
 
+
 /**
  * Custom Settings
  */
-define('AUTOMATIC_UPDATER_DISABLED', true);
 define('DISALLOW_FILE_EDIT', true);
+define('WP_DEFAULT_THEME', 'rocket');
+
 
 /**
  * Bootstrap WordPress
