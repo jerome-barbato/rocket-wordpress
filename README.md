@@ -1,10 +1,13 @@
-# Rocker Silex
+# Rocker Wordpress
 
 INTRODUCTION
 ------------
 
-A Silex application ready to dev.
+A Wordpress core application ready to dev.
 
+SUMMARY
+----------
+* [Changelog](changelog)
         
 Features
 -----------

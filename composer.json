@@ -1,17 +1,45 @@
 {
     "name":"metabolism/rocket-wordpress",
-    "version":"0.0.0",
+    "version":"0.0.2",
+    "config": {
+        "preferred-install": "dist"
+    },
     "repositories": [
+        { "type": "composer", "url": "https://wpackagist.org"},
+        { "type": "vcs", "url": "ssh://git@git.metabolism.fr/rocket/wordpress.git"},
+        { "type": "package",
+            "package": {
+                "name": "elliotcondon/advanced-custom-fields-pro", "version": "5.4.6", "type": "wordpress-plugin",
+                "dist": { "type": "zip", "url": "https://connect.advancedcustomfields.com/index.php?p=pro&a=download&k=b3JkZXJfaWQ9NTgyNTZ8dHlwZT1kZXZlbG9wZXJ8ZGF0ZT0yMDE1LTA2LTE3IDEwOjA3OjI2"}
+            }
+        },
         {
-            "type": "vcs",
-            "url": "ssh://git@git.metabolism.fr/rocket/wordpress.git"
+            "type": "package",
+            "package": {
+                "name": "sitepress/wpml", "version": "3.5.3.1", "type": "wordpress-plugin",
+                "dist": { "type": "zip", "url": "https://wpml.org/?download=6088&user_id=113187&subscription_key=e722b4051f018f7542f513c14850453e"}
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "sitepress/wpml-sl", "version": "2.4.2.1", "type": "wordpress-plugin",
+                "dist": { "type": "zip", "url": "https://wpml.org/?download=6092&user_id=113187&subscription_key=e722b4051f018f7542f513c14850453e"}
+            }
         }
     ],
     "require": {
         "php" : ">=5.6.0",
         "johnpbloch/wordpress": "^4.6",
         "mustangostang/spyc": "^0.6.1",
-        "dflydev/dot-access-data": "^1.0"
+        "dflydev/dot-access-data": "^1.0",
+        "wpackagist-plugin/wordpress-seo": "*",
+        "wpackagist-plugin/yoast-seo-acf-analysis": "*",
+        "wpackagist-plugin/w3-total-cache": "*",
+        "wpackagist-plugin/timber-library": "*",
+        "elliotcondon/advanced-custom-fields-pro": "^5.4.6",
+        "sitepress/wpml": "^3.5.3.1",
+        "sitepress/wpml-sl": "^2.4.2.1"
     },
     "autoload"    : {
         "psr-4" : {
