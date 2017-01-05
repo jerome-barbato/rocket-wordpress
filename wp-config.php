@@ -95,5 +95,7 @@ if (!defined('ABSPATH'))
     define('ABSPATH', BASE_URI . '/web/wp/');
 
 
+$app = \Customer\Application::getInstance();
+
 /** Sets up WordPress vars and included files. */
 require_once(ABSPATH . 'wp-settings.php');

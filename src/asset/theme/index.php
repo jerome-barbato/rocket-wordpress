@@ -3,20 +3,30 @@
 use Customer\Application;
 use Timber\Timber;
 use Timber\Post;
+try {
 
-$context = Timber::get_context();
-$app = Application::getInstance();
+    if (class_exists('Timber')) {
 
-if( $app ){
+        $context = Timber::get_context();
 
-    $post = new Post();
-    $context['post'] = $post;
-    $context['post_objects'] = $app->acf_to_timber( $post->ID );
+        $app = Application::getInstance();
 
-    if( $route = $app->solve($context) )
-        Timber::render( 'page/'.$route[0], $route[1] );
-}
-else{
+        if( $app ){
 
-    wp_redirect( wp_login_url() );
+            $post = new Post();
+            $context['post'] = $post;
+            $context['post_objects'] = $app->acf_to_timber( $post->ID );
+
+            if( $route = $app->solve($context) )
+                Timber::render( 'page/'.$route[0], $route[1] );
+        }
+        else{
+
+            wp_redirect( wp_login_url() );
+        }
+    }
+} catch (Error $exception) {
+
+    echo    "<h1>We are very sorry but this website is currently not available</h1>" .
+            "<hr>" . "<p>Message : </p><br><pre>" . $exception->getMessage() . "</pre>";
 }

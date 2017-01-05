@@ -5,9 +5,10 @@ namespace Rocket;
 use Rocket\Helper\Route, Rocket\Helper\ACF;
 use Dflydev\DotAccessData\Data;
 use Rocket\Kernel\ApplicationKernel;
+use Rocket\Kernel\Singleton;
 
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'rocket-kernel' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'autoload.php';
+require_once 'autoload.php';
 
 /**
  * Class Rocket Framework
@@ -22,39 +23,58 @@ abstract class Application {
         asset_url       as public;
         upload_url      as public;
     }
+    use Singleton;
 
     /**
      * @var string plugin domain name for translations
      */
     public static $domain_name = 'carita_pg';
     private $ft_images_sizes;
+    protected static $_instance;
 
 
     /**
      * Application Constructor
      */
-    public function __construct()
+    protected function __construct()
     {
         $this->definePaths();
         $this->loadConfig();
-        include $this->paths['wp'].'/wp-blog-header.php';
 
 
+        $this->checkDependencies();
 
+        // *******
         // Actions
+        // *******
+
+        // Defines settings for ACF Custom Fields
+        add_action('acf/init', array($this, 'acf_settings') );
+
+        add_action('init', array($this, 'enable_plugins'));
+
+        // Automatically set Rocket theme
         add_action('init', array($this, 'set_theme'));
-        add_action( 'acf/init', array($this, 'acf_settings') );
-        add_theme_support( 'post-thumbnails' );
-        add_action( 'init', array($this, 'register_menus') );
-        add_action( 'init', array($this, 'add_filters') );
+
+        // Register custom processes on Wordpress common functions
+        add_action( 'init', array($this, 'register_filters') );
+
+        // Add specific image sizes for thumbnails
         add_action('after_setup_theme', array($this, 'image_sizes'));
+
+        // Removes or add pages
         add_action( 'admin_menu', array($this, 'clean_interface'));
 
+        add_theme_support( 'post-thumbnails' );
+
+
+        $this->add_menus();
         $this->add_post_types();
         //this->add_taxonomies();
         $this->add_option_pages();
 
         $this->registerRoutes();
+
 
     }
 
@@ -144,6 +164,16 @@ abstract class Application {
         return $this->routes[$pattern];
     }
 
+    protected function add_menus() {
+
+        $menus = $this->config->get('menus');
+        if (!empty($menus) && is_array($menus)) {
+            foreach ($menus as $slug => $name) {
+                new Menu($name, $slug);
+            }
+        }
+    }
+
 
     /**
      * Define route manager
@@ -220,10 +250,23 @@ abstract class Application {
     public function set_theme()
     {
         $current_theme = wp_get_theme();
-        $meta_theme = 'meta';
+        $meta_theme = 'rocket';
 
         if ($current_theme->get_stylesheet() != $meta_theme) {
             switch_theme($meta_theme);
         }
+    }
+
+    public function enable_plugins() {
+
+        $result = activate_plugin( $this->paths['wp'] . '/advanced-custom-fields-pro/acf.php' );
+        if ( is_wp_error( $result ) ) {
+            // Process Error
+            echo "Error on activation !";
+        }
+    }
+
+    public function checkDependencies()
+    {
     }
 }
