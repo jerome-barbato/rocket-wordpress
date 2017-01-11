@@ -2,12 +2,10 @@
 
 namespace Rocket;
 
+use Rocket\Application\ApplicationTrait;
+use Rocket\Application\SingletonTrait;
 use Rocket\Helper\Route, Rocket\Helper\ACF;
 use Dflydev\DotAccessData\Data;
-use Rocket\Kernel\ApplicationKernel;
-use Rocket\Kernel\Singleton;
-
-require_once 'autoload.php';
 
 /**
  * Class Rocket Framework
@@ -15,19 +13,19 @@ require_once 'autoload.php';
 abstract class Application {
 
     // Use of cross-framework functions by extending traits
-    use ApplicationKernel {
+    use ApplicationTrait {
         loadConfig      as private k_LoadConfig;
         addTwigGlobal   as private k_AddTwigGlobal;
         definePaths     as protected k_definePaths;
         asset_url       as public;
         upload_url      as public;
     }
-    use Singleton;
+    use SingletonTrait;
 
     /**
      * @var string plugin domain name for translations
      */
-    public static $domain_name = 'carita_pg';
+    public static $domain_name = 'rocket_customer';
     private $ft_images_sizes;
     protected static $_instance;
 
