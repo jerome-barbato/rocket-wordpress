@@ -7,7 +7,6 @@ use Dflydev\DotAccessData\Data;
 use Rocket\Kernel\ApplicationKernel;
 use Rocket\Kernel\Singleton;
 
-
 require_once 'autoload.php';
 
 /**
@@ -32,6 +31,12 @@ abstract class Application {
     private $ft_images_sizes;
     protected static $_instance;
 
+    public static function run()
+    {
+        add_action('init', function() {
+            new \Customer\Application();
+        }, 1);
+    }
 
     /**
      * Application Constructor
@@ -41,20 +46,20 @@ abstract class Application {
         $this->definePaths();
         $this->loadConfig();
 
-
         $this->checkDependencies();
+
 
         // *******
         // Actions
         // *******
-
         // Defines settings for ACF Custom Fields
         add_action('acf/init', array($this, 'acf_settings') );
 
-        add_action('init', array($this, 'enable_plugins'));
+
+        //$this->enable_plugins();
 
         // Automatically set Rocket theme
-        add_action('init', array($this, 'set_theme'));
+        $this->set_theme();
 
         // Register custom processes on Wordpress common functions
         add_action( 'init', array($this, 'register_filters') );
@@ -67,14 +72,14 @@ abstract class Application {
 
         add_theme_support( 'post-thumbnails' );
 
-
+        /*
         $this->add_menus();
         $this->add_post_types();
         //this->add_taxonomies();
         $this->add_option_pages();
 
         $this->registerRoutes();
-
+        */
 
     }
 
@@ -145,6 +150,10 @@ abstract class Application {
     }
 
 
+    public function register_filters()
+    {
+
+    }
     /**
      * Load App configuration
      */
@@ -259,14 +268,25 @@ abstract class Application {
 
     public function enable_plugins() {
 
-        $result = activate_plugin( $this->paths['wp'] . '/advanced-custom-fields-pro/acf.php' );
-        if ( is_wp_error( $result ) ) {
-            // Process Error
-            echo "Error on activation !";
+
+        if ( ! class_exists( 'Timber' ) ) {
+
+            add_action( 'admin_notices', function() {
+
+                echo '<div class="error"><p>Timber not activated. Make sure you activate the plugin in <a href="' . esc_url( admin_url( 'plugins.php#timber' ) ) . '">' . esc_url( admin_url( 'plugins.php' ) ) . '</a></p></div>';
+            } );
+
+            return;
         }
+        // Require parent plugin
+        /*if ( class_exists(ACF)! is_plugin_active( $this->paths['wp'] . '/advanced-custom-fields-pro/acf.php' ) and current_user_can( 'activate_plugins' ) ) {
+            // Stop activation redirect and show error
+            wp_die('Sorry, but this plugin requires the Parent Plugin to be installed and active. <br><a href="' . admin_url( 'plugins.php' ) . '">&laquo; Return to Plugins</a>');
+        }*/
     }
 
     public function checkDependencies()
     {
+
     }
 }
