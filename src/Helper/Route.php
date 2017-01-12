@@ -53,6 +53,9 @@ class Route
 
     public function execute( $context )
     {
+        if( !isset($context['locale']) )
+            $context['locale'] = 'en';
+
         $data = $this->data['to']($context['locale'], $context);
 
         $this->data['page']    = $data[0];

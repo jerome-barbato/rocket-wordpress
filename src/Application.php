@@ -8,7 +8,7 @@ use Rocket\Application\ApplicationTrait, Rocket\Application\SingletonTrait;
 use Rocket\Helper\Route, Rocket\Helper\ACF;
 use Rocket\Model\CustomPostType,  Rocket\Model\Menu, Rocket\Model\Taxonomy;
 use Rocket\Model\Theme;
-die('wordpress app');
+use Timber\Timber;
 
 /**
  * Class Rocket Framework
@@ -33,6 +33,7 @@ abstract class Application {
      */
     protected function __construct()
     {
+
         $this->definePaths();
         $this->loadConfig();
         $this->checkDependencies();
@@ -45,7 +46,10 @@ abstract class Application {
         add_action('acf/init', array($this, 'acf_settings') );
 
         // Automatically set Rocket theme
-        add_action( 'init', function(){ Theme::getInstance(); });
+        add_action( 'init', function(){
+
+            Theme::getInstance();
+        });
 
         // Register custom processes on Wordpress common functions
         add_action( 'init', array($this, 'register_filters') );
@@ -314,6 +318,7 @@ abstract class Application {
 
     public static function run()
     {
+
         add_action('init', function() {
             new \Customer\Application();
         }, 1);

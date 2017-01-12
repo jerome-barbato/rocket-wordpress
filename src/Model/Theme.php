@@ -1,7 +1,9 @@
 <?php
 
 namespace Rocket\Model;
+use Customer\Application;
 use Rocket\Application\SingletonTrait;
+use Timber\Post;
 use Timber\Timber, Timber\Site, Timber\Menu as TimberMenu;
 
 
@@ -24,8 +26,8 @@ class Theme extends Site
         if ($autodeclare)
             $this->set_theme();
 
-        //add_filter('timber_context', array($this, 'add_to_context'));
-        //add_filter('get_twig', array($this, 'add_to_twig'));
+        add_filter('timber_context', array($this, 'add_to_context'));
+        add_filter('get_twig', array($this, 'add_to_twig'));
     }
 
 
@@ -42,7 +44,7 @@ class Theme extends Site
         }
     }
 
-    function add_to_context($context)
+    public function add_to_context($context)
     {
 
         $language = explode('-', get_bloginfo('language'));
@@ -89,11 +91,48 @@ class Theme extends Site
     }
 
 
-    function add_to_twig($twig)
+    public function add_to_twig($twig)
     {
         include BASE_URI . '/src/Helper/Twig.php';
 
         $twig->addExtension(new \Customer\Helper\Twig(get_bloginfo('url')));
         return $twig;
+    }
+
+    public function run() {
+
+        try {
+
+            if (class_exists('Timber')) {
+
+                Timber::$locations = BASE_URI . '/web/views/';
+                $context = Timber::get_context();
+
+
+                /** @var Application $app */
+                $app = Application::getInstance();
+
+                if( $app ){
+
+                    $post = new Post();
+
+                    $context['locale'] = 'en';
+                    $context['post'] = $post;
+                    $context['post_objects'] = $app->acf_to_timber( $post->ID );
+
+                    if( $route = $app->solve($context) )
+                        Timber::render(  'page/'.$route[0], $route[1] );
+                }
+                else{
+
+                    wp_redirect( wp_login_url() );
+                }
+            }
+
+        } catch (Error $exception) {
+
+            echo    "<h1>We are very sorry but this website is currently not available</h1>" .
+                "<hr>" . "<p>Message : </p><br><pre>" . $exception->getMessage() . "</pre>";
+        }
     }
 }
