@@ -3,8 +3,11 @@
 use Customer\Application;
 use Timber\Timber;
 use Timber\Post;
+
+die('toto');
+
 try {
-/*
+
     if (class_exists('Timber')) {
 
         $context = Timber::get_context();
@@ -25,7 +28,7 @@ try {
             wp_redirect( wp_login_url() );
         }
     }
-*/
+
 } catch (Error $exception) {
 
     echo    "<h1>We are very sorry but this website is currently not available</h1>" .

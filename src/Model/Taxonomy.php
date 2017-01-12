@@ -3,7 +3,10 @@
  * User: Paul Coudeville <paul@metabolism.fr>
  */
 
-namespace Rocket;
+namespace Rocket\Model;
+
+use Dflydev\DotAccessData\Data as DotAccessData;
+use Rocket\Application;
 
 /**
  * Class Taxonomy
@@ -494,5 +497,29 @@ class Taxonomy
                 }
             }
         }
+    }
+
+    /**
+     * Create default dataset for Taxonomu according to configuration file.
+     * @param $data_taxonomy DotAccessData Configuration data
+     */
+    public function hydrate($data_taxonomy)
+    {
+        $this->label_name(__($data_taxonomy->get('labels.name', ucfirst($this->labels['name'])), Application::$domain_name));
+        $this->label_all_items(__($data_taxonomy->get('labels.all_items','All '.$this->labels['name']), Application::$domain_name));
+        $this->label_singular_name(__($data_taxonomy->get('labels.singular_name',ucfirst($this->slug)), Application::$domain_name));
+        $this->label_add_new_item(__($data_taxonomy->get('labels.add_new_item','Add a '.$this->slug), Application::$domain_name));
+        $this->label_edit_item(__($data_taxonomy->get('labels.edit_item','Edit '.$this->slug), Application::$domain_name));
+        $this->label_not_found(__($data_taxonomy->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$domain_name));
+        $this->label_search_items(__($data_taxonomy->get('labels.search_items','Search in '.$this->labels['name']), Application::$domain_name));
+        $this->show_admin_column($data_taxonomy->get('show_admin_column', true));
+        $this->assign_to($data_taxonomy->get('object_type', 'post'));
+        $this->show_in_nav_menus($data_taxonomy->get('show_in_nav_menus', true));
+        $this->setPublic($data_taxonomy->get('public', true));
+        $this->show_ui($data_taxonomy->get('show_ui', true));
+        $this->hierarchical($data_taxonomy->get('hierarchical', true));
+        $this->query_var($data_taxonomy->get('query_var', true));
+        $this->insert_term(ucfirst($data_taxonomy->get('default_term', 'default')), $data_taxonomy->get('default_term', 'default'));
+        $this->set_default_term($data_taxonomy->get('default_term', 'default'));
     }
 }

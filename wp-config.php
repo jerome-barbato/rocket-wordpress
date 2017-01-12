@@ -5,6 +5,8 @@ error_reporting(~0);
 if (!defined('BASE_URI'))
     define('BASE_URI', str_replace('/vendor/metabolism', '', dirname(__DIR__)));
 
+die('wp-config');
+
 include BASE_URI . '/vendor/autoload.php';
 
 use Dflydev\DotAccessData\Data;
@@ -93,9 +95,6 @@ if (!defined('WP_USE_THEMES'))
 
 if (!defined('ABSPATH'))
     define('ABSPATH', BASE_URI . '/web/wp/');
-
-
-//$app = \Customer\Application::getInstance();
 
 /** Sets up WordPress vars and included files. */
 require_once(ABSPATH . 'wp-settings.php');

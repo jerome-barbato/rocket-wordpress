@@ -2,39 +2,31 @@
 
 namespace Rocket;
 
-use Rocket\Application\ApplicationTrait;
-use Rocket\Application\SingletonTrait;
+use Dflydev\DotAccessData\Data as DotAccessData;
+
+use Rocket\Application\ApplicationTrait, Rocket\Application\SingletonTrait;
 use Rocket\Helper\Route, Rocket\Helper\ACF;
-use Dflydev\DotAccessData\Data;
+use Rocket\Model\CustomPostType,  Rocket\Model\Menu, Rocket\Model\Taxonomy;
+use Rocket\Model\Theme;
+die('wordpress app');
 
 /**
  * Class Rocket Framework
  */
 abstract class Application {
 
+
     // Use of cross-framework functions by extending traits
-    use ApplicationTrait {
-        loadConfig      as private k_LoadConfig;
-        addTwigGlobal   as private k_AddTwigGlobal;
-        definePaths     as protected k_definePaths;
-        asset_url       as public;
-        upload_url      as public;
-    }
-    use SingletonTrait;
+    use ApplicationTrait, SingletonTrait;
+
 
     /**
      * @var string plugin domain name for translations
      */
-    public static $domain_name = 'rocket_customer';
-    private $ft_images_sizes;
+    public static $domain_name = 'default';
     protected static $_instance;
+    protected $routes;
 
-    public static function run()
-    {
-        add_action('init', function() {
-            new \Customer\Application();
-        }, 1);
-    }
 
     /**
      * Application Constructor
@@ -43,51 +35,61 @@ abstract class Application {
     {
         $this->definePaths();
         $this->loadConfig();
-
         $this->checkDependencies();
-
 
         // *******
         // Actions
         // *******
+
         // Defines settings for ACF Custom Fields
         add_action('acf/init', array($this, 'acf_settings') );
 
-
-        //$this->enable_plugins();
-
         // Automatically set Rocket theme
-        $this->set_theme();
+        add_action( 'init', function(){ Theme::getInstance(); });
 
         // Register custom processes on Wordpress common functions
         add_action( 'init', array($this, 'register_filters') );
 
         // Add specific image sizes for thumbnails
-        add_action('after_setup_theme', array($this, 'image_sizes'));
+        add_action( 'after_setup_theme', array($this, 'register_image_sizes'));
 
         // Removes or add pages
         add_action( 'admin_menu', array($this, 'clean_interface'));
 
-        add_theme_support( 'post-thumbnails' );
+        $this->defineSupport();
 
-        /*
         $this->add_menus();
         $this->add_post_types();
-        //this->add_taxonomies();
+        $this->add_taxonomies();
         $this->add_option_pages();
 
         $this->registerRoutes();
-        */
-
     }
 
-    /**
-     * Add or remove image sizes
-     */
-    public function image_sizes(){
 
-        add_image_size('full-hd', 1920, 1080, true);
-        $this->ft_images_sizes = get_intermediate_image_sizes();
+    /**
+     * Custom theme compatibilities according to created project.
+     */
+    protected function defineSupport(){
+
+        add_theme_support( 'post-thumbnails' );
+        add_post_type_support( 'page', 'excerpt' );
+    }
+
+
+    /**
+     * Add or remove image sizes according to wordpress.yml image_sizes option
+     * - <name>: <width> <height> <crop>
+     */
+    public function register_image_sizes(){
+
+        foreach ( $this->config->get('image_sizes', []) as $name=>$size) {
+
+            $size = explode(' ', $size);
+
+            if( count($size) == 3 )
+                add_image_size($name, intval($size[0]), intval($size[1]), intval($size[2]));
+        };
     }
 
 
@@ -96,69 +98,89 @@ abstract class Application {
      */
     public function clean_interface()
     {
-        remove_menu_page('edit-comments.php' ); // Posts
-        //remove_menu_page('edit.php' ); // Posts
+        foreach ( $this->config->get('remove_menu_page', []) as $page) {
 
-
-        // Add excerpt support to pages
-        add_post_type_support( 'page', 'excerpt' );
+            remove_menu_page($page);
+        }
     }
 
 
     /**
      * Adds specific post types here
+     * @see CustomPostType
      */
     public function add_post_types(){
 
         foreach ( $this->config->get('post_types', []) as $slug => $data_post_type ){
 
-            $data_post_type = new Data($data_post_type);
+            $data_post_type = new DotAccessData($data_post_type);
 
-            $singular = $slug;
-            $plurial = $slug.'s';
-            $post_type = new CustomPostType(__(ucfirst($plurial), Application::$domain_name), $singular);
+            $label = __(ucfirst($slug.'s'), Application::$domain_name);
 
-            $post_type->label_name(__($data_post_type->get('labels.name', ucfirst($plurial)), Application::$domain_name));
-            $post_type->label_all_items(__($data_post_type->get('labels.all_items','All '.$plurial), Application::$domain_name));
-            $post_type->label_singular_name(__($data_post_type->get('labels.singular_name',ucfirst($singular)), Application::$domain_name));
-            $post_type->label_add_new_item(__($data_post_type->get('labels.add_new_item','Add a '.$singular), Application::$domain_name));
-            $post_type->label_edit_item(__($data_post_type->get('labels.edit_item','Edit '.$singular), Application::$domain_name));
-            $post_type->label_not_found(__($data_post_type->get('labels.not_found',ucfirst($singular).' not found'), Application::$domain_name));
-            $post_type->label_search_items(__($data_post_type->get('labels.search_items','Search in '.$plurial), Application::$domain_name));
-            $post_type->menu_icon($data_post_type->get('menu_icon','dashicons-media-default'));
-            $post_type->setPublic($data_post_type->get('public', true));
-            $post_type->has_archive($data_post_type->get('has_archive', false));
-            $post_type->capability_type($data_post_type->get('capability_type', 'post'));
-            $post_type->supports( $data_post_type->get('supports', ['title', 'editor', 'thumbnail']));
-            $post_type->rewrite($data_post_type->get('rewrite', true));
-            $post_type->exclude_from_search($data_post_type->get('exclude_from_search', true));
-            $post_type->query_var($data_post_type->get('query_var', true));
+            $post_type = new CustomPostType($label, $slug);
+            $post_type->hydrate($data_post_type);
         };
 
     }
 
-    abstract protected function registerRoutes();
 
-    private function definePaths($custom_paths = null){
-
-        $this->k_definePaths($custom_paths);
-        $this->paths['views'] = [ BASE_URI . '/web/views', __DIR__.'/../web/views' ];
-        $this->paths['config']= BASE_URI . '/config';
-        $this->paths['wp']= BASE_URI . '/web/wp';
-    }
-
-
-    public function register_filters()
+    /**
+     * Adds Custom taxonomies
+     * @see Taxonomy
+     */
+    public function add_taxonomies()
     {
 
+        foreach ( $this->config->get('taxonomies', []) as $slug => $data_taxonomy ) {
+
+            $data_taxonomy = new DotAccessData($data_taxonomy);
+            $label = __(ucfirst($slug.'s'), Application::$domain_name);
+
+            $taxonomy = new Taxonomy($label, $slug);
+            $taxonomy->hydrate($data_taxonomy);
+        }
+
     }
+
+
+    abstract protected function registerRoutes();
+
+    /**
+     * Register wp path
+     */
+    private function definePaths(){
+
+        $this->paths = $this->getPaths();
+        $this->paths['wp'] = BASE_URI . '/web/wp';
+    }
+
+
+    /**
+     * Allows user to add specific process on Wordpress functions
+     */
+    public function register_filters()
+    {
+        add_filter('wp_get_attachment_url', function($rewrite){
+
+            $rewrite = str_replace('/wp/wp-content/uploads', '/public/upload', $rewrite);
+            return $rewrite;
+        });
+
+        add_filter('wp_calculate_image_srcset_meta', '__return_null');
+
+        //implement in src/application
+        //ex : add_filter( 'page_link', array($this, 'rewrite_common'), 10, 3);
+    }
+
+
     /**
      * Load App configuration
      */
     private function loadConfig()
     {
+        $this->config = $this->getConfig('wordpress');
 
-        $this->k_LoadConfig('wordpress');
+        self::$domain_name = $this->config->get('domain_name');
     }
 
 
@@ -171,13 +193,16 @@ abstract class Application {
         return $this->routes[$pattern];
     }
 
+
+    /**
+     * Create Menu instances from configs
+     * @see Menu
+     */
     protected function add_menus() {
 
-        $menus = $this->config->get('menus');
-        if (!empty($menus) && is_array($menus)) {
-            foreach ($menus as $slug => $name) {
-                new Menu($name, $slug);
-            }
+        foreach ($this->config->get('menus', []) as $slug => $name)
+        {
+            new Menu($name, $slug);
         }
     }
 
@@ -198,6 +223,15 @@ abstract class Application {
     {
         $ACFHelper = new ACF( $post_id );
         return $ACFHelper->process();
+    }
+
+
+    /**
+     * Add settings to acf
+     */
+    public function acf_settings() {
+
+        acf_update_setting('google_api_key', $this->config->get('options.gmap_api_key', ''));
     }
 
 
@@ -236,7 +270,11 @@ abstract class Application {
             return false;
     }
 
-    private function add_option_pages()
+
+    /**
+     * Add wordpress configuration 'options_page' fields as ACF Options pages
+     */
+    protected function add_option_pages()
     {
 
         if( function_exists('acf_add_options_page') ) {
@@ -252,39 +290,32 @@ abstract class Application {
 
 
     /**
-     * Define meta theme as theme.
+     * Check if ACF and Timber is enabled
      */
-    public function set_theme()
-    {
-        $current_theme = wp_get_theme();
-        $meta_theme = 'rocket';
-
-        if ($current_theme->get_stylesheet() != $meta_theme) {
-            switch_theme($meta_theme);
-        }
-    }
-
-    public function enable_plugins() {
-
-
-        if ( ! class_exists( 'Timber' ) ) {
-
-            add_action( 'admin_notices', function() {
-
-                echo '<div class="error"><p>Timber not activated. Make sure you activate the plugin in <a href="' . esc_url( admin_url( 'plugins.php#timber' ) ) . '">' . esc_url( admin_url( 'plugins.php' ) ) . '</a></p></div>';
-            } );
-
-            return;
-        }
-        // Require parent plugin
-        /*if ( class_exists(ACF)! is_plugin_active( $this->paths['wp'] . '/advanced-custom-fields-pro/acf.php' ) and current_user_can( 'activate_plugins' ) ) {
-            // Stop activation redirect and show error
-            wp_die('Sorry, but this plugin requires the Parent Plugin to be installed and active. <br><a href="' . admin_url( 'plugins.php' ) . '">&laquo; Return to Plugins</a>');
-        }*/
-    }
-
     public function checkDependencies()
     {
+        $notices = [];
 
+        if ( !class_exists( 'Timber' ) )
+            $notices [] = '<div class="error"><p>Timber not activated. Make sure you activate the plugin in <a href="' . esc_url( admin_url( 'plugins.php#timber' ) ) . '">' . esc_url( admin_url( 'plugins.php' ) ) . '</a></p></div>';
+
+        if ( !class_exists( 'acf' ) )
+            $notices[] = '<div class="error"><p>Advanced Custom Fields not activated. Make sure you activate the plugin in <a href="' . esc_url( admin_url( 'plugins.php#acf' ) ) . '">' . esc_url( admin_url( 'plugins.php' ) ) . '</a></p></div>';
+
+        if( !empty($notices) ){
+
+            add_action( 'admin_notices', function() use($notices){
+
+                echo implode('<br/>', $notices );
+            });
+        }
+    }
+
+
+    public static function run()
+    {
+        add_action('init', function() {
+            new \Customer\Application();
+        }, 1);
     }
 }

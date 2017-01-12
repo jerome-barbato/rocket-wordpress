@@ -3,7 +3,9 @@
  * User: Paul Coudeville <paul@metabolism.fr>
  */
 
-namespace Rocket;
+namespace Rocket\Model;
+use Dflydev\DotAccessData\Data as DotAccessData;
+use Rocket\Application;
 
 /**
  * Class CustomPostType
@@ -29,7 +31,7 @@ class CustomPostType
      * @param $slug
      * @param bool $autodeclare
      */
-    public function __construct($singular_name, $slug, $autodeclare = true)
+    public function __construct($label, $slug, $autodeclare = true)
     {
         if (empty(CustomPostType::$custom_types)) {
             CustomPostType::$custom_types = array();
@@ -37,7 +39,7 @@ class CustomPostType
 
         CustomPostType::$custom_types[$slug] = false;
 
-        $this->labels['name'] = $singular_name;
+        $this->labels['name'] = $label;
         $this->option = array(
             'public' => true,
             'labels' => $this->labels
@@ -558,5 +560,28 @@ class CustomPostType
     public function register()
     {
         register_post_type($this->slug, $this->option);
+    }
+
+    /**
+     * Create default dataset for Custom Post Type according to configuration file.
+     * @param $data_post_type DotAccessData Configuration data
+     */
+    public function hydrate($data_post_type)
+    {
+        $this->label_name(__($data_post_type->get('labels.name', ucfirst($this->labels['name'])), Application::$domain_name));
+        $this->label_all_items(__($data_post_type->get('labels.all_items','All '.$this->labels['name']), Application::$domain_name));
+        $this->label_singular_name(__($data_post_type->get('labels.singular_name',ucfirst($this->slug)), Application::$domain_name));
+        $this->label_add_new_item(__($data_post_type->get('labels.add_new_item','Add a '.$this->slug), Application::$domain_name));
+        $this->label_edit_item(__($data_post_type->get('labels.edit_item','Edit '.$this->slug), Application::$domain_name));
+        $this->label_not_found(__($data_post_type->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$domain_name));
+        $this->label_search_items(__($data_post_type->get('labels.search_items','Search in '.$this->labels['name']), Application::$domain_name));
+        $this->menu_icon($data_post_type->get('menu_icon','dashicons-media-default'));
+        $this->setPublic($data_post_type->get('public', true));
+        $this->has_archive($data_post_type->get('has_archive', false));
+        $this->capability_type($data_post_type->get('capability_type', 'post'));
+        $this->supports( $data_post_type->get('supports', ['title', 'editor', 'thumbnail']));
+        $this->rewrite($data_post_type->get('rewrite', true));
+        $this->exclude_from_search($data_post_type->get('exclude_from_search', true));
+        $this->query_var($data_post_type->get('query_var', true));
     }
 }
