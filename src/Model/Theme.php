@@ -11,14 +11,10 @@ class Theme extends Site
 {
     use SingletonTrait;
 
-    protected static $_instance;
     public $theme_name = 'rocket';
 
     public function __construct($autodeclare = true)
     {
-        if ( !class_exists( 'Timber' ) )
-            return;
-
         Timber::$dirname = '../../../../web/views';
 
         parent::__construct();
@@ -46,7 +42,6 @@ class Theme extends Site
 
     public function add_to_context($context)
     {
-
         $language = explode('-', get_bloginfo('language'));
 
         if( function_exists('wpml_get_active_languages_filter') )
@@ -99,6 +94,7 @@ class Theme extends Site
         return $twig;
     }
 
+
     public function run() {
 
         try {
@@ -116,7 +112,6 @@ class Theme extends Site
 
                     $post = new Post();
 
-                    $context['locale'] = 'en';
                     $context['post'] = $post;
                     $context['post_objects'] = $app->acf_to_timber( $post->ID );
 
@@ -132,7 +127,7 @@ class Theme extends Site
         } catch (Error $exception) {
 
             echo    "<h1>We are very sorry but this website is currently not available</h1>" .
-                "<hr>" . "<p>Message : </p><br><pre>" . $exception->getMessage() . "</pre>";
+                "<hr>" . "<p>Message : </p><pre>" . $exception->getMessage() . "</pre>";
         }
     }
 }

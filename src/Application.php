@@ -24,7 +24,6 @@ abstract class Application {
      * @var string plugin domain name for translations
      */
     public static $domain_name = 'default';
-    protected static $_instance;
     protected $routes;
 
 
@@ -45,14 +44,15 @@ abstract class Application {
         // Defines settings for ACF Custom Fields
         add_action('acf/init', array($this, 'acf_settings') );
 
-        // Automatically set Rocket theme
         add_action( 'init', function(){
 
-            Theme::getInstance();
-        });
+            // Load theme : todo: try to find an add_action('timber/init'...
+            if ( class_exists( 'Timber' ) )
+                Theme::getInstance();
 
-        // Register custom processes on Wordpress common functions
-        add_action( 'init', array($this, 'register_filters') );
+            // Register custom processes on Wordpress common functions
+            $this->register_filters();
+        });
 
         // Add specific image sizes for thumbnails
         add_action( 'after_setup_theme', array($this, 'register_image_sizes'));
@@ -239,30 +239,25 @@ abstract class Application {
     }
 
 
+    public function get_current_url() {
+
+        $current_url = trim(esc_url_raw(add_query_arg([])), '/');
+        $home_path = trim(parse_url(home_url(), PHP_URL_PATH), '/');
+
+        if ($home_path && strpos($current_url, $home_path) === 0)
+            $current_url = trim(substr($current_url, strlen($home_path)), '/');
+
+        return '/'.$current_url;
+    }
+
     /**
      * Define route manager
      */
     public function solve($context)
     {
-        if     ( is_embed() ) $type = 'embed';
-        elseif ( is_404() ) $type = '404';
-        elseif ( is_search() ) $type = 'search';
-        elseif ( is_front_page() ) $type = '';
-        elseif ( is_home() ) $type = '';
-        elseif ( is_post_type_archive() ) $type = 'post_type_archive';
-        elseif ( is_tax() ) $type = 'tax';
-        elseif ( is_attachment() ) $type = 'attachment';
-        elseif ( is_single() ) $type = 'single';
-        elseif ( is_page() ) $type = 'page';
-        elseif ( is_singular() ) $type = 'singular';
-        elseif ( is_category() ) $type = 'category';
-        elseif ( is_tag() ) $type = 'tag';
-        elseif ( is_author() ) $type = 'author';
-        elseif ( is_date() ) $type = 'date';
-        elseif ( is_archive() ) $type = 'archive';
-        elseif ( is_paged() ) $type = 'paged';
-        else $type = '';
 
+        $current_url = $this->get_current_url();
+        
         $type = '/'.$type;
 
         if( isset($this->routes[$type] ) ){
