@@ -13,32 +13,17 @@ class Theme extends Site
 
     public $theme_name = 'rocket';
 
-    public function __construct($autodeclare = true)
+
+    public function __construct()
     {
         Timber::$dirname = '../../../../web/views';
 
         parent::__construct();
 
-        if ($autodeclare)
-            $this->set_theme();
-
         add_filter('timber_context', array($this, 'add_to_context'));
         add_filter('get_twig', array($this, 'add_to_twig'));
     }
 
-
-
-    /**
-     * Define meta theme as theme.
-     */
-    public function set_theme()
-    {
-        $current_theme = wp_get_theme();
-
-        if ($current_theme->get_stylesheet() != $this->theme_name) {
-            switch_theme($this->theme_name);
-        }
-    }
 
     public function add_to_context($context)
     {
@@ -80,7 +65,7 @@ class Theme extends Site
         // Rocket compatibility
         $context['head']   = $context['wp_head'];
         $context['footer'] = $context['wp_footer'];
-        $context['title']  = $context['wp_title'];
+        $context['page_title']  = $context['wp_title'];
 
         return $context;
     }
@@ -104,7 +89,6 @@ class Theme extends Site
                 Timber::$locations = BASE_URI . '/web/views/';
                 $context = Timber::get_context();
 
-
                 /** @var Application $app */
                 $app = Application::getInstance();
 
@@ -115,8 +99,13 @@ class Theme extends Site
                     $context['post'] = $post;
                     $context['post_objects'] = $app->acf_to_timber( $post->ID );
 
-                    if( $route = $app->solve($context) )
-                        Timber::render(  'page/'.$route[0], $route[1] );
+                    if( $route = $app->solve($context) ){
+
+                        $page = $route[0];
+                        $context = (count($route)>1 and is_array($route[1])) ? $route[1]: $context;
+
+                        Timber::render(  'page/'.$page, $context );
+                    }
                 }
                 else{
 
