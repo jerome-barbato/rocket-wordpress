@@ -5,6 +5,12 @@ error_reporting(~0);
 if (!defined('BASE_URI'))
     define('BASE_URI', str_replace('/vendor/metabolism', '', dirname(__DIR__)));
 
+if (!defined('AUTOLOAD')){
+
+    define('AUTOLOAD', true);
+    require_once BASE_URI.'/vendor/autoload.php';
+}
+
 use Dflydev\DotAccessData\Data;
 
 
