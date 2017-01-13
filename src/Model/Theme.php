@@ -65,7 +65,7 @@ class Theme extends Site
         // Rocket compatibility
         $context['head']   = $context['wp_head'];
         $context['footer'] = $context['wp_footer'];
-        $context['page_title']  = $context['wp_title'];
+        $context['page_title']  = empty($context['wp_title'])?get_bloginfo('name'):$context['wp_title'];
 
         return $context;
     }
@@ -99,12 +99,17 @@ class Theme extends Site
                     $context['post'] = $post;
                     $context['post_objects'] = $app->acf_to_timber( $post->ID );
 
-                    if( $route = $app->solve($context) ){
+                    if( !is_404() and $route = $app->solve($context) ){
 
                         $page = $route[0];
                         $context = (count($route)>1 and is_array($route[1])) ? $route[1]: $context;
 
-                        Timber::render(  'page/'.$page, $context );
+                        Timber::render( 'page/'.$page, $context );
+                    }
+                    else{
+
+                        $context['code'] = 404;
+                        Timber::render( 'page/error.html.twig', $context );
                     }
                 }
                 else{
