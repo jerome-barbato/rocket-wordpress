@@ -86,7 +86,7 @@ class Theme extends Site
 
             if (class_exists('Timber')) {
 
-                Timber::$locations = BASE_URI . '/web/views/';
+                Timber::$locations = BASE_URI . '/app/views/';
                 $context = Timber::get_context();
 
                 /** @var Application $app */

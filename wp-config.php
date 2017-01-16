@@ -20,13 +20,12 @@ use Dflydev\DotAccessData\Data;
 $data = array();
 
 foreach (array('global', 'wordpress', 'local') as $config) {
-    $file = BASE_URI . '/config/' . $config . '.yml';
+    $file = BASE_URI . '/app/config/' . $config . '.yml';
     if (file_exists($file))
         $data = array_merge($data, \Spyc::YAMLLoad($file));
 }
 
 $config = new Data($data);
-
 
 define('WP_ENV', $config->get('environment', 'production'));
 define('WP_DEBUG', $config->get('debug.php_error', 0));

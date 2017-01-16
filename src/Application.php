@@ -4,9 +4,16 @@ namespace Rocket;
 
 use Dflydev\DotAccessData\Data as DotAccessData;
 
-use Rocket\Application\ApplicationTrait, Rocket\Application\SingletonTrait;
-use Rocket\Helper\ACF, Rocket\Helper\Router;
-use Rocket\Model\CustomPostType, Rocket\Model\Menu, Rocket\Model\Taxonomy;
+use Rocket\Application\ApplicationTrait,
+    Rocket\Application\SingletonTrait;
+
+use Rocket\Helper\ACF;
+
+use Rocket\Model\CustomPostType,
+    Rocket\Model\Menu,
+    Rocket\Model\Taxonomy,
+    Rocket\Model\Router;
+
 use Symfony\Component\Routing\Route as Route;
 
 /**
@@ -278,7 +285,7 @@ abstract class Application {
         {
             acf_add_options_page();
 
-            foreach ( $this->config->get('options_page') as $name )
+            foreach ( $this->config->get('options_page', []) as $name )
             {
                 acf_add_options_sub_page($name);
             }
