@@ -114,7 +114,7 @@ class ACF
 
                         if ($object['return_format'] == 'id')
                             $objects[$object['name']][] = new Term($value);
-                        elseif ($object['return_format'] == 'object')
+                        elseif (is_object($value) && $object['return_format'] == 'object')
                             $objects[$object['name']][] = new Term($value->term_id);
                         else
                             $objects[$object['name']][] = $object['value'];
