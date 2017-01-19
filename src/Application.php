@@ -318,6 +318,9 @@ abstract class Application {
 
     public static function run()
     {
+        /*if( !defined('WPINC') )
+            include 'wp/wp-blog-header.php';*/
+
         add_action('init', function(){ new \Customer\Application(); }, 1);
     }
 }

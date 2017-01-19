@@ -6,10 +6,10 @@
  */
 namespace Rocket\Model;
 
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Matcher\UrlMatcher,
+    Symfony\Component\Routing\RequestContext,
+    Symfony\Component\Routing\Route,
+    Symfony\Component\Routing\RouteCollection;
 
 class Router
 {
