@@ -36,7 +36,7 @@ abstract class Application {
     /**
      * Application Constructor
      */
-    public function __construct()
+    public function setup()
     {
         $this->definePaths();
         $this->loadConfig();
@@ -60,7 +60,11 @@ abstract class Application {
         if( is_admin() ){
 
             // Set default theme
-            add_action( 'init', array($this, 'set_theme'));
+            add_action( 'init', function()
+            {
+                $this->set_theme();
+                $this->set_permalink();
+            });
 
             // Setup ACF Settings
             add_action( 'acf/init', array($this, 'acf_settings') );
@@ -71,7 +75,9 @@ abstract class Application {
             // Removes or add pages
             add_action( 'admin_menu', array($this, 'clean_interface'));
 
-            $this->checkDependencies();
+            //check loaded plugin
+            add_action( 'plugins_loaded', array($this, 'checkDependencies'));
+
             $this->defineSupport();
             $this->add_menus();
             $this->add_option_pages();
@@ -94,6 +100,21 @@ abstract class Application {
         if ($current_theme->get_stylesheet() != 'rocket') {
             switch_theme('rocket');
         }
+    }
+
+
+    /**
+     * Set permalink stucture
+     */
+    public function set_permalink()
+    {
+        global $wp_rewrite;
+
+        $wp_rewrite->set_permalink_structure('/%postname%/');
+
+        update_option( "rewrite_rules", FALSE );
+
+        $wp_rewrite->flush_rules( true );
     }
 
 
@@ -316,13 +337,13 @@ abstract class Application {
     }
 
 
-    public static function run()
+    public function __construct()
     {
-        /*if( !defined('WPINC') )
-            include 'wp/wp-blog-header.php';*/
-
-        add_action('init', function(){ new \Customer\Application(); }, 1);
+        if( !defined('WPINC') )
+            include 'wp/wp-blog-header.php';
+        else
+           $this->setup();
     }
 }
 
-Application::run();
+//Application::run();

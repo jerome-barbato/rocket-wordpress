@@ -3,8 +3,10 @@
 namespace Rocket\Model;
 use Customer\Application;
 use Rocket\Application\SingletonTrait;
-use Timber\Post;
-use Timber\Timber, Timber\Site, Timber\Menu as TimberMenu;
+use Timber\Post,
+    Timber\Timber,
+    Timber\Site,
+    Timber\Menu as TimberMenu;
 
 
 class Theme extends Site

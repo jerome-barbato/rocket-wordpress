@@ -27,11 +27,10 @@ class Router
      */
     private function get_current_url()
     {
-        $current_url = trim(esc_url_raw(add_query_arg([])), '/');
+        $current_url = ltrim(esc_url_raw(add_query_arg([])), '/');
         $home_path = trim(parse_url(home_url(), PHP_URL_PATH), '/');
-
         if ($home_path && strpos($current_url, $home_path) === 0)
-            $current_url = trim(substr($current_url, strlen($home_path)), '/');
+            $current_url = ltrim(substr($current_url, strlen($home_path)), '/');
 
         return '/'.$current_url;
     }
