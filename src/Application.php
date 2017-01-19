@@ -30,7 +30,24 @@ abstract class Application {
      * @var string plugin domain name for translations
      */
     public static $domain_name = 'default';
-    protected $router;
+    protected $router, $context;
+
+
+    /**
+     * Set context
+     * @param $context
+     */
+    public function setContext($context){
+        $this->context = $context;
+    }
+
+
+    /**
+     * Get context
+     */
+    public function getContext(){
+        return $this->context;
+    }
 
 
     /**
@@ -85,6 +102,8 @@ abstract class Application {
         else{
 
             $this->router = new Router();
+            $this->router->setLocale(get_locale());
+
             $this->registerRoutes();
         }
     }
@@ -288,12 +307,11 @@ abstract class Application {
 
     /**
      * Define route manager
-     * @param $context
      * @return bool|mixed
      */
-    public function solve($context)
+    public function solve()
     {
-        return $this->router->solve($context);
+        return $this->router->solve();
     }
 
 
@@ -339,6 +357,8 @@ abstract class Application {
 
     public function __construct()
     {
+        $this->context = [];
+
         if( !defined('WPINC') )
             include 'wp/wp-blog-header.php';
         else

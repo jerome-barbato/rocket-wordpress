@@ -7,6 +7,5 @@ if (class_exists('Timber')) {
 }
 else{
 
-    echo "<h1>We are very sorry but this page is currently not available</h1>" .
-        "<hr>" . "<p>Message : </p><pre>Timber plugin is not active</pre>";
+    wp_redirect( wp_login_url() );
 }

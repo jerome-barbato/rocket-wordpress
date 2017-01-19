@@ -13,11 +13,20 @@ use Symfony\Component\Routing\Matcher\UrlMatcher,
 
 class Router
 {
-    protected $routes;
+    protected $routes, $locale;
 
     public function __construct()
     {
         $this->routes = new RouteCollection();
+    }
+
+
+    /**
+     * Set locale
+     */
+    public function setLocale($locale){
+
+        $this->locale = $locale;
     }
 
 
@@ -38,10 +47,9 @@ class Router
 
     /**
      * Define route manager
-     * @param $context
      * @return bool|mixed
      */
-    public function solve($context)
+    public function solve()
     {
         $current_url = $this->get_current_url();
 
@@ -54,8 +62,7 @@ class Router
 
             $controller = $parameters['_controller'];
             $params = array_filter($parameters, function($key){ return substr($key,0,1) != '_'; }, ARRAY_FILTER_USE_KEY);
-            $params[] = $context;
-            array_unshift($params, $context['locale']);
+            array_unshift($params, $this->locale);
 
             return call_user_func_array($controller, $params);
         }
