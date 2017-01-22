@@ -15,7 +15,7 @@ use Rocket\Application;
 class Taxonomy
 {
     static $defaults;
-    private $labels, $option, $slug, $object_types;
+    private $name, $option, $slug, $object_types;
 
     /**
      * Taxonomy constructor.
@@ -25,10 +25,10 @@ class Taxonomy
      */
     public function __construct($singular_name, $slug, $autodeclare = true)
     {
-        $this->labels['name'] = $singular_name;
+        $this->name = $singular_name;
         $this->option = array(
             'public' => true,
-            'labels' => $this->labels
+            'labels' => ['name'=>$this->name]
         );
         $this->slug = $slug;
 
@@ -43,7 +43,7 @@ class Taxonomy
      */
     public function label_name($text)
     {
-        $this->labels['name'] = $text;
+        $this->option['labels']['name'] = $text;
     }
 
     /**
@@ -52,7 +52,7 @@ class Taxonomy
      */
     public function label_singular_name($text)
     {
-        $this->labels['singular_name'] = $text;
+        $this->option['labels']['singular_name'] = $text;
     }
 
     /**
@@ -61,7 +61,7 @@ class Taxonomy
      */
     public function label_add_new($text)
     {
-        $this->labels['add_new'] = $text;
+        $this->option['labels']['add_new'] = $text;
     }
 
     /**
@@ -70,7 +70,7 @@ class Taxonomy
      */
     public function label_add_new_item($text)
     {
-        $this->labels['add_new_item'] = $text;
+        $this->option['labels']['add_new_item'] = $text;
     }
 
     /**
@@ -79,7 +79,7 @@ class Taxonomy
      */
     public function label_edit_item($text)
     {
-        $this->labels['edit_item'] = $text;
+        $this->option['labels']['edit_item'] = $text;
     }
 
     /**
@@ -88,7 +88,7 @@ class Taxonomy
      */
     public function label_new_item($text)
     {
-        $this->labels['new_item'] = $text;
+        $this->option['labels']['new_item'] = $text;
     }
 
     /**
@@ -97,7 +97,7 @@ class Taxonomy
      */
     public function label_view_item($text)
     {
-        $this->labels['view_item'] = $text;
+        $this->option['labels']['view_item'] = $text;
     }
 
     /**
@@ -106,7 +106,7 @@ class Taxonomy
      */
     public function label_search_items($text)
     {
-        $this->labels['search_items'] = $text;
+        $this->option['labels']['search_items'] = $text;
     }
 
     /**
@@ -115,7 +115,7 @@ class Taxonomy
      */
     public function label_not_found($text)
     {
-        $this->labels['not_found'] = $text;
+        $this->option['labels']['not_found'] = $text;
     }
 
     /**
@@ -124,7 +124,7 @@ class Taxonomy
      */
     public function label_not_found_in_trash($text)
     {
-        $this->labels['not_found_in_trash'] = $text;
+        $this->option['labels']['not_found_in_trash'] = $text;
     }
 
     /**
@@ -133,7 +133,7 @@ class Taxonomy
      */
     public function label_parent_item_colon($text)
     {
-        $this->labels['parent_item_colon'] = $text;
+        $this->option['labels']['parent_item_colon'] = $text;
     }
 
     /**
@@ -142,7 +142,7 @@ class Taxonomy
      */
     public function label_all_items($text)
     {
-        $this->labels['all_items'] = $text;
+        $this->option['labels']['all_items'] = $text;
     }
 
     /**
@@ -151,7 +151,7 @@ class Taxonomy
      */
     public function label_archives($text)
     {
-        $this->labels['archives'] = $text;
+        $this->option['labels']['archives'] = $text;
     }
 
     /**
@@ -160,7 +160,7 @@ class Taxonomy
      */
     public function label_insert_into_item($text)
     {
-        $this->labels['insert_into_item'] = $text;
+        $this->option['labels']['insert_into_item'] = $text;
     }
 
     /**
@@ -169,7 +169,7 @@ class Taxonomy
      */
     public function label_uploaded_to_this_item($text)
     {
-        $this->labels['uploaded_to_this_item'] = $text;
+        $this->option['labels']['uploaded_to_this_item'] = $text;
     }
 
     /**
@@ -178,7 +178,7 @@ class Taxonomy
      */
     public function label_featured_image($text)
     {
-        $this->labels['featured_image'] = $text;
+        $this->option['labels']['featured_image'] = $text;
     }
 
     /**
@@ -187,7 +187,7 @@ class Taxonomy
      */
     public function label_set_featured_image($text)
     {
-        $this->labels['set_featured_image'] = $text;
+        $this->option['labels']['set_featured_image'] = $text;
     }
 
     /**
@@ -196,7 +196,7 @@ class Taxonomy
      */
     public function label_remove_featured_image($text)
     {
-        $this->labels['remove_featured_image'] = $text;
+        $this->option['labels']['remove_featured_image'] = $text;
     }
 
     /**
@@ -205,7 +205,7 @@ class Taxonomy
      */
     public function label_use_featured_image($text)
     {
-        $this->labels['use_featured_image'] = $text;
+        $this->option['labels']['use_featured_image'] = $text;
     }
 
     /**
@@ -214,7 +214,7 @@ class Taxonomy
      */
     public function label_menu_name($text)
     {
-        $this->labels['menu_name'] = $text;
+        $this->option['labels']['menu_name'] = $text;
     }
 
     /**
@@ -223,7 +223,7 @@ class Taxonomy
      */
     public function label_filter_items_list($text)
     {
-        $this->labels['filter_items_list'] = $text;
+        $this->option['labels']['filter_items_list'] = $text;
     }
 
     /**
@@ -232,7 +232,7 @@ class Taxonomy
      */
     public function label_items_list_navigation($text)
     {
-        $this->labels['items_list_navigation'] = $text;
+        $this->option['labels']['items_list_navigation'] = $text;
     }
 
     /**
@@ -241,7 +241,7 @@ class Taxonomy
      */
     public function label_items_list($text)
     {
-        $this->labels['items_list'] = $text;
+        $this->option['labels']['items_list'] = $text;
     }
 
     /**
@@ -250,7 +250,7 @@ class Taxonomy
      */
     public function label_name_admin_bar($text)
     {
-        $this->labels['name_admin_bar'] = $text;
+        $this->option['labels']['name_admin_bar'] = $text;
     }
 
     public function setDescription($description)
@@ -505,13 +505,13 @@ class Taxonomy
      */
     public function hydrate($data_taxonomy)
     {
-        $this->label_name(__($data_taxonomy->get('labels.name', ucfirst($this->labels['name'])), Application::$domain_name));
-        $this->label_all_items(__($data_taxonomy->get('labels.all_items','All '.$this->labels['name']), Application::$domain_name));
+        $this->label_name(__($data_taxonomy->get('labels.name', ucfirst($this->name)), Application::$domain_name));
+        $this->label_all_items(__($data_taxonomy->get('labels.all_items','All '.$this->name), Application::$domain_name));
         $this->label_singular_name(__($data_taxonomy->get('labels.singular_name',ucfirst($this->slug)), Application::$domain_name));
         $this->label_add_new_item(__($data_taxonomy->get('labels.add_new_item','Add a '.$this->slug), Application::$domain_name));
         $this->label_edit_item(__($data_taxonomy->get('labels.edit_item','Edit '.$this->slug), Application::$domain_name));
         $this->label_not_found(__($data_taxonomy->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$domain_name));
-        $this->label_search_items(__($data_taxonomy->get('labels.search_items','Search in '.$this->labels['name']), Application::$domain_name));
+        $this->label_search_items(__($data_taxonomy->get('labels.search_items','Search in '.$this->name), Application::$domain_name));
         $this->show_admin_column($data_taxonomy->get('show_admin_column', true));
         $this->assign_to($data_taxonomy->get('object_type', 'post'));
         $this->show_in_nav_menus($data_taxonomy->get('show_in_nav_menus', true));

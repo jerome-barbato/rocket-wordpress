@@ -71,7 +71,12 @@ abstract class Application {
         // Actions
         // *******
 
-        add_action( 'init', array($this, 'register_filters'));
+        add_action( 'init', function(){
+
+            $this->add_menus();
+            $this->register_filters();
+        });
+
 
         // When viewing admin
         if( is_admin() ){
@@ -96,7 +101,6 @@ abstract class Application {
             add_action( 'plugins_loaded', array($this, 'checkDependencies'));
 
             $this->defineSupport();
-            $this->add_menus();
             $this->add_option_pages();
         }
         else{
@@ -129,7 +133,7 @@ abstract class Application {
     {
         global $wp_rewrite;
 
-        $wp_rewrite->set_permalink_structure('/%postname%/');
+        $wp_rewrite->set_permalink_structure('/%postname%');
 
         update_option( "rewrite_rules", FALSE );
 

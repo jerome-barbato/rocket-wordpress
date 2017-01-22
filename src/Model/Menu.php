@@ -14,7 +14,7 @@ class Menu {
 
         if ($autodeclare) {
 
-            register_nav_menu(__($slug, Application::$domain_name), __($name, Application::$domain_name));
+            register_nav_menu($slug, __($name, Application::$domain_name));
         }
     }
 }

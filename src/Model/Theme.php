@@ -63,7 +63,6 @@ class Theme extends Site
         if( function_exists('get_fields') )
             $context['options'] = get_fields('options');
 
-
         // Rocket compatibility
         $context['head']   = $context['wp_head'];
         $context['footer'] = $context['wp_footer'];
