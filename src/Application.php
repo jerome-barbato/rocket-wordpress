@@ -86,6 +86,7 @@ abstract class Application {
             {
                 $this->set_theme();
                 $this->set_permalink();
+                $this->add_option_pages();
             });
 
             // Setup ACF Settings
@@ -101,7 +102,6 @@ abstract class Application {
             add_action( 'plugins_loaded', array($this, 'checkDependencies'));
 
             $this->defineSupport();
-            $this->add_option_pages();
         }
         else{
 
