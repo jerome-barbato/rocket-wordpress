@@ -69,10 +69,13 @@ class ACF
             return [];
 
         foreach ($raw_objects as $object) {
-
+            
             switch ($object['type']) {
 
                 case 'image';
+
+                    if( empty($object['value']) )
+                        break;
 
                     if ($object['return_format'] == 'id')
                         $objects[$object['name']] = new Image($object['value']);
@@ -84,6 +87,9 @@ class ACF
                     break;
 
                 case 'file';
+
+                    if( empty($object['value']) )
+                        break;
 
                     if ($object['return_format'] == 'id')
                         $objects[$object['name']] = wp_get_attachment_url( $object['value'] );
@@ -114,11 +120,17 @@ class ACF
 
                 case 'post_object';
 
+                    if( empty($object['value']) )
+                        break;
+
                     $objects[$object['name']] = new Post($object['value']->ID);
                     break;
 
                 case 'user';
 
+                    if( empty($object['value']) )
+                        break;
+                    
                     $objects[$object['name']] = new User($object['value']['ID']);
                     break;
 
