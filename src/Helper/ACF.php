@@ -26,7 +26,7 @@ class ACF
     }
 
 
-    public function layoutAsKeyValue( $raw_layouts )
+    public function layoutsAsKeyValue( $raw_layouts )
     {
         $layouts = [];
 
@@ -43,13 +43,37 @@ class ACF
     }
 
 
-    public function bindLayoutFields($fields, $layouts){
+    public function bindLayoutsFields($fields, $layouts){
 
         $data = [];
         $type = $fields['acf_fc_layout'];
         $layout = $layouts[$type];
 
         unset($fields['acf_fc_layout']);
+
+        foreach ($fields as $name=>$value){
+
+            $data[$name] = $layout[$name];
+            $data[$name]['value'] = $value;
+        }
+
+        return $data;
+    }
+
+
+    public function layoutAsKeyValue( $raw_layout )
+    {
+        $data = [];
+
+        foreach ($raw_layout as $value)
+            $data[$value['name']] = $value;
+
+        return $data;
+    }
+
+    public function bindLayoutFields($fields, $layout){
+
+        $data = [];
 
         foreach ($fields as $name=>$value){
 
@@ -140,12 +164,12 @@ class ACF
 
                     if( is_array($object['value']) ){
 
-                        $layout = $this->layoutAsKeyValue($object['layouts']);
+                        $layouts = $this->layoutsAsKeyValue($object['layouts']);
 
                         foreach ($object['value'] as $value) {
 
                             $type = $value['acf_fc_layout'];
-                            $value = $this->bindLayoutFields($value, $layout);
+                            $value = $this->bindLayoutsFields($value, $layouts);
 
                             $objects[$object['name']][] = ['type'=>$type, 'fields'=>$this->clean($value)];
                         }
@@ -159,22 +183,11 @@ class ACF
 
                     if( is_array($object['value']) ){
 
-                        foreach ($object['value'] as &$value) {
-                            $i = 0;
-                            foreach ($value as $id=>&$_value) {
-
-                                $_tmp_value = $_value;
-                                $_value = $object['sub_fields'][$i];
-                                $_value['value'] = $_tmp_value;
-                                $i++;
-                            }
-                        }
-                    }
-
-                    if( is_array($object['value']) ){
+                        $layout = $this->layoutAsKeyValue($object['sub_fields']);
 
                         foreach ($object['value'] as $value) {
 
+                            $value = $this->bindLayoutFields($value, $layout);
                             $objects[$object['name']][] = $this->clean($value);
                         }
                     }

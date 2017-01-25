@@ -105,6 +105,9 @@ abstract class Application {
         }
         else{
 
+            add_action('after_setup_theme', array($this, 'clean_header'));
+            add_action('wp_footer', array($this, 'clean_footer'));
+
             $this->router = new Router();
             $this->router->setLocale(get_locale());
 
@@ -123,6 +126,32 @@ abstract class Application {
         if ($current_theme->get_stylesheet() != 'rocket') {
             switch_theme('rocket');
         }
+    }
+
+
+    /**
+     * Clean WP Head
+     */
+    public function clean_header()
+    {
+        remove_action('wp_head', 'rsd_link');
+        remove_action('wp_head', 'wlwmanifest_link');
+        remove_action('wp_head', 'wp_generator');
+        remove_action('wp_head', 'wp_shortlink_wp_head');
+        remove_action('wp_head', 'print_emoji_detection_script', 7 );
+        remove_action('wp_print_styles', 'print_emoji_styles' );
+        remove_action('wp_head', 'rest_output_link_wp_head');
+        remove_action('wp_head', 'wp_resource_hints', 2 );
+        remove_action('wp_head', 'wp_oembed_add_discovery_links');
+    }
+
+
+    /**
+     * Clean WP Footer
+     */
+    public function clean_footer()
+    {
+        wp_deregister_script( 'wp-embed' );
     }
 
 
@@ -232,10 +261,14 @@ abstract class Application {
      */
     public function register_filters()
     {
-        add_filter('wp_get_attachment_url', function($rewrite){
+        add_filter('wp_get_attachment_url', function($value){
 
-            $rewrite = str_replace('/wp/wp-content/uploads', '/public/upload', $rewrite);
-            return $rewrite;
+            return str_replace('/wp/wp-content/uploads', '/public/upload', $value);
+        });
+
+        add_filter('timber/image/new_url', function($value){
+
+            return str_replace('/wp/wp-content/uploads', '/public/upload', $value);
         });
 
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
