@@ -257,6 +257,28 @@ abstract class Application {
 
 
     /**
+     * Detect active plugin
+     * @param $plugin
+     * @return bool
+     */
+    private function is_active($plugin ) {
+
+        $network_active = false;
+
+        if ( is_multisite() ) {
+
+            $plugins = get_site_option( 'active_sitewide_plugins' );
+            if ( isset( $plugins[$plugin] ) ) {
+                $network_active = true;
+            }
+        }
+
+        return in_array( $plugin, get_option( 'active_plugins' ) ) || $network_active;
+    }
+
+
+
+    /**
      * Allows user to add specific process on Wordpress functions
      */
     public function register_filters()
@@ -273,9 +295,11 @@ abstract class Application {
 
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
 
+        if( $jpeg_quality = $this->config->get('jpeg_quality') )
+            add_filter( 'jpeg_quality', create_function( '', 'return '.$jpeg_quality.';' ) );
+
         if( $this->config->get('environement') != 'production' )
             add_filter('gettext', array($this, 'force_register_gettext_strings'), 20, 3);
-
 
         //implement in src/application
         //ex : add_filter( 'page_link', array($this, 'rewrite_common'), 10, 3);
