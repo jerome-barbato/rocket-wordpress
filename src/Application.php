@@ -273,8 +273,28 @@ abstract class Application {
 
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
 
+        if( $this->config->get('environement') != 'production' )
+            add_filter('gettext', array($this, 'force_register_gettext_strings'), 20, 3);
+
+
         //implement in src/application
         //ex : add_filter( 'page_link', array($this, 'rewrite_common'), 10, 3);
+    }
+
+
+    /**
+     * Force string registration for WPML using __('')
+     * @param $translated_text
+     * @param $text
+     * @param $domain
+     * @return mixed
+     */
+    function force_register_gettext_strings($translated_text, $text, $domain)
+    {
+        if( function_exists('icl_register_string') )
+            icl_register_string($domain, $text, $translated_text);
+
+        return $translated_text;
     }
 
 
