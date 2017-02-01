@@ -37,7 +37,8 @@ abstract class Application {
      * Set context
      * @param $context
      */
-    public function setContext($context){
+    public function setContext($context)
+    {
         $this->context = $context;
     }
 
@@ -45,7 +46,8 @@ abstract class Application {
     /**
      * Get context
      */
-    public function getContext(){
+    public function getContext()
+    {
         return $this->context;
     }
 
@@ -71,16 +73,16 @@ abstract class Application {
         // Actions
         // *******
 
-        add_action( 'init', function(){
-
+        add_action( 'init', function()
+        {
             $this->add_menus();
             $this->register_filters();
         });
 
 
         // When viewing admin
-        if( is_admin() ){
-
+        if( is_admin() )
+        {
             // Set default theme
             add_action( 'init', function()
             {
@@ -103,8 +105,8 @@ abstract class Application {
 
             $this->defineSupport();
         }
-        else{
-
+        else
+        {
             add_action('after_setup_theme', array($this, 'clean_header'));
             add_action('wp_footer', array($this, 'clean_footer'));
 
@@ -123,9 +125,8 @@ abstract class Application {
     {
         $current_theme = wp_get_theme();
 
-        if ($current_theme->get_stylesheet() != 'rocket') {
+        if ($current_theme->get_stylesheet() != 'rocket')
             switch_theme('rocket');
-        }
     }
 
 
@@ -201,8 +202,8 @@ abstract class Application {
      */
     public function clean_interface()
     {
-        foreach ( $this->config->get('remove_menu_page', []) as $page) {
-
+        foreach ( $this->config->get('remove_menu_page', []) as $page)
+        {
             remove_menu_page($page);
         }
     }
@@ -265,12 +266,11 @@ abstract class Application {
 
         $network_active = false;
 
-        if ( is_multisite() ) {
-
+        if ( is_multisite() )
+        {
             $plugins = get_site_option( 'active_sitewide_plugins' );
-            if ( isset( $plugins[$plugin] ) ) {
+            if ( isset( $plugins[$plugin] ) )
                 $network_active = true;
-            }
         }
 
         return in_array( $plugin, get_option( 'active_plugins' ) ) || $network_active;
@@ -283,15 +283,27 @@ abstract class Application {
      */
     public function register_filters()
     {
-        add_filter('wp_get_attachment_url', function($value){
-
+        add_filter('wp_get_attachment_url', function($value)
+        {
             return str_replace('/wp/wp-content/uploads', '/public/upload', $value);
         });
 
-        add_filter('timber/image/new_url', function($value){
-
+        add_filter('timber/image/new_url', function($value)
+        {
             return str_replace('/wp/wp-content/uploads', '/public/upload', $value);
         });
+
+        add_filter('acf/settings/save_json', function()
+        {
+            $dir = BASE_URI.'/app/resources/acf';
+
+            if( !is_writable($dir) )
+                echo $dir.' is not writeable';
+
+            return $dir;
+        });
+
+        add_filter('acf/settings/load_json', function(){ return [BASE_URI.'/app/resources/acf']; });
 
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
 
@@ -329,6 +341,9 @@ abstract class Application {
 
     /**
      * Define route manager
+     * @param $template
+     * @param bool $context
+     * @return array
      */
     protected function page($template, $context=false)
     {
@@ -338,6 +353,8 @@ abstract class Application {
 
     /**
      * Get ACF Fields
+     * @param $post_id
+     * @return array
      */
     public function acf_to_timber( $post_id )
     {
@@ -422,7 +439,7 @@ abstract class Application {
         $this->context = [];
 
         if( !defined('WPINC') )
-            include 'wp/wp-blog-header.php';
+            include BASE_URI.'/web/wp/wp-blog-header.php';
         else
            $this->setup();
     }
