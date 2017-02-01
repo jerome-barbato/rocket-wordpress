@@ -1,6 +1,6 @@
 <?php
 
-if (class_exists('Timber')) {
+if (defined('AUTOLOAD') and class_exists('Timber')) {
 
     $theme = \Rocket\Model\Theme::getInstance();
     $theme->run();
