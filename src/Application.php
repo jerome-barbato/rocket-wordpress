@@ -15,6 +15,8 @@ use Rocket\Model\CustomPostType,
     Rocket\Model\Router;
 
 use Symfony\Component\Routing\Route as Route;
+use Timber\Image;
+use Timber\ImageHelper;
 
 /**
  * Class Rocket Framework
@@ -31,6 +33,7 @@ abstract class Application {
      */
     public static $domain_name = 'default';
     protected $router, $context;
+    public $remote_url;
 
 
     /**
@@ -86,6 +89,9 @@ abstract class Application {
             // Set default theme
             add_action( 'init', function()
             {
+                if( WP_REMOTE )
+                    wp_redirect(WP_REMOTE.'/wp/wp-admin/');
+
                 $this->set_theme();
                 $this->set_permalink();
                 $this->add_option_pages();
@@ -254,6 +260,14 @@ abstract class Application {
     {
         $this->paths = $this->getPaths();
         $this->paths['wp'] = BASE_URI . '/web/wp';
+
+        if( !defined('WP_REMOTE') ){
+
+            global $wpdb;
+            $remote = preg_replace('/\/wp$/', '', $wpdb->get_var( "SELECT `option_value` FROM $wpdb->options WHERE `option_name` = 'siteurl'" ));
+
+            define('WP_REMOTE', $remote!=WP_HOME?$remote:false);
+        }
     }
 
 
@@ -262,8 +276,8 @@ abstract class Application {
      * @param $plugin
      * @return bool
      */
-    private function is_active($plugin ) {
-
+    private function is_active($plugin )
+    {
         $network_active = false;
 
         if ( is_multisite() )
@@ -277,34 +291,59 @@ abstract class Application {
     }
 
 
+    /**
+     * @param $value
+     * @return mixed
+     */
+    public function get_upload_url($value, $replace=false)
+    {
+        if( $replace and WP_REMOTE )
+            $value = str_replace(WP_HOME, WP_REMOTE, $value);
+
+        $value = str_replace('/app/wp/uploads', '/upload', $value);
+        $value = str_replace('/wp/wp-content/uploads', '/upload', $value);
+
+        return $value;
+    }
+
+
+    /**
+     * @param $path
+     * @return mixed
+     */
+    public function check_image($path)
+    {
+        if( WP_REMOTE ){
+
+            $base   = str_replace(WP_HOME, '', $path);
+            $file   = BASE_URI.$base;
+            $remote = WP_REMOTE.$base;
+
+            if( !file_exists($file) )
+            {
+                $dir = dirname($file) ;
+
+                if( !is_dir($dir) )
+                    mkdir($dir, 0777, true);
+
+                file_put_contents($file, file_get_contents($remote));
+            }
+        }
+
+        return $path;
+    }
+
 
     /**
      * Allows user to add specific process on Wordpress functions
      */
     public function register_filters()
     {
-        add_filter('wp_get_attachment_url', function($value)
-        {
-            $value = str_replace('/app/wp/uploads', '/upload', $value);
-            return str_replace('/wp/wp-content/uploads', '/upload', $value);
-        });
+        add_filter('wp_get_attachment_url', function($value){ return $this->get_upload_url($value, true); });
+        add_filter('timber/image/new_url', array($this, 'get_upload_url'));
+        add_filter('timber/image/src', array($this, 'check_image'));
 
-        add_filter('timber/image/new_url', function($value)
-        {
-            $value = str_replace('/app/wp/uploads', '/upload', $value);
-            return str_replace('/wp/wp-content/uploads', '/upload', $value);
-        });
-
-        add_filter('acf/settings/save_json', function()
-        {
-            $dir = BASE_URI.'/app/resources/acf';
-
-            if( !is_writable($dir) )
-                echo $dir.' is not writeable';
-
-            return $dir;
-        });
-
+        add_filter('acf/settings/save_json', function(){ return BASE_URI.'/app/resources/acf'; });
         add_filter('acf/settings/load_json', function(){ return [BASE_URI.'/app/resources/acf']; });
 
         add_filter('wp_calculate_image_srcset_meta', '__return_null');

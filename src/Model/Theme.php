@@ -76,7 +76,7 @@ class Theme extends Site
     {
         include BASE_URI . '/src/Helper/Twig.php';
 
-        $twig->addExtension(new \Customer\Helper\Twig(get_bloginfo('url')));
+        $twig->addExtension(new \Customer\Helper\Twig(get_bloginfo('url'), WP_REMOTE));
         return $twig;
     }
 
