@@ -110,6 +110,24 @@ class ACF
 
                     break;
 
+                case 'gallery';
+
+                    if( empty($object['value']) )
+                        break;
+
+                    if( is_array($object['value']) ){
+
+                        $objects[$object['name']] = [];
+
+                        foreach ($object['value'] as $value) {
+
+                            $objects[$object['name']][] = new Image($value['id']);
+
+                        }
+                    }
+
+                    break;
+
                 case 'file';
 
                     if( empty($object['value']) )
