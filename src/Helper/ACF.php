@@ -215,6 +215,15 @@ class ACF
                     }
                     break;
 
+                    case 'select';
+
+                    if( !$object['multiple'] and is_array($object['value']) and count($object['value']) )
+                        $objects[$object['name']] = $object['value'][0];
+                    else
+                        $objects[$object['name']] = $object['value'];
+
+                        break;
+
                 default:
                     $objects[$object['name']] = $object['value'];
                     break;
