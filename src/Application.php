@@ -285,12 +285,14 @@ abstract class Application {
     {
         add_filter('wp_get_attachment_url', function($value)
         {
-            return str_replace('/wp/wp-content/uploads', '/public/upload', $value);
+            $value = str_replace('/app/wp/uploads', '/upload', $value);
+            return str_replace('/wp/wp-content/uploads', '/upload', $value);
         });
 
         add_filter('timber/image/new_url', function($value)
         {
-            return str_replace('/wp/wp-content/uploads', '/public/upload', $value);
+            $value = str_replace('/app/wp/uploads', '/upload', $value);
+            return str_replace('/wp/wp-content/uploads', '/upload', $value);
         });
 
         add_filter('acf/settings/save_json', function()

@@ -81,11 +81,20 @@ define('NONCE_SALT', 'gelPRQb4NzO=4pOG_5YnuN(5G~YJCIutY*BL%!:ds(TqwDd;F[PsI,gT_1
 
 
 /**
+ * Custom Content Directory
+ */
+define('CONTENT_DIR', '/app/wp');
+define('WP_CONTENT_DIR', BASE_URI . CONTENT_DIR);
+define('WP_CONTENT_URL', WP_HOME . CONTENT_DIR);
+
+
+/**
  * Custom Settings
  */
 define('DISALLOW_FILE_EDIT', true);
 define('WP_DEFAULT_THEME', 'rocket');
 define('WP_POST_REVISIONS', 3);
+
 
 /**
  * Bootstrap WordPress
