@@ -107,7 +107,7 @@ abstract class Application {
             add_action( 'admin_menu', array($this, 'clean_interface'));
 
             //check loaded plugin
-            add_action( 'plugins_loaded', array($this, 'checkDependencies'));
+            add_action( 'plugins_loaded', array($this, 'plugin_loaded'));
 
             $this->defineSupport();
         }
@@ -133,6 +133,30 @@ abstract class Application {
 
         if ($current_theme->get_stylesheet() != 'rocket')
             switch_theme('rocket');
+    }
+
+
+    /**
+     * Define rocket theme as default theme.
+     */
+    public function define_cache()
+    {
+        $cache = get_option('cache');
+        $cache_options = $this->config->get('cache');
+
+        // Cache_Enabler options
+        // expires, new_post, new_comment, compress, webp, excl_ids, minify_html
+
+        if( defined('WP_CACHE') and WP_CACHE and $cache_options and class_exists('Cache_Enabler') ){
+
+            if( isset($cache_options['http']) and $cache_options['http'] != $cache['expires'] ){
+
+                $cache_options['expires'] = $cache_options['http']/3600;
+                $cache_options['new_post'] = 1;
+                $cache = array_merge($cache, $cache_options);
+                update_option('cache', $cache);
+            }
+        }
     }
 
 
@@ -455,7 +479,7 @@ abstract class Application {
     /**
      * Check if ACF and Timber are enabled
      */
-    public function checkDependencies()
+    public function plugin_loaded()
     {
         $notices = [];
 
@@ -472,6 +496,8 @@ abstract class Application {
                 echo implode('<br/>', $notices );
             });
         }
+
+        $this->define_cache();
     }
 
 

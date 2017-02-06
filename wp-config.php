@@ -27,9 +27,14 @@ foreach (array('global', 'wordpress', 'local') as $config) {
 
 $config = new Data($data);
 
+if( $config->get('environment', 'production') == 'production' )
+    $config->set('debug', false);
+
 define('WP_ENV', $config->get('environment', 'production'));
 define('WP_DEBUG', $config->get('debug.php_error', 0));
 
+if( $config->get('cache.http', 0) and !WP_DEBUG )
+    define('WP_CACHE', true);
 
 /**
  * URLs
