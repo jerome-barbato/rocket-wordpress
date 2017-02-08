@@ -98,29 +98,39 @@ abstract class Application {
             });
 
             // Setup ACF Settings
-            add_action( 'acf/init', array($this, 'acf_settings') );
+            add_action( 'acf/init', [$this, 'acf_settings'] );
 
-            // Add specific image sizes for thumbnails
-            add_action( 'after_setup_theme', array($this, 'register_image_sizes'));
+            // Remove image sizes for thumbnails
+            add_filter('intermediate_image_sizes_advanced', [$this, 'remove_image_sizes'] );
 
             // Removes or add pages
-            add_action( 'admin_menu', array($this, 'clean_interface'));
+            add_action( 'admin_menu', [$this, 'clean_interface']);
 
             //check loaded plugin
-            add_action( 'plugins_loaded', array($this, 'plugin_loaded'));
+            add_action( 'plugins_loaded', [$this, 'plugin_loaded']);
 
             $this->defineSupport();
         }
         else
         {
-            add_action('after_setup_theme', array($this, 'clean_header'));
-            add_action('wp_footer', array($this, 'clean_footer'));
+            add_action('after_setup_theme', [$this, 'clean_header']);
+            add_action('wp_footer', [$this, 'clean_footer']);
 
             $this->router = new Router();
             $this->router->setLocale(get_locale());
 
             $this->registerRoutes();
         }
+    }
+
+
+    /**
+     * Unset thumbnail image
+     */
+    public function remove_image_sizes($sizes){
+
+        unset($sizes['medium'], $sizes['medium_large'], $sizes['large']);
+        return $sizes;
     }
 
 
@@ -206,25 +216,12 @@ abstract class Application {
      */
     protected function defineSupport()
     {
-        add_theme_support( 'post-thumbnails' );
+        if( $this->config->get('post-thumbnails') )
+            add_theme_support( 'post-thumbnails' );
+
         add_post_type_support( 'page', 'excerpt' );
     }
 
-
-    /**
-     * Add or remove image sizes according to wordpress.yml image_sizes option
-     * - <name>: <width> <height> <crop>
-     */
-    public function register_image_sizes()
-    {
-        foreach ( $this->config->get('image_sizes', []) as $name=>$size)
-        {
-            $size = explode(' ', $size);
-
-            if( count($size) == 3 )
-                add_image_size($name, intval($size[0]), intval($size[1]), intval($size[2]));
-        };
-    }
 
 
     /**
@@ -364,8 +361,8 @@ abstract class Application {
     public function register_filters()
     {
         add_filter('wp_get_attachment_url', function($value){ return $this->get_upload_url($value, true); });
-        add_filter('timber/image/new_url', array($this, 'get_upload_url'));
-        add_filter('timber/image/src', array($this, 'check_image'));
+        add_filter('timber/image/new_url', [$this, 'get_upload_url']);
+        add_filter('timber/image/src', [$this, 'check_image']);
 
         add_filter('acf/settings/save_json', function(){ return BASE_URI.'/app/resources/acf'; });
         add_filter('acf/settings/load_json', function(){ return [BASE_URI.'/app/resources/acf']; });
@@ -373,10 +370,10 @@ abstract class Application {
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
 
         if( $jpeg_quality = $this->config->get('jpeg_quality') )
-            add_filter( 'jpeg_quality', create_function( '', 'return '.$jpeg_quality.';' ) );
+            add_filter( 'jpeg_quality', function() use ($jpeg_quality){ return $jpeg_quality; });
 
         //implement in src/application
-        //ex : add_filter( 'page_link', array($this, 'rewrite_common'), 10, 3);
+        //ex : add_filter( 'page_link', [$this, 'rewrite_common'), 10, 3);
     }
 
 
@@ -511,5 +508,3 @@ abstract class Application {
            $this->setup();
     }
 }
-
-//Application::run();
