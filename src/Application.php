@@ -70,17 +70,11 @@ abstract class Application {
 
         $this->add_post_types();
         $this->add_taxonomies();
+        $this->register_filters();
 
 
-        // *******
-        // Actions
-        // *******
-
-        add_action( 'init', function()
-        {
-            $this->add_menus();
-            $this->register_filters();
-        });
+        // Global init action
+        add_action( 'init', [$this, 'add_menus']);
 
 
         // When viewing admin
@@ -392,7 +386,7 @@ abstract class Application {
      * Create Menu instances from configs
      * @see Menu
      */
-    protected function add_menus()
+    public function add_menus()
     {
         foreach ($this->config->get('menus', []) as $slug => $name)
         {
