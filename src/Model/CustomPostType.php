@@ -11,10 +11,12 @@ use Rocket\Application;
  * Class CustomPostType
  * @package Customer
  */
-class CustomPostType
-{
+class CustomPostType {
+
+
     private $option, $slug, $name;
     private static $custom_types;
+
 
     /**
      * Return a list of all created CustomPostTypes
@@ -25,15 +27,17 @@ class CustomPostType
         return static::$custom_types;
     }
 
+
     /**
      * CustomPostType constructor.
-     * @param $singular_name
+     * @param $label
      * @param $slug
      * @param bool $autodeclare
      */
     public function __construct($label, $slug, $autodeclare = true)
     {
-        if (empty(CustomPostType::$custom_types)) {
+        if (empty(CustomPostType::$custom_types))
+        {
             CustomPostType::$custom_types = array();
         }
 
@@ -60,6 +64,7 @@ class CustomPostType
          $this->option['labels']['name'] = $text;
     }
 
+
     /**
      * name for one object of this post type. default is Post/Page
      * @param $text String Displayed text.
@@ -68,6 +73,7 @@ class CustomPostType
     {
          $this->option['labels']['singular_name'] = $text;
     }
+
 
     /**
      * the add new text. The default is "Add New" for both hierarchical and non-hierarchical post types. When internationalizing this string, please use a gettext context matching your post type. Example: _x('Add New', 'product');
@@ -78,6 +84,7 @@ class CustomPostType
          $this->option['labels']['add_new'] = $text;
     }
 
+
     /**
      * default is Add New Post/Add New Page.
      * @param $text String Displayed text.
@@ -86,6 +93,7 @@ class CustomPostType
     {
          $this->option['labels']['add_new_item'] = $text;
     }
+
 
     /**
      * default is Edit Post/Edit Page.
@@ -96,6 +104,7 @@ class CustomPostType
          $this->option['labels']['edit_item'] = $text;
     }
 
+
     /**
      * default is New Post/New Page.
      * @param $text String Displayed text.
@@ -104,6 +113,7 @@ class CustomPostType
     {
          $this->option['labels']['new_item'] = $text;
     }
+
 
     /**
      * default is View Post/View Page.
@@ -114,6 +124,7 @@ class CustomPostType
          $this->option['labels']['view_item'] = $text;
     }
 
+
     /**
      * default is Search Posts/Search Pages.
      * @param $text String Displayed text.
@@ -122,6 +133,7 @@ class CustomPostType
     {
          $this->option['labels']['search_items'] = $text;
     }
+
 
     /**
      * default is No posts found/No pages found.
@@ -132,6 +144,7 @@ class CustomPostType
          $this->option['labels']['not_found'] = $text;
     }
 
+
     /**
      * default is No posts found in Trash/No pages found in Trash.
      * @param $text String Displayed text.
@@ -140,6 +153,7 @@ class CustomPostType
     {
          $this->option['labels']['not_found_in_trash'] = $text;
     }
+
 
     /**
      * This string isn't used on non-hierarchical types. In hierarchical ones the default is 'Parent Page:'.
@@ -150,6 +164,7 @@ class CustomPostType
          $this->option['labels']['parent_item_colon'] = $text;
     }
 
+
     /**
      * String for the submenu. default is All Posts/All Pages.
      * @param $text String Displayed text.
@@ -158,6 +173,7 @@ class CustomPostType
     {
          $this->option['labels']['all_items'] = $text;
     }
+
 
     /**
      * String for use with archives in nav menus. default is Post Archives/Page Archives.
@@ -168,6 +184,7 @@ class CustomPostType
          $this->option['labels']['archives'] = $text;
     }
 
+
     /**
      * String for the media frame button. default is Insert into post/Insert into page.
      * @param $text String Displayed text.
@@ -176,6 +193,7 @@ class CustomPostType
     {
          $this->option['labels']['insert_into_item'] = $text;
     }
+
 
     /**
      * String for the media frame filter. default is Uploaded to this post/Uploaded to this page.
@@ -186,6 +204,7 @@ class CustomPostType
          $this->option['labels']['uploaded_to_this_item'] = $text;
     }
 
+
     /**
      * default is Featured Image.
      * @param $text String Displayed text.
@@ -194,6 +213,7 @@ class CustomPostType
     {
          $this->option['labels']['featured_image'] = $text;
     }
+
 
     /**
      * default is Set featured image.
@@ -204,6 +224,7 @@ class CustomPostType
          $this->option['labels']['set_featured_image'] = $text;
     }
 
+
     /**
      * default is Remove featured image.
      * @param $text String Displayed text.
@@ -212,6 +233,7 @@ class CustomPostType
     {
          $this->option['labels']['remove_featured_image'] = $text;
     }
+
 
     /**
      * default is Use as featured image.
@@ -222,6 +244,7 @@ class CustomPostType
          $this->option['labels']['use_featured_image'] = $text;
     }
 
+
     /**
      * default is the same as `name`.
      * @param $text String Displayed text.
@@ -230,6 +253,7 @@ class CustomPostType
     {
          $this->option['labels']['menu_name'] = $text;
     }
+
 
     /**
      * String for the table views hidden heading.
@@ -240,6 +264,7 @@ class CustomPostType
          $this->option['labels']['filter_items_list'] = $text;
     }
 
+
     /**
      * String for the table pagination hidden heading.
      * @param $text String Displayed text.
@@ -248,6 +273,7 @@ class CustomPostType
     {
          $this->option['labels']['items_list_navigation'] = $text;
     }
+
 
     /**
      * String for the table hidden heading.
@@ -548,7 +574,8 @@ class CustomPostType
      * (bool) (optional) Whether or not register the CustomPostType in APIRest sitemap.
      * @param $bool bool showed in sitemap or not
      */
-    public function show_in_sitemap($bool) {
+    public function show_in_sitemap($bool)
+    {
         CustomPostType::$custom_types[$this->slug] = $bool;
     }
 

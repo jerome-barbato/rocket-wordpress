@@ -74,9 +74,9 @@ class Theme extends Site
 
     public function add_to_twig($twig)
     {
-        include BASE_URI . '/src/Helper/Twig.php';
+        if ( class_exists( '\\Customer\\Helper\\TwigPlugin' ) )
+            $twig->addExtension( new \Customer\Helper\TwigPlugin( get_bloginfo('url'), WP_REMOTE ) );
 
-        $twig->addExtension(new \Customer\Helper\Twig(get_bloginfo('url'), WP_REMOTE));
         return $twig;
     }
 

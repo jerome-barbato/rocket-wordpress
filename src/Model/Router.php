@@ -11,8 +11,9 @@ use Symfony\Component\Routing\Matcher\UrlMatcher,
     Symfony\Component\Routing\Route,
     Symfony\Component\Routing\RouteCollection;
 
-class Router
-{
+class Router {
+
+
     protected $routes, $locale;
 
     public function __construct()
@@ -24,8 +25,8 @@ class Router
     /**
      * Set locale
      */
-    public function setLocale($locale){
-
+    public function setLocale($locale)
+    {
         $this->locale = $locale;
     }
 
@@ -76,7 +77,8 @@ class Router
      * @param $controller
      * @return Route
      */
-    public function add($pattern, $controller) {
+    public function add($pattern, $controller)
+    {
         $route = new Route($pattern, ['_controller' => $controller]);
         $name  = $this->generateRouteName($route);
 

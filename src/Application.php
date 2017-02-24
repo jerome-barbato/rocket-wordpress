@@ -121,8 +121,8 @@ abstract class Application {
     /**
      * Unset thumbnail image
      */
-    public function remove_image_sizes($sizes){
-
+    public function remove_image_sizes($sizes)
+    {
         unset($sizes['medium'], $sizes['medium_large'], $sizes['large']);
         return $sizes;
     }
@@ -151,10 +151,10 @@ abstract class Application {
         // Cache_Enabler options
         // expires, new_post, new_comment, compress, webp, excl_ids, minify_html
 
-        if( defined('WP_CACHE') and WP_CACHE and $cache_options and class_exists('Cache_Enabler') ){
-
-            if( isset($cache_options['http']) and $cache_options['http'] != $cache['expires'] ){
-
+        if( defined('WP_CACHE') and WP_CACHE and $cache_options and class_exists('Cache_Enabler') )
+        {
+            if( isset($cache_options['http']) and $cache_options['http'] != $cache['expires'] )
+            {
                 $cache_options['expires'] = $cache_options['http']/3600;
                 $cache_options['new_post'] = 1;
                 $cache = array_merge($cache, $cache_options);
@@ -236,8 +236,8 @@ abstract class Application {
      */
     public function add_post_types()
     {
-        foreach ( $this->config->get('post_types', []) as $slug => $data_post_type ){
-
+        foreach ( $this->config->get('post_types', []) as $slug => $data_post_type )
+        {
             $data_post_type = new DotAccessData($data_post_type);
 
             $label = __(ucfirst($slug.'s'), Application::$domain_name);
@@ -254,8 +254,8 @@ abstract class Application {
      */
     public function add_taxonomies()
     {
-        foreach ( $this->config->get('taxonomies', []) as $slug => $data_taxonomy ) {
-
+        foreach ( $this->config->get('taxonomies', []) as $slug => $data_taxonomy )
+        {
             $data_taxonomy = new DotAccessData($data_taxonomy);
             $label = __(ucfirst($slug.'s'), Application::$domain_name);
 
@@ -276,8 +276,8 @@ abstract class Application {
         $this->paths = $this->getPaths();
         $this->paths['wp'] = BASE_URI . '/web/wp';
 
-        if( !defined('WP_REMOTE') ){
-
+        if( !defined('WP_REMOTE') )
+        {
             global $wpdb;
             $remote = preg_replace('/\/wp$/', '', $wpdb->get_var( "SELECT `option_value` FROM $wpdb->options WHERE `option_name` = 'siteurl'" ));
 
@@ -328,8 +328,8 @@ abstract class Application {
      */
     public function check_image($path)
     {
-        if( WP_REMOTE ){
-
+        if( WP_REMOTE )
+        {
             $base   = str_replace(WP_HOME, '', $path);
             $file   = BASE_URI.$base;
             $remote = WP_REMOTE.$base;
