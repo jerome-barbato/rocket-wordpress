@@ -1,7 +1,6 @@
 {
     "name":"metabolism/rocket-wordpress",
     "version":"1.0.0",
-    "type":"rocket-cms",
     "config": {
         "preferred-install": "dist"
     },
@@ -13,7 +12,6 @@
     "require": {
         "php" : ">=5.5.0",
         "johnpbloch/wordpress-core": "*",
-        "metabolism/rocket-kernel": "dev-feature-installer",
         "mustangostang/spyc": "^0.6.1",
         "symfony/routing":"^3.2",
         "dflydev/dot-access-data": "^1.0",
