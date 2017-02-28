@@ -1,27 +1,19 @@
 {
     "name":"metabolism/rocket-wordpress",
     "version":"1.0.0",
+    "type":"rocket-cms",
     "config": {
         "preferred-install": "dist"
     },
     "repositories": [
         { "type": "composer", "url": "https://wpackagist.org"},
         { "type": "gitlab",   "url": "https://git.metabolism.fr/rocket/wordpress" },
-        {  "type": "rocket-cms",
-            "package": {
-                "name": "wordpress/wordpress",
-                "version": "lastest",
-                "source": {
-                    "url": "https://github.com/WordPress/WordPress.git",
-                    "type": "git",
-                    "reference": "origin/master"
-                }
-            }},
         { "type": "package",  "package": { "name": "elliotcondon/advanced-custom-fields-pro", "version": "5.5.5", "type": "wordpress-plugin", "dist": { "type": "zip", "url": "https://connect.advancedcustomfields.com/index.php?p=pro&a=download&k=b3JkZXJfaWQ9NTgyNTZ8dHlwZT1kZXZlbG9wZXJ8ZGF0ZT0yMDE1LTA2LTE3IDEwOjA3OjI2" } } }
     ],
     "require": {
         "php" : ">=5.5.0",
         "johnpbloch/wordpress-core": "*",
+        "metabolism/rocket-kernel": "dev-feature-installer",
         "mustangostang/spyc": "^0.6.1",
         "symfony/routing":"^3.2",
         "dflydev/dot-access-data": "^1.0",
