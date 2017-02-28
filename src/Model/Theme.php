@@ -18,8 +18,6 @@ class Theme extends Site
 
     public function __construct()
     {
-        Timber::$dirname = '../../../../web/views';
-
         parent::__construct();
 
         add_filter('timber_context', array($this, 'add_to_context'));

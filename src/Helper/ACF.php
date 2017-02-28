@@ -134,7 +134,7 @@ class ACF
                         break;
 
                     if ($object['return_format'] == 'id')
-                        $objects[$object['name']] = wp_get_attachment_url( $object['value'] );
+                        $objects[$object['name']] = apply_filters('rewrite_upload_url', wp_get_attachment_url( $object['value'] ));
                     elseif ($object['return_format'] == 'array')
                         $objects[$object['name']] = $object['value']['url'];
                     else

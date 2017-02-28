@@ -274,7 +274,7 @@ abstract class Application {
     private function definePaths()
     {
         $this->paths = $this->getPaths();
-        $this->paths['wp'] = BASE_URI . '/web/edition';
+        $this->paths['wp'] = CMS_URI;
 
         if( !defined('WP_REMOTE') and is_blog_installed())
         {
@@ -354,7 +354,7 @@ abstract class Application {
      */
     public function register_filters()
     {
-        add_filter('wp_get_attachment_url', function($value){ return $this->get_upload_url($value, true); });
+        add_filter('rewrite_upload_url', function($value){ return $this->get_upload_url($value, true); });
         add_filter('timber/image/new_url', [$this, 'get_upload_url']);
         add_filter('timber/image/src', [$this, 'check_image']);
 
@@ -497,7 +497,7 @@ abstract class Application {
         $this->context = [];
 
         if( !defined('WPINC') )
-            include BASE_URI.'/web/edition/wp-blog-header.php';
+            include CMS_URI.'/wp-blog-header.php';
         else
            $this->setup();
     }
