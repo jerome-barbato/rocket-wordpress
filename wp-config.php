@@ -49,12 +49,12 @@ $base_uri = $isSecure ? 'https' : 'http'.'://'.$_SERVER['HTTP_HOST'];
 
 if (!defined('BASE_PATH')) {
 
-    $request_uri = explode('/wp/', $_SERVER['REQUEST_URI']);
+    $request_uri = explode('/edition/', $_SERVER['REQUEST_URI']);
     define('BASE_PATH', $request_uri[0]);
 }
 
 define('WP_HOME', $base_uri.BASE_PATH);
-define('WP_SITEURL', $base_uri.BASE_PATH . '/wp');
+define('WP_SITEURL', $base_uri.BASE_PATH . '/edition');
 
 
 /**
@@ -86,7 +86,7 @@ define('NONCE_SALT', 'gelPRQb4NzO=4pOG_5YnuN(5G~YJCIutY*BL%!:ds(TqwDd;F[PsI,gT_1
 /**
  * Custom Content Directory
  */
-define('CONTENT_DIR', '/app/wp');
+define('CONTENT_DIR', '/app/cms');
 define('WP_CONTENT_DIR', BASE_URI . CONTENT_DIR);
 define('WP_CONTENT_URL', WP_HOME . CONTENT_DIR);
 
@@ -107,7 +107,7 @@ if (!defined('WP_USE_THEMES'))
     define('WP_USE_THEMES', true);
 
 if (!defined('ABSPATH'))
-    define('ABSPATH', BASE_URI . '/web/wp/');
+    define('ABSPATH', BASE_URI . '/web/edition/');
 
 /** Sets up WordPress vars and included files. */
 require_once(ABSPATH . 'wp-settings.php');

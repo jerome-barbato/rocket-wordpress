@@ -84,7 +84,7 @@ abstract class Application {
             add_action( 'init', function()
             {
                 if( WP_REMOTE )
-                    wp_redirect(WP_REMOTE.'/wp/wp-admin/');
+                    wp_redirect(WP_REMOTE.'/edition/wp-admin/');
 
                 $this->set_theme();
                 $this->set_permalink();
@@ -274,12 +274,12 @@ abstract class Application {
     private function definePaths()
     {
         $this->paths = $this->getPaths();
-        $this->paths['wp'] = BASE_URI . '/web/wp';
+        $this->paths['wp'] = BASE_URI . '/web/edition';
 
-        if( !defined('WP_REMOTE') )
+        if( !defined('WP_REMOTE') and is_blog_installed())
         {
             global $wpdb;
-            $remote = preg_replace('/\/wp$/', '', $wpdb->get_var( "SELECT `option_value` FROM $wpdb->options WHERE `option_name` = 'siteurl'" ));
+            $remote = preg_replace('/\/edition$/', '', $wpdb->get_var( "SELECT `option_value` FROM $wpdb->options WHERE `option_name` = 'siteurl'" ));
 
             define('WP_REMOTE', $remote!=WP_HOME?$remote:false);
         }
@@ -315,8 +315,8 @@ abstract class Application {
         if( $replace and WP_REMOTE )
             $value = str_replace(WP_HOME, WP_REMOTE, $value);
 
-        $value = str_replace('/app/wp/uploads', '/upload', $value);
-        $value = str_replace('/wp/wp-content/uploads', '/upload', $value);
+        $value = str_replace('/app/cms/uploads', '/upload', $value);
+        $value = str_replace('/edition/wp-content/uploads', '/upload', $value);
 
         return $value;
     }
@@ -497,7 +497,7 @@ abstract class Application {
         $this->context = [];
 
         if( !defined('WPINC') )
-            include BASE_URI.'/web/wp/wp-blog-header.php';
+            include BASE_URI.'/web/edition/wp-blog-header.php';
         else
            $this->setup();
     }
