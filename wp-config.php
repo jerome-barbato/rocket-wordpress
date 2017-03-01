@@ -8,7 +8,13 @@
 //error_reporting(~0);
 
 if (!defined('BASE_URI'))
-    define('BASE_URI', preg_replace( "/\/web$/", '', dirname( __DIR__ ) ));
+{
+    $base_uri = preg_replace( "/\/web$/", '', dirname( __DIR__ ) );
+    $base_uri = preg_replace( "/\/vendor\/metabolism$/", '', $base_uri );
+
+    define('BASE_URI', $base_uri);
+}
+
 
 if ( !defined('AUTOLOAD') )
 {
