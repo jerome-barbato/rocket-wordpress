@@ -1,12 +1,24 @@
 <?php
 
+/*
+ * Wordpress config file, do not edit, use app/config/wordpress.yml
+ */
+
+//ini_set('display_errors', 1);
+//error_reporting(~0);
+
 if (!defined('BASE_URI'))
-    define('BASE_URI', str_replace('/vendor/metabolism', '', dirname(__DIR__)));
+    define('BASE_URI', preg_replace( "/\/web$/", '', dirname( __DIR__ ) ));
 
-if (!defined('AUTOLOAD')){
-
+if ( !defined('AUTOLOAD') )
+{
     define('AUTOLOAD', true);
+    define('WP_DIRECT_LOADING', true);
     require_once BASE_URI.'/vendor/autoload.php';
+}
+else
+{
+    define('WP_DIRECT_LOADING', false);
 }
 
 use Dflydev\DotAccessData\Data;
@@ -17,8 +29,10 @@ use Dflydev\DotAccessData\Data;
  */
 $data = array();
 
-foreach (array('global', 'wordpress', 'local') as $config) {
+foreach (array('global', 'wordpress', 'local') as $config)
+{
     $file = BASE_URI . '/app/config/' . $config . '.yml';
+
     if (file_exists($file))
         $data = array_merge($data, \Spyc::YAMLLoad($file));
 }
@@ -47,15 +61,14 @@ elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED
 $base_uri = $isSecure ? 'https' : 'http'.'://'.$_SERVER['HTTP_HOST'];
 
 
-if (!defined('BASE_PATH')) {
-
+if (!defined('BASE_PATH'))
+{
     $request_uri = explode('/edition/', $_SERVER['REQUEST_URI']);
     define('BASE_PATH', $request_uri[0]);
 }
 
 define('WP_HOME', $base_uri.BASE_PATH);
 define('WP_SITEURL', $base_uri.BASE_PATH . '/edition');
-
 
 /**
  * DB settings
@@ -87,7 +100,6 @@ define('NONCE_SALT', 'gelPRQb4NzO=4pOG_5YnuN(5G~YJCIutY*BL%!:ds(TqwDd;F[PsI,gT_1
  * Custom Content Directory
  */
 define('CONTENT_DIR', '/app/cms');
-define('WP_PUBLIC_DIR', '/web/edition');
 define('WP_CONTENT_DIR', BASE_URI . CONTENT_DIR);
 define('WP_CONTENT_URL', WP_HOME . CONTENT_DIR);
 
@@ -106,6 +118,9 @@ define('WP_POST_REVISIONS', 3);
 
 if (!defined('WP_USE_THEMES'))
     define('WP_USE_THEMES', true);
+
+if (!defined('CMS_URI'))
+    define( 'CMS_URI', BASE_URI.'/web/edition');
 
 if (!defined('ABSPATH'))
     define('ABSPATH', CMS_URI .'/');
