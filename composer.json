@@ -2,7 +2,6 @@
     "name":"metabolism/rocket-wordpress",
     "version":"1.1.0",
     "description": "Wordpress Scaffolder using Rocket Framework",
-    "type": "composer-plugin",
     "config": {
         "preferred-install": "dist"
     },
@@ -13,7 +12,6 @@
     ],
     "require": {
         "php" : ">=5.5.0",
-        "composer-plugin-api": "^1.0",
         "johnpbloch/wordpress-core": "*",
         "mustangostang/spyc": "^0.6.1",
         "symfony/routing":"^3.2",
@@ -25,7 +23,6 @@
         "elliotcondon/advanced-custom-fields-pro": "*"
     },
     "extra": {
-      "class": "Rocket\\Composer\\WordpressPlugin",
         "file-management": {
             "create": {
                 "metabolism/rocket-wordpress": {
