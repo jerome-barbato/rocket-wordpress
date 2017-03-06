@@ -1,6 +1,8 @@
 {
     "name":"metabolism/rocket-wordpress",
     "version":"1.1.0",
+    "description": "Wordpress Scaffolder using Rocket Framework",
+    "type": "composer-plugin",
     "config": {
         "preferred-install": "dist"
     },
@@ -11,6 +13,7 @@
     ],
     "require": {
         "php" : ">=5.5.0",
+        "composer-plugin-api": "^1.0",
         "johnpbloch/wordpress-core": "*",
         "mustangostang/spyc": "^0.6.1",
         "symfony/routing":"^3.2",
@@ -20,6 +23,35 @@
         "wpackagist-plugin/cache-enabler": "*",
         "wpackagist-plugin/timber-library": "*",
         "elliotcondon/advanced-custom-fields-pro": "*"
+    },
+    "extra": {
+        "class": "Rocket\\Composer\\WordpressPlugin"
+        "file-management": {
+            "create": {
+                "metabolism/rocket-wordpress": {
+                    "app/cms/uploads": 777,
+                    "app/resources/acf": 777
+                }
+            },
+            "symlink": {
+                "metabolism/rocket-wordpress": {
+                    "wp-config.php": "web/edition/wp-config.php",
+                    "src/theme": "app/cms/themes/rocket",
+                    "doc": "doc/wordpress",
+                    "src/Helper/Rocket.php": "app/cms/mu-plugins/Rocket.php",
+                    "../../../app/cms/uploads": "web/upload"
+                }
+            },
+            "copy": {
+            },
+            "remove": {
+                "metabolism/rocket-wordpress": [
+                    "web/edition/wp-content",
+                    "app/config/silex.yml",
+                    "web/edition/wp-config-sample.php"
+                ]
+            }
+        }
     },
     "autoload"    : {
         "psr-4" : {
