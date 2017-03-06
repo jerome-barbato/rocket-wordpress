@@ -25,7 +25,7 @@
         "elliotcondon/advanced-custom-fields-pro": "*"
     },
     "extra": {
-        "class": "Rocket\\Composer\\WordpressPlugin"
+      "class": "Rocket\\Composer\\WordpressPlugin",
         "file-management": {
             "create": {
                 "metabolism/rocket-wordpress": {
