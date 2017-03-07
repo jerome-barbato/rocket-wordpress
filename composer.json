@@ -48,6 +48,9 @@
                     "web/edition/wp-config-sample.php"
                 ]
             }
+        },
+        "branch-alias": {
+            "dev-dev": "1.1.x-dev"
         }
     },
     "autoload"    : {
