@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.1.0 - IN DEV
+## 1.1.1
+### Added
+* post-types-order plugin
+
+## 1.1.0 
 ### Changed ###
 * Main folder is now in `web/edition` and configuration in `app/cms`
 * Removed johnpbloc/wordpress custom installer
