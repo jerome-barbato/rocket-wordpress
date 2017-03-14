@@ -4,20 +4,11 @@
   "version": "1.2.0",
     "description": "Wordpress Scaffolder using Rocket Framework",
     "config": {
-        "preferred-install": "dist",
-        "secure-http": false
+        "preferred-install": "dist"
     },
-    "repositories": [
-        { "type": "composer", "url": "https://wpackagist.org"},
-      {
-        "type": "composer",
-        "url": "http://satis.metabolism.fr:56000/"
-      }
-    ],
     "require": {
         "php" : ">=5.5.0",
       "johnpbloch/wordpress-core": "1.5.*",
-      "metabolism/rocket-kernel": "dev-dev",
         "mustangostang/spyc": "^0.6.1",
         "symfony/routing":"^3.2",
         "dflydev/dot-access-data": "^1.0",
@@ -25,6 +16,9 @@
         "wpackagist-plugin/timber-library": "*",
         "elliotcondon/advanced-custom-fields-pro": "5.*",
         "wpackagist-plugin/post-types-order": "*"
+    },
+    "suggest": {
+      "metabolism/rocket-kernel": "*"
     },
     "extra": {
         "file-management": {
