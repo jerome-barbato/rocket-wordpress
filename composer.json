@@ -24,7 +24,7 @@
         "file-management": {
             "create": {
                 "metabolism/rocket-wordpress": {
-                    "app/cms/uploads": 777,
+                    "web/app/uploads": 777,
                     "app/resources/acf": 777
                 }
             },
@@ -32,10 +32,9 @@
                 "metabolism/rocket-wordpress": {
                     "../../johnpbloch/wordpress-core": "web/edition",
                     "wp-config.php": "vendor/johnpbloch/wordpress-core/wp-config.php",
-                    "src/theme": "app/cms/themes/rocket",
+                    "src/theme": "web/app/themes/rocket",
                     "doc": "doc/wordpress",
-                    "src/Helper/Rocket.php": "app/cms/mu-plugins/Rocket.php",
-                    "../../../app/cms/uploads": "web/upload"
+                    "src/Helper/Rocket.php": "web/app/mu-plugins/Rocket.php"
                 }
             },
             "copy": {
