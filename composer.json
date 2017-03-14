@@ -11,12 +11,13 @@
         { "type": "composer", "url": "https://wpackagist.org"},
       {
         "type": "composer",
-        "url": "http://138.68.98.121:56000/"
+        "url": "http://satis.metabolism.fr:56000/"
       }
     ],
     "require": {
         "php" : ">=5.5.0",
       "johnpbloch/wordpress-core": "1.5.*",
+      "metabolism/rocket-kernel": "dev-dev",
         "mustangostang/spyc": "^0.6.1",
         "symfony/routing":"^3.2",
         "dflydev/dot-access-data": "^1.0",
