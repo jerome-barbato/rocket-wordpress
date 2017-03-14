@@ -105,7 +105,7 @@ define('NONCE_SALT', 'gelPRQb4NzO=4pOG_5YnuN(5G~YJCIutY*BL%!:ds(TqwDd;F[PsI,gT_1
 /**
  * Custom Content Directory
  */
-define('CONTENT_DIR', '/app/cms');
+define('CONTENT_DIR', '/web/app');
 define('WP_CONTENT_DIR', BASE_URI . CONTENT_DIR);
 define('WP_CONTENT_URL', WP_HOME . CONTENT_DIR);
 

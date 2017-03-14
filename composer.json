@@ -25,7 +25,7 @@
             "create": {
                 "metabolism/rocket-wordpress": {
                     "web/app/uploads": 777,
-                    "app/resources/acf": 777
+                    "app/config/acf": 777
                 }
             },
             "symlink": {

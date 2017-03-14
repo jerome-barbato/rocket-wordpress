@@ -315,8 +315,8 @@ abstract class Application {
         if( $replace and WP_REMOTE )
             $value = str_replace(WP_HOME, WP_REMOTE, $value);
 
-        $value = str_replace('/app/cms/uploads', '/upload', $value);
-        $value = str_replace('/edition/wp-content/uploads', '/upload', $value);
+        $value = str_replace(CONTENT_DIR.'/uploads', '/app/upload', $value);
+        $value = str_replace('/edition/wp-content/uploads', '/app/upload', $value);
 
         return $value;
     }
@@ -358,8 +358,8 @@ abstract class Application {
         add_filter('timber/image/new_url', [$this, 'get_upload_url']);
         add_filter('timber/image/src', [$this, 'check_image']);
 
-        add_filter('acf/settings/save_json', function(){ return BASE_URI.'/app/resources/acf'; });
-        add_filter('acf/settings/load_json', function(){ return [BASE_URI.'/app/resources/acf']; });
+        add_filter('acf/settings/save_json', function(){ return BASE_URI.'/app/config/acf'; });
+        add_filter('acf/settings/load_json', function(){ return [BASE_URI.'/app/config/acf']; });
 
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
 
@@ -424,7 +424,7 @@ abstract class Application {
      */
     public function acf_settings()
     {
-        acf_update_setting('google_api_key', $this->config->get('options.gmap_api_key', ''));
+        acf_update_setting('google_api_key', $this->config->get('options.google_api', ''));
     }
 
 
