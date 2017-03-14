@@ -16,7 +16,7 @@
     ],
     "require": {
         "php" : ">=5.5.0",
-        "johnpbloch/wordpress": "^1.5",
+      "johnpbloch/wordpress-core": "1.5.*",
         "mustangostang/spyc": "^0.6.1",
         "symfony/routing":"^3.2",
         "dflydev/dot-access-data": "^1.0",
