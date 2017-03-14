@@ -30,6 +30,7 @@
             },
             "symlink": {
                 "metabolism/rocket-wordpress": {
+                    "../../johnpbloch/wordpress-core": "web/edition",
                     "wp-config.php": "web/edition/wp-config.php",
                     "src/theme": "app/cms/themes/rocket",
                     "doc": "doc/wordpress",
