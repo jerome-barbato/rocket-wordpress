@@ -1,26 +1,27 @@
 {
     "name":"metabolism/rocket-wordpress",
-    "version":"1.1.0",
+    "license": "AGPL-3.0",
+    "version":"1.2.0",
     "description": "Wordpress Scaffolder using Rocket Framework",
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "secure-http": false
     },
     "repositories": [
         { "type": "composer", "url": "https://wpackagist.org"},
-        { "type": "gitlab",   "url": "https://git.metabolism.fr/rocket/wordpress" },
-        { "type": "package",  "package": { "name": "elliotcondon/advanced-custom-fields-pro", "version": "5.5.5", "type": "wordpress-plugin", "dist": { "type": "zip", "url": "https://connect.advancedcustomfields.com/index.php?p=pro&a=download&k=b3JkZXJfaWQ9NTgyNTZ8dHlwZT1kZXZlbG9wZXJ8ZGF0ZT0yMDE1LTA2LTE3IDEwOjA3OjI2" } } }
+        { "type": "composer",
+            "url": "http://138.68.98.121:56000/"}
     ],
     "require": {
         "php" : ">=5.5.0",
-        "johnpbloch/wordpress-core": "*",
+        "johnpbloch/wordpress": "^1.5",
         "mustangostang/spyc": "^0.6.1",
         "symfony/routing":"^3.2",
         "dflydev/dot-access-data": "^1.0",
-        "wpackagist-plugin/wordpress-seo": "*",
-        "wpackagist-plugin/yoast-seo-acf-analysis": "*",
         "wpackagist-plugin/cache-enabler": "*",
         "wpackagist-plugin/timber-library": "*",
-        "elliotcondon/advanced-custom-fields-pro": "*"
+        "elliotcondon/advanced-custom-fields-pro": "5.*",
+        "wpackagist-plugin/post-types-order": "*"
     },
     "extra": {
         "file-management": {
@@ -50,7 +51,7 @@
             }
         },
         "branch-alias": {
-            "dev-dev": "1.1.x-dev"
+            "dev-dev": "1.2.x-dev"
         }
     },
     "autoload"    : {
