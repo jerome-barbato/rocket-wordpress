@@ -315,8 +315,8 @@ abstract class Application {
         if( $replace and WP_REMOTE )
             $value = str_replace(WP_HOME, WP_REMOTE, $value);
 
-        $value = str_replace(CONTENT_DIR.'/uploads', '/app/upload', $value);
-        $value = str_replace('/edition/wp-content/uploads', '/app/upload', $value);
+        $value = str_replace(CONTENT_DIR.'/uploads', '/upload', $value);
+        $value = str_replace('/edition/wp-content/uploads', '/upload', $value);
 
         return $value;
     }

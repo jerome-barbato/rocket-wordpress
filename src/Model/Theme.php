@@ -73,7 +73,7 @@ class Theme extends Site
     public function add_to_twig($twig)
     {
         if ( class_exists( '\\Customer\\Helper\\TwigPlugin' ) )
-            $twig->addExtension( new \Customer\Helper\TwigPlugin( get_bloginfo('url').'/app', WP_REMOTE ) );
+            $twig->addExtension( new \Customer\Helper\TwigPlugin( get_bloginfo('url'), WP_REMOTE ) );
 
         return $twig;
     }
