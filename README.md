@@ -7,7 +7,7 @@ A Wordpress core application ready to dev.
 
 SUMMARY
 ----------
-* [Changelog](changelog)
+* [Changelog](doc/changelog)
         
 Features
 -----------
