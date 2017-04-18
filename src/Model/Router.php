@@ -8,7 +8,6 @@ namespace Rocket\Model;
 
 use Symfony\Component\Routing\Matcher\UrlMatcher,
     Symfony\Component\Routing\RequestContext,
-    Symfony\Component\Routing\Route,
     Symfony\Component\Routing\RouteCollection;
 
 class Router {
