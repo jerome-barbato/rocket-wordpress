@@ -11,6 +11,11 @@ class Route extends \Symfony\Component\Routing\Route
 
     public function bind($string)
     {
-         // Silence is golden.
+        return $this;
+    }
+
+    public function value($string)
+    {
+        return $this;
     }
 }
