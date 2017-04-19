@@ -1,21 +1,21 @@
 {
     "name":"metabolism/rocket-wordpress",
     "license": "AGPL-3.0",
-  "version": "1.2.0",
+    "version": "1.2.0",
     "description": "Wordpress Scaffolder using Rocket Framework",
     "config": {
         "preferred-install": "dist"
     },
     "require": {
         "php" : ">=5.5.0",
-        "johnpbloch/wordpress-core": "*",
+        "johnpbloch/wordpress-core": "^4.7",
         "mustangostang/spyc": "^0.6.1",
         "symfony/routing":"^3.2",
         "dflydev/dot-access-data": "^1.0",
-        "wpackagist-plugin/cache-enabler": "*",
-        "wpackagist-plugin/timber-library": "*",
+        "wpackagist-plugin/cache-enabler": "^1.2",
+        "wpackagist-plugin/timber-library": "^1.2",
         "elliotcondon/advanced-custom-fields-pro": "5.*",
-        "wpackagist-plugin/post-types-order": "*"
+        "wpackagist-plugin/post-types-order": "^1.9"
     },
     "suggest": {
       "metabolism/rocket-kernel": "*"
@@ -30,8 +30,7 @@
             },
             "symlink": {
                 "metabolism/rocket-wordpress": {
-                    "../../johnpbloch/wordpress-core": "web/edition",
-                    "wp-config.php": "vendor/johnpbloch/wordpress-core/wp-config.php",
+                    "wp-config.php": "web/edition/wp-config.php",
                     "src/theme": "web/app/themes/rocket",
                     "src/Helper/Rocket.php": "web/app/mu-plugins/Rocket.php",
                     "doc": "doc/wordpress"
