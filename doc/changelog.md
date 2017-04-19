@@ -4,9 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 1.2.0 - 2017-03-14
+# 1.2.0 - IN DEV
 ### Added
 * Files manipulation are now included inside this project
+* Route Override from Symfony/Route to raterize Customer Application with Silex syntax
+* Added configuration file in documentation as sample
+### Changed 
+* app/cms to web/app for public folder accessibility protection
+
+
+### Changed
+* Fixed add_to_twig function registration
 
 ## 1.1.1 - 2017-02-19
 ### Added
