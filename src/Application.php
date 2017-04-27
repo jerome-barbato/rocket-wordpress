@@ -32,9 +32,19 @@ abstract class Application {
      * @var string plugin domain name for translations
      */
     public static $domain_name = 'default';
-    protected $router, $context;
+    protected $router, $context, $class_loader;
     public $remote_url;
 
+
+    /**
+     * Application constructor.
+     *
+     * @param $autoloader
+     */
+    public function __construct($autoloader)
+    {
+        $this->class_loader = $autoloader;
+    }
 
     /**
      * Set context
