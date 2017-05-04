@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 1.2.0 - IN DEV
+# 1.2.1
+### Added
+* Route options : value / assert / convert
+ 
+### Fixed 
+* double construct
+
+# 1.2.0
 ### Added
 * Files manipulation are now included inside this project
 * Route Override from Symfony/Route to raterize Customer Application with Silex syntax

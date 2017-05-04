@@ -37,16 +37,6 @@ abstract class Application {
 
 
     /**
-     * Application constructor.
-     *
-     * @param $autoloader
-     */
-    public function __construct($autoloader)
-    {
-        $this->class_loader = $autoloader;
-    }
-
-    /**
      * Set context
      * @param $context
      */
@@ -502,8 +492,9 @@ abstract class Application {
     }
 
 
-    public function __construct()
+    public function __construct($autoloader=false)
     {
+	    $this->class_loader = $autoloader;
         $this->context = [];
 
         if( !defined('WPINC') )
