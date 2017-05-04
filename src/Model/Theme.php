@@ -66,9 +66,37 @@ class Theme extends Site
         $context['footer'] = $context['wp_footer'];
         $context['page_title']  = empty($context['wp_title'])?get_bloginfo('name'):$context['wp_title'];
 
+        if (class_exists( 'WooCommerce' ) ) {
+
+            $this->woocommerce_support($context);
+        }
+
         return $context;
     }
 
+    public function woocommerce_support($context) {
+
+
+        if (is_singular('product')) {
+
+            $context['post']    = Timber::get_post();
+            $product            = wc_get_product( $context['post']->ID );
+            $context['product'] = $product;
+
+        } else {
+
+            $posts = Timber::get_posts();
+            $context['products'] = $posts;
+
+            if ( is_product_category() ) {
+                $queried_object = get_queried_object();
+                $term_id = $queried_object->term_id;
+                $context['category'] = get_term( $term_id, 'product_cat' );
+                $context['title'] = single_term_title('', false);
+            }
+
+        }
+    }
 
     public function add_to_twig($twig)
     {

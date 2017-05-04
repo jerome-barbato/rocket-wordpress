@@ -213,6 +213,11 @@ abstract class Application {
         if( $this->config->get('post-thumbnails') )
             add_theme_support( 'post-thumbnails' );
 
+        if (class_exists( 'WooCommerce' ) ) {
+
+            add_theme_support( 'woocommerce' );
+        }
+
         add_post_type_support( 'page', 'excerpt' );
     }
 
@@ -265,7 +270,7 @@ abstract class Application {
     }
 
 
-    protected function registerRoutes(){}
+    protected function registerRoutes() {}
 
 
     /**
@@ -494,12 +499,12 @@ abstract class Application {
 
     public function __construct($autoloader=false)
     {
-	    $this->class_loader = $autoloader;
+        $this->class_loader = $autoloader;
         $this->context = [];
 
         if( !defined('WPINC') )
             include CMS_URI.'/wp-blog-header.php';
         else
-           $this->setup();
+            $this->setup();
     }
 }
