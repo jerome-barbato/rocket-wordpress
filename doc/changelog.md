@@ -4,14 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 1.2.1
+# 1.2.2 - IN DEV
+### Added
+* WooCommerce Support
+  - see [timber integration](https://github.com/timber/timber/wiki/WooCommerce-Integration) for more details about templates.
+ 
+# 1.2.1 - 2017-05-04
 ### Added
 * Route options : value / assert / convert
  
 ### Fixed 
 * double construct
 
-# 1.2.0
+# 1.2.0 - 2017-04-27
 ### Added
 * Files manipulation are now included inside this project
 * Route Override from Symfony/Route to raterize Customer Application with Silex syntax
