@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * WooCommerce Support
   - see [timber integration](https://github.com/timber/timber/wiki/WooCommerce-Integration) for more details about templates.
+* Added Query String support
  
 # 1.2.1 - 2017-05-04
 ### Added
