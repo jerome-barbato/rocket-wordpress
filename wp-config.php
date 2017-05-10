@@ -69,7 +69,7 @@ $base_uri = $isSecure ? 'https' : 'http'.'://'.$_SERVER['HTTP_HOST'];
 
 if (!defined('BASE_PATH'))
 {
-    $request_uri = explode('/edition/', $_SERVER['REQUEST_URI']);
+    $request_uri = explode('/edition/', strtok($_SERVER["REQUEST_URI"],'?'));
     define('BASE_PATH', $request_uri[0]);
 }
 

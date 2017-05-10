@@ -41,7 +41,7 @@ class Router {
         if ($home_path && strpos($current_url, $home_path) === 0)
             $current_url = ltrim(substr($current_url, strlen($home_path)), '/');
 
-        return '/'.$current_url;
+        return '/'.strtok($current_url,'?');
     }
 
 
