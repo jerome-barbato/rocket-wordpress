@@ -213,10 +213,7 @@ abstract class Application {
         if( $this->config->get('post-thumbnails') )
             add_theme_support( 'post-thumbnails' );
 
-        if (class_exists( 'WooCommerce' ) ) {
-
-            add_theme_support( 'woocommerce' );
-        }
+        add_theme_support( 'woocommerce' );
 
         add_post_type_support( 'page', 'excerpt' );
     }
