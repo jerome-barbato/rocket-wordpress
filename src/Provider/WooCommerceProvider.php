@@ -7,6 +7,7 @@ namespace Rocket\Provider;
 
 
 use Rocket\Application\SingletonTrait;
+use Timber\Post;
 use Timber\Timber;
 
 /**
@@ -21,6 +22,18 @@ class WooCommerceProvider
     /** @var $_instance WooCommerceProvider Singleton Instance */
     protected static $_instance;
 
+
+    /**
+     * @param $context
+     */
+    public function globalContext(&$context)
+    {
+
+        // WooCommerce Notices
+        $context['wc_notices'] = wc_get_notices();
+        wc_clear_notices();
+
+    }
 
     /**
      * Add current product to TemplateEngine context
@@ -63,6 +76,7 @@ class WooCommerceProvider
     }
 
 
+    /** Add cart content to TemplateEngine context */
     public function cartContext(&$context)
     {
 
@@ -89,6 +103,7 @@ class WooCommerceProvider
         return $context;
     }
 
+
     /**
      * Add products to TemplateEngine context
      * @param $context
@@ -105,6 +120,12 @@ class WooCommerceProvider
         $context['products'] = $posts;
 
         return true;
+    }
+
+    public function accountContext(&$context)
+    {
+
+        return $context;
     }
 
 }

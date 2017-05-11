@@ -3,6 +3,7 @@
 namespace Rocket\Model;
 use Customer\Application;
 use Rocket\Application\SingletonTrait;
+use Rocket\Provider\WooCommerceProvider;
 use Timber\Post,
     Timber\Timber,
     Timber\Site,
@@ -60,6 +61,12 @@ class Theme extends Site
 
         if( function_exists('get_fields') )
             $context['options'] = get_fields('options');
+
+        if (class_exists('WooCommerce')) {
+
+            $wcProvider = WooCommerceProvider::getInstance();
+            $wcProvider->globalContext($context);
+        }
 
         // Rocket compatibility
         $context['head']   = $context['wp_head'];
