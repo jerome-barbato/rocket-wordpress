@@ -44,10 +44,12 @@ class CustomPostType {
         CustomPostType::$custom_types[$slug] = false;
 
         $this->name = $label;
+
         $this->option = array(
             'public' => true,
             'labels' => ['name'=>$this->name]
         );
+
         $this->slug = $slug;
 
         if ($autodeclare)
@@ -604,11 +606,15 @@ class CustomPostType {
 
         $this->menu_icon($data_post_type->get('menu_icon','dashicons-media-default'));
         $this->setPublic($data_post_type->get('public', true));
-        $this->has_archive($data_post_type->get('has_archive', false));
-        $this->capability_type($data_post_type->get('capability_type', 'post'));
+	    $this->publicly_queryable($data_post_type->get('publicly_queryable', true));
+	    $this->has_archive($data_post_type->get('has_archive', false));
+        $this->capability_type($data_post_type->get('capability_type', 'page'));
         $this->supports( $data_post_type->get('supports', ['title', 'editor', 'thumbnail']));
         $this->rewrite($data_post_type->get('rewrite', true));
         $this->exclude_from_search($data_post_type->get('exclude_from_search', true));
         $this->query_var($data_post_type->get('query_var', true));
+
+        $this->show_in_menu($data_post_type->get('show_in_menu'));
+        $this->show_in_nav_menus($data_post_type->get('show_in_nav_menus'));
     }
 }

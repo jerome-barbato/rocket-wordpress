@@ -516,6 +516,7 @@ class Taxonomy
         $this->assign_to($data_taxonomy->get('object_type', 'post'));
         $this->show_in_nav_menus($data_taxonomy->get('show_in_nav_menus', true));
         $this->setPublic($data_taxonomy->get('public', true));
+        $this->publicly_queryable($data_taxonomy->get('publicly_queryable', true));
         $this->show_ui($data_taxonomy->get('show_ui', true));
         $this->hierarchical($data_taxonomy->get('hierarchical', true));
         $this->query_var($data_taxonomy->get('query_var', true));

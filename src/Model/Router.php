@@ -59,8 +59,8 @@ class Router {
 
         $parameters = $matcher->match($current_url);
 
-        if( $parameters and isset($parameters['_controller']) ){
-
+        if( $parameters and isset($parameters['_controller']) )
+        {
             $controller = $parameters['_controller'];
             $params = array_filter($parameters, function($key){ return substr($key,0,1) != '_'; }, ARRAY_FILTER_USE_KEY);
             array_unshift($params, $this->locale);

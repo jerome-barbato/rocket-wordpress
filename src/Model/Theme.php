@@ -98,23 +98,15 @@ class Theme extends Site
 
                 if( $app ){
 
-                    $post = new Post();
-
                     //clean context
                     unset($context['posts'], $context['request'], $context['theme'], $context['wp_head'], $context['wp_footer'], $context['wp_title']);
-
-                    //add current post
-                    $context['post'] = $post;
-
-                    //load acf to post objects
-                    $context['post']->objects = $app->acf_to_timber( $post->ID );
 
                     $app->setContext($context);
 
                     if( !is_404() and $route = $app->solve() ){
 
                         $page = $route[0];
-                        $context = (count($route)>1 and is_array($route[1])) ? $route[1]: $context;
+                        $context = (count($route)>1 and is_array($route[1])) ? array_merge($context, $route[1]): $context;
 
                         Timber::render( 'page/'.$page, $context );
                     }
