@@ -60,6 +60,10 @@ abstract class Application {
      */
     public function setup()
     {
+    	if( defined('WP_INSTALLING') and WP_INSTALLING )
+		    return;
+
+
         $this->definePaths();
         $this->loadConfig();
 

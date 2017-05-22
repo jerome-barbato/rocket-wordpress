@@ -19,9 +19,6 @@ class WooCommerceProvider
 {
     use SingletonTrait;
 
-    /** @var $_instance WooCommerceProvider Singleton Instance */
-    protected static $_instance;
-
 
     /**
      * @param $context
