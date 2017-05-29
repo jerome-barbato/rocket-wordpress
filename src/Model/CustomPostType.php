@@ -4,6 +4,7 @@
  */
 
 namespace Rocket\Model;
+
 use Dflydev\DotAccessData\Data as DotAccessData;
 use Rocket\Application;
 
@@ -393,7 +394,7 @@ class CustomPostType {
      */
     public function menu_icon($icon_name)
     {
-        $this->option['menu_icon'] = $icon_name;
+        $this->option['menu_icon'] = 'dashicons-'.$icon_name;
     }
 
     /**
@@ -604,7 +605,7 @@ class CustomPostType {
         $this->label_not_found(__($data_post_type->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$domain_name));
         $this->label_search_items(__($data_post_type->get('labels.search_items','Search in '.$this->name), Application::$domain_name));
 
-        $this->menu_icon($data_post_type->get('menu_icon','dashicons-media-default'));
+        $this->menu_icon($data_post_type->get('menu_icon','media-default'));
         $this->setPublic($data_post_type->get('public', true));
 	    $this->publicly_queryable($data_post_type->get('publicly_queryable', true));
 	    $this->has_archive($data_post_type->get('has_archive', false));

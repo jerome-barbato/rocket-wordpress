@@ -57,6 +57,9 @@ class Router {
         $request_context = new RequestContext('/');
         $matcher = new UrlMatcher($this->routes, $request_context);
 
+        if( isset($_GET['debug']) and $_GET['debug']=="route" )
+	        echo '<!-- current url : '.$current_url.' -->';
+
         $parameters = $matcher->match($current_url);
 
         if( $parameters and isset($parameters['_controller']) )

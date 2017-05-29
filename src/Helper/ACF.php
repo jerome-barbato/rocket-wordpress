@@ -150,10 +150,12 @@ class ACF
 
                         foreach ($object['value'] as $value) {
 
+                        	$is_woo_product = count($object['post_type']) === 1 and $object['post_type'][0] == 'product' and class_exists( 'WooCommerce' );
+
                             if ($object['return_format'] == 'id')
-                                $objects[$object['name']][] = new Post($value);
+                                $objects[$object['name']][] = $is_woo_product ? wc_get_product($value) : new Post($value);
                             elseif ($object['return_format'] == 'object')
-                                $objects[$object['name']][] = new Post($value->ID);
+                                $objects[$object['name']][] = $is_woo_product ? wc_get_product($value->ID) : new Post($value->ID);
                             else
                                 $objects[$object['name']][] = $object['value'];
                         }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Rocket\Model;
+
 use Customer\Application;
 use Rocket\Application\SingletonTrait;
 use Rocket\Provider\WooCommerceProvider;
@@ -48,7 +49,8 @@ class Theme extends Site
             'is_admin'       => current_user_can('manage_options'),
             'body_class'     => get_bloginfo('language') . ' ' . implode(' ', get_body_class()),
             'is_child_theme' => is_child_theme(),
-            'base_url'       => get_bloginfo('template_url')
+            'base_url'       => get_bloginfo('url'),
+            'ajax_url'       => admin_url( 'admin-ajax.php' )
         ));
 
         $menus = get_registered_nav_menus();

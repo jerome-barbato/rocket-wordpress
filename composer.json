@@ -14,6 +14,7 @@
         "dflydev/dot-access-data": "1.0.*",
         "wpackagist-plugin/cache-enabler": "1.2.*",
         "wpackagist-plugin/timber-library": "1.2.*",
+        "wpackagist-plugin/clean-image-filenames": "*",
         "elliotcondon/advanced-custom-fields-pro": "5.*",
         "wpackagist-plugin/post-types-order": "1.9.*"
     },

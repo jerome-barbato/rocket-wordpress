@@ -12,10 +12,13 @@ use Rocket\Helper\ACF;
 use Rocket\Model\CustomPostType,
     Rocket\Model\Menu,
     Rocket\Model\Taxonomy,
-    Rocket\Model\Router;
+    Rocket\Model\Router,
+	Rocket\Model\PageTemplater,
+	Rocket\Model\Terms,
+	Rocket\Model\Metabox;
 
-use Rocket\Model\PageTemplater;
 use Symfony\Component\Routing\Route as Route;
+
 use Timber\Image;
 use Timber\ImageHelper;
 
@@ -79,7 +82,7 @@ abstract class Application {
 
 
         // Global init action
-        add_action( 'init', [$this, 'add_menus']);
+        add_action( 'init', [$this, 'init']);
 
 
         // When viewing admin
@@ -97,38 +100,41 @@ abstract class Application {
             });
 
             // Setup ACF Settings
-            add_action( 'acf/init', [$this, 'acf_settings'] );
+            add_action( 'acf/init', [$this, 'acf_init'] );
 
             // Remove image sizes for thumbnails
-            add_filter('intermediate_image_sizes_advanced', [$this, 'remove_image_sizes'] );
+            add_filter( 'intermediate_image_sizes_advanced', [$this, 'intermediate_image_sizes_advanced'] );
+	        add_filter( 'wp_terms_checklist_args', [Terms::getInstance(), 'wp_terms_checklist_args'] );
 
             // Removes or add pages
-            add_action( 'admin_menu', [$this, 'clean_interface']);
+            add_action( 'admin_menu', [$this, 'admin_menu']);
+	        add_action( 'admin_footer', [$this, 'admin_footer'] );
 
             //check loaded plugin
             add_action( 'plugins_loaded', [$this, 'plugin_loaded']);
-
-	        add_action('admin_head-nav-menus.php', [$this, 'add_nav_menus']);
+	        add_action( 'admin_head_nav-menus.php', [$this, 'admin_head_nav_menus']);
 
             $this->defineSupport();
         }
         else
         {
-            add_action('after_setup_theme', [$this, 'clean_header']);
-            add_action('wp_footer', [$this, 'clean_footer']);
+            add_action( 'after_setup_theme', [$this, 'after_setup_theme']);
+            add_action( 'wp_footer', [$this, 'wp_footer']);
 
             $this->router = new Router();
             $this->router->setLocale(get_locale());
 
             $this->registerRoutes();
         }
+
+        $this->RegisterActions();
     }
 
 
     /**
      * Unset thumbnail image
      */
-    public function remove_image_sizes($sizes)
+    public function intermediate_image_sizes_advanced($sizes)
     {
         unset($sizes['medium'], $sizes['medium_large'], $sizes['large']);
         return $sizes;
@@ -174,7 +180,7 @@ abstract class Application {
     /**
      * Clean WP Head
      */
-    public function clean_header()
+    public function after_setup_theme()
     {
         remove_action('wp_head', 'rsd_link');
         remove_action('wp_head', 'wlwmanifest_link');
@@ -191,68 +197,16 @@ abstract class Application {
 	/**
 	 * Add new menu possibilities
 	 */
-	public function add_nav_menus()
+	public function admin_head_nav_menus()
 	{
-		add_meta_box('add-archive', 'Archives', [$this, 'add_archive_metabox'], 'nav-menus', 'side', 'default');
+		add_meta_box('add-archive', 'Archives', [Metabox::getInstance(), 'add_archive'], 'nav-menus', 'side', 'default');
 	}
 
-
-	/**
-	 * Add archive metabox
-	 */
-	public function add_archive_metabox() {
-
-		$post_types = get_post_types(array('show_in_nav_menus' => true, 'has_archive' => true), 'object');
-
-		if ($post_types) :
-
-			$items = array();
-			$loop_index = 999999;
-
-			foreach ($post_types as $post_type)
-			{
-				$item = new \stdClass();
-				$loop_index++;
-
-				$item->object_id = $loop_index;
-				$item->db_id = 0;
-				$item->object = 'post_type_' . $post_type->query_var;
-				$item->menu_item_parent = 0;
-				$item->type = 'custom';
-				$item->title = $post_type->labels->name;
-				$item->url = get_post_type_archive_link($post_type->query_var);
-				$item->target = '';
-				$item->attr_title = '';
-				$item->classes = array();
-				$item->xfn = '';
-
-				$items[] = $item;
-			}
-
-			$walker = new \Walker_Nav_Menu_Checklist(array());
-
-			echo '<div id="posttype-archive" class="posttypediv">';
-			echo '<div id="tabs-panel-posttype-archive" class="tabs-panel tabs-panel-active">';
-			echo '<ul id="posttype-archive-checklist" class="categorychecklist form-no-clear">';
-			echo walk_nav_menu_tree(array_map('wp_setup_nav_menu_item', $items), 0, (object) array('walker' => $walker));
-			echo '</ul>';
-			echo '</div>';
-			echo '</div>';
-
-			echo '<p class="button-controls">';
-			echo '<span class="add-to-menu">';
-			echo '<input type="submit"' . disabled(1, 0) . ' class="button-secondary submit-add-to-menu right" value="' . __('Add to Menu', 'andromedamedia') . '" name="add-posttype-archive-menu-item" id="submit-posttype-archive" />';
-			echo '<span class="spinner"></span>';
-			echo '</span>';
-			echo '</p>';
-
-		endif;
-	}
 
     /**
      * Clean WP Footer
      */
-    public function clean_footer()
+    public function wp_footer()
     {
         wp_deregister_script( 'wp-embed' );
     }
@@ -292,8 +246,9 @@ abstract class Application {
     /**
      * Adds or remove pages from menu admin.
      */
-    public function clean_interface()
+    public function admin_menu()
     {
+    	//clean interface
         foreach ( $this->config->get('remove_menu_page', []) as $page)
         {
             remove_menu_page($page);
@@ -311,7 +266,7 @@ abstract class Application {
         {
             $data_post_type = new DotAccessData($data_post_type);
 
-            $label = __(ucfirst($slug.'s'), Application::$domain_name);
+            $label = __(ucfirst($this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), Application::$domain_name);
 
             $post_type = new CustomPostType($label, $slug);
             $post_type->hydrate($data_post_type);
@@ -328,7 +283,7 @@ abstract class Application {
         foreach ( $this->config->get('taxonomies', []) as $slug => $data_taxonomy )
         {
             $data_taxonomy = new DotAccessData($data_taxonomy);
-            $label = __(ucfirst($slug.'s'), Application::$domain_name);
+            $label = __(ucfirst( $this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), Application::$domain_name);
 
             $taxonomy = new Taxonomy($label, $slug);
             $taxonomy->hydrate($data_taxonomy);
@@ -337,6 +292,7 @@ abstract class Application {
 
 
     protected function registerRoutes() {}
+    protected function admin_footer() {}
 
 
     /**
@@ -381,7 +337,7 @@ abstract class Application {
      * @param $value
      * @return mixed
      */
-    public function get_upload_url($value, $replace=false)
+    public function rewrite_upload_url($value, $replace=false)
     {
         if( $replace and WP_REMOTE )
             $value = str_replace(WP_HOME, WP_REMOTE, $value);
@@ -425,8 +381,8 @@ abstract class Application {
      */
     public function register_filters()
     {
-        add_filter('rewrite_upload_url', function($value){ return $this->get_upload_url($value, true); });
-        add_filter('timber/image/new_url', [$this, 'get_upload_url']);
+	    add_filter('rewrite_upload_url', function($value){ return $this->rewrite_upload_url($value, true); });
+        add_filter('timber/image/new_url', [$this, 'rewrite_upload_url']);
         add_filter('timber/image/src', [$this, 'check_image']);
 
         add_filter('acf/settings/save_json', function(){ return BASE_URI.'/app/config/acf'; });
@@ -457,7 +413,7 @@ abstract class Application {
      * Create Menu instances from configs
      * @see Menu
      */
-    public function add_menus()
+    public function init()
     {
         foreach ($this->config->get('menus', []) as $slug => $name)
         {
@@ -478,6 +434,19 @@ abstract class Application {
     }
 
 
+	/**
+	 * Return json data / Silex compatibility
+	 * @param $data
+	 * @return bool
+	 */
+    protected function json($data)
+    {
+        wp_send_json($data);
+
+        return true;
+    }
+
+
     /**
      * Get ACF Fields
      * @param $post_id
@@ -493,7 +462,7 @@ abstract class Application {
     /**
      * Add settings to acf
      */
-    public function acf_settings()
+    public function acf_init()
     {
         acf_update_setting('google_api_key', $this->config->get('options.google_api', ''));
     }
@@ -508,6 +477,21 @@ abstract class Application {
     protected function route($pattern, $controller)
     {
         return $this->router->add($pattern, $controller);
+    }
+
+
+	/**
+	 * Register route
+	 * @param $id
+	 * @param $controller
+	 * @param bool $no_private
+	 */
+    protected function action($id, $controller, $no_private=true)
+    {
+	    add_action( 'wp_ajax_'.$id, $controller );
+
+	    if( $no_private )
+		    add_action( 'wp_ajax_nopriv_'.$id, $controller );
     }
 
 

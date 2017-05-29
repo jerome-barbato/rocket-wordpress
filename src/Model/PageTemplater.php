@@ -20,7 +20,6 @@ class PageTemplater {
 
 		$this->templates = $templates;
 
-
 		// Add a filter to the attributes metabox to inject template into the cache.
 		if ( version_compare( floatval( get_bloginfo( 'version' ) ), '4.7', '<' ) ) {
 

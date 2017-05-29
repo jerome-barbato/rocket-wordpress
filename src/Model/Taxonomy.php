@@ -19,13 +19,14 @@ class Taxonomy
 
     /**
      * Taxonomy constructor.
-     * @param $singular_name
+     * @param $name
      * @param $slug
      * @param bool $autodeclare
      */
-    public function __construct($singular_name, $slug, $autodeclare = true)
+    public function __construct($name, $slug, $autodeclare = true)
     {
-        $this->name = $singular_name;
+        $this->name = $name;
+
         $this->option = array(
             'public' => true,
             'labels' => ['name'=>$this->name]
@@ -522,5 +523,6 @@ class Taxonomy
         $this->query_var($data_taxonomy->get('query_var', true));
         $this->insert_term(ucfirst($data_taxonomy->get('default_term', 'default')), $data_taxonomy->get('default_term', 'default'));
         $this->set_default_term($data_taxonomy->get('default_term', 'default'));
+        $this->rewrite($data_taxonomy->get('rewrite', true));
     }
 }
