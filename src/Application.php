@@ -112,7 +112,6 @@ abstract class Application {
 
             //check loaded plugin
             add_action( 'plugins_loaded', [$this, 'plugin_loaded']);
-	        add_action( 'admin_head_nav-menus.php', [$this, 'admin_head_nav_menus']);
 
             $this->defineSupport();
         }
@@ -127,7 +126,7 @@ abstract class Application {
             $this->registerRoutes();
         }
 
-        $this->RegisterActions();
+        $this->registerActions();
     }
 
 
@@ -192,15 +191,6 @@ abstract class Application {
         remove_action('wp_head', 'wp_resource_hints', 2 );
         remove_action('wp_head', 'wp_oembed_add_discovery_links');
     }
-
-
-	/**
-	 * Add new menu possibilities
-	 */
-	public function admin_head_nav_menus()
-	{
-		add_meta_box('add-archive', 'Archives', [Metabox::getInstance(), 'add_archive'], 'nav-menus', 'side', 'default');
-	}
 
 
     /**

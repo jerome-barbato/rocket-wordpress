@@ -71,6 +71,7 @@ class ACF
         return $data;
     }
 
+
     public function bindLayoutFields($fields, $layout){
 
         $data = [];
@@ -252,4 +253,6 @@ class ACF
 
         return $objects;
     }
+
+
 }
