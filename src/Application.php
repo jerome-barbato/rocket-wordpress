@@ -371,6 +371,8 @@ abstract class Application {
      */
     public function register_filters()
     {
+	    add_filter('woocommerce_template_path', function(){ return '../../../../../src/Woocommerce/'; });
+
 	    add_filter('rewrite_upload_url', function($value){ return $this->rewrite_upload_url($value, true); });
         add_filter('timber/image/new_url', [$this, 'rewrite_upload_url']);
         add_filter('timber/image/src', [$this, 'check_image']);
