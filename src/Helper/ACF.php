@@ -151,7 +151,7 @@ class ACF
 
                         foreach ($object['value'] as $value) {
 
-                        	$is_woo_product = count($object['post_type']) === 1 and $object['post_type'][0] == 'product' and class_exists( 'WooCommerce' );
+                        	$is_woo_product = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' );
 
                             if ($object['return_format'] == 'id')
                                 $objects[$object['name']][] = $is_woo_product ? wc_get_product($value) : new Post($value);
