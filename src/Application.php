@@ -17,6 +17,7 @@ use Rocket\Model\CustomPostType,
 	Rocket\Model\Terms,
 	Rocket\Model\Metabox;
 
+use Rocket\Model\Post;
 use Symfony\Component\Routing\Route as Route;
 
 use Timber\Image;
@@ -36,27 +37,24 @@ abstract class Application {
      * @var string plugin domain name for translations
      */
     public static $domain_name = 'default';
-    protected $router, $context, $class_loader;
+    protected $router, $global_context, $class_loader;
     public $remote_url;
 
 
-    /**
-     * Set context
-     * @param $context
-     */
-    public function setContext($context)
-    {
-        $this->context = $context;
-    }
+	/**
+	 * Set context
+	 * @param $context
+	 */
+	public function setContext($context)
+	{
+		$this->global_context = $context;
+	}
 
 
     /**
      * Get context
      */
-    public function getContext()
-    {
-        return $this->context;
-    }
+	protected function getContext($context){ return []; }
 
 
     /**
@@ -544,7 +542,7 @@ abstract class Application {
     public function __construct($autoloader=false)
     {
         $this->class_loader = $autoloader;
-        $this->context = [];
+        $this->global_context = [];
 
         if( !defined('WPINC') )
             include CMS_URI.'/wp-blog-header.php';

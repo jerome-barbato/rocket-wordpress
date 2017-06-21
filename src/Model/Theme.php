@@ -16,7 +16,7 @@ class Theme extends Site
     use SingletonTrait;
 
     public $theme_name = 'rocket';
-
+	private $app;
 
     public function __construct()
     {
@@ -24,6 +24,9 @@ class Theme extends Site
 
         add_filter('timber_context', array($this, 'add_to_context'));
         add_filter('get_twig', array($this, 'add_to_twig'));
+
+	    /** @var Application $app */
+	    $this->app = Application::getInstance();
     }
 
 
@@ -56,16 +59,11 @@ class Theme extends Site
         $menus = get_registered_nav_menus();
         $context['menus'] = [];
 
-        foreach ( $menus as $location => $description ) {
-
+        foreach ( $menus as $location => $description )
             $context['menus'][$location] = new TimberMenu($location);
-        }
 
-        if( function_exists('get_fields') )
-            $context['options'] = get_fields('options');
-
-        if (class_exists('WooCommerce')) {
-
+        if (class_exists('WooCommerce'))
+        {
             $wcProvider = WooCommerceProvider::getInstance();
             $wcProvider->globalContext($context);
         }
@@ -75,8 +73,11 @@ class Theme extends Site
         $context['footer'] = $context['wp_footer'];
         $context['page_title']  = empty($context['wp_title'])?get_bloginfo('name'):$context['wp_title'];
 
+	    $this->app->timber_context($context);
+
         return $context;
     }
+
 
     public function add_to_twig($twig)
     {
@@ -85,6 +86,7 @@ class Theme extends Site
 
         return $twig;
     }
+
 
     public function run() {
 
@@ -95,17 +97,14 @@ class Theme extends Site
                 Timber::$locations = BASE_URI . '/app/views/';
                 $context = Timber::get_context();
 
-                /** @var Application $app */
-                $app = Application::getInstance();
-
-                if( $app ){
+                if( $this->app ){
 
                     //clean context
                     unset($context['posts'], $context['request'], $context['theme'], $context['wp_head'], $context['wp_footer'], $context['wp_title']);
 
-                    $app->setContext($context);
+                    $this->app->setContext($context);
 
-                    if( !is_404() and $route = $app->solve() ){
+                    if( !is_404() and $route = $this->app->solve() ){
 
                         $page = $route[0];
                         $context = (count($route)>1 and is_array($route[1])) ? array_merge($context, $route[1]): $context;

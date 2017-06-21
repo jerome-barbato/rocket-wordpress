@@ -16,14 +16,16 @@ use Rocket\Helper\ACF;
  */
 class Post extends \Timber\Post
 {
-
 	/**
 	 * Post constructor.
 	 *
 	 * @param null $pid
 	 */
 	public function __construct($pid = null) {
+
 		parent::__construct( $pid );
+
+		$this->clean();
 		$this->hydrateCustomFields();
 	}
 
@@ -31,14 +33,32 @@ class Post extends \Timber\Post
 	/**
 	 * Add ACF custom fields as members of the post
 	 */
-	protected function hydrateCustomFields() {
-		$acfHelper = new ACF( $this->ID);
+	protected function hydrateCustomFields()
+	{
+		$custom_fields = new ACF( $this->ID);
 
-		$custom_fields = $acfHelper->process();
-
-		foreach ($custom_fields as $name => $value ) {
-
+		foreach ($custom_fields->get() as $name => $value )
+		{
 			$this->$name = $value;
 		}
+	}
+
+
+	/**
+	 * Add ACF custom fields as members of the post
+	 */
+	protected function clean()
+	{
+		foreach ($this as $key=>$value){
+
+			if( substr($key,0,1) == '_' and $key != '_content')
+			{
+				unset($this->$key);
+				$key = substr($key,1);
+				unset($this->$key);
+			}
+		}
+
+		unset($this->custom, $this->guid, $this->post_content_filtered, $this->to_ping, $this->pinged);
 	}
 }

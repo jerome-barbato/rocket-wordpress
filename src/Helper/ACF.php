@@ -6,23 +6,28 @@
  */
 namespace Rocket\Helper;
 
-use Timber\Post, Timber\Image, Timber\User, Timber\Term;
+use Rocket\Model\Post;
+
+use Timber\Image,
+	Timber\User,
+	Timber\Term;
 
 class ACF
 {
-    private $raw_objects;
-
+    private $raw_objects, $objects;
 
     public function __construct($post_id)
     {
         if( function_exists('get_field_objects') )
             $this->raw_objects = get_field_objects($post_id);
+
+        $this->objects = $this->clean( $this->raw_objects);
     }
 
 
-    public function process()
+    public function get()
     {
-        return $this->clean( $this->raw_objects );
+	    return $this->objects;
     }
 
 
@@ -86,15 +91,18 @@ class ACF
     }
 
 
-    public function clean($raw_objects)
+    public function clean($raw_objects, $depth=0)
     {
+    	if( $depth > 2 )
+    		return $raw_objects;
+
         $objects = [];
 
         if( !$raw_objects or !is_array($raw_objects) )
             return [];
 
         foreach ($raw_objects as $object) {
-            
+	        
             switch ($object['type']) {
 
                 case 'image';
@@ -154,9 +162,9 @@ class ACF
                         	$is_woo_product = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' );
 
                             if ($object['return_format'] == 'id')
-                                $objects[$object['name']][] = $is_woo_product ? wc_get_product($value) : new Post($value);
+                                $objects[$object['name']][] = $is_woo_product ? ['product'=>wc_get_product($value), 'post'=>new Post($value)] : new Post($value);
                             elseif ($object['return_format'] == 'object')
-                                $objects[$object['name']][] = $is_woo_product ? wc_get_product($value->ID) : new Post($value->ID);
+                                $objects[$object['name']][] = $is_woo_product ? ['product'=>wc_get_product($value->ID), 'post'=>new Post($value->ID)] : new Post($value->ID);
                             else
                                 $objects[$object['name']][] = $object['value'];
                         }
@@ -168,7 +176,13 @@ class ACF
                     if( empty($object['value']) )
                         break;
 
-                    $objects[$object['name']] = new Post($object['value']->ID);
+	                if ($object['return_format'] == 'id')
+		                $objects[$object['name']] = new Post($object['value']);
+	                elseif ($object['return_format'] == 'object')
+		                $objects[$object['name']] = new Post($object['value']->ID);
+	                else
+		                $objects[$object['name']] = $object['value'];
+
                     break;
 
                 case 'user';
@@ -192,7 +206,7 @@ class ACF
                             $type = $value['acf_fc_layout'];
                             $value = $this->bindLayoutsFields($value, $layouts);
 
-                            $objects[$object['name']][] = ['type'=>$type, 'fields'=>$this->clean($value)];
+                            $objects[$object['name']][] = ['type'=>$type, 'fields'=>$this->clean($value, $depth+1)];
                         }
                     }
 
@@ -209,7 +223,7 @@ class ACF
                         foreach ($object['value'] as $value) {
 
                             $value = $this->bindLayoutFields($value, $layout);
-                            $objects[$object['name']][] = $this->clean($value);
+                            $objects[$object['name']][] = $this->clean($value, $depth+1);
                         }
                     }
 
