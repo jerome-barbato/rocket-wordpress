@@ -9,12 +9,12 @@
   "require": {
     "php" : ">=5.5.0",
     "metabolism/rocket-installer": "1.0.x-dev",
-    "johnpbloch/wordpress-core": "4.7.*",
+    "johnpbloch/wordpress-core": "4.8.*",
     "mustangostang/spyc": "0.6.*",
     "symfony/routing":"3.2.*",
     "dflydev/dot-access-data": "1.0.*",
     "wpackagist-plugin/cache-enabler": "1.2.*",
-    "wpackagist-plugin/timber-library": "1.2.*",
+    "wpackagist-plugin/timber-library": "1.3.*",
     "wpackagist-plugin/clean-image-filenames": "*",
     "elliotcondon/advanced-custom-fields-pro": "5.*",
     "wpackagist-plugin/post-types-order": "1.9.*"
