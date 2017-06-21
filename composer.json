@@ -1,61 +1,62 @@
 {
-    "name":"metabolism/rocket-wordpress",
-    "license": "AGPL-3.0",
-    "version": "1.2.2",
-    "description": "Wordpress Scaffolder using Rocket Framework",
-    "config": {
-        "preferred-install": "dist"
-    },
-    "require": {
-        "php" : ">=5.5.0",
-        "johnpbloch/wordpress-core": "4.7.*",
-        "mustangostang/spyc": "0.6.*",
-        "symfony/routing":"3.2.*",
-        "dflydev/dot-access-data": "1.0.*",
-        "wpackagist-plugin/cache-enabler": "1.2.*",
-        "wpackagist-plugin/timber-library": "1.2.*",
-        "wpackagist-plugin/clean-image-filenames": "*",
-        "elliotcondon/advanced-custom-fields-pro": "5.*",
-        "wpackagist-plugin/post-types-order": "1.9.*"
-    },
-    "suggest": {
-      "metabolism/rocket-kernel": "*"
-    },
-    "extra": {
-        "file-management": {
-            "create": {
-                "metabolism/rocket-wordpress": {
-                    "web/app/uploads": 777,
-                    "app/config/acf": 777
-                }
-            },
-            "symlink": {
-                "metabolism/rocket-wordpress": {
-                    "wp-config.php": "web/edition/wp-config.php",
-                    "src/theme": "web/app/themes/rocket",
-                    "src/Helper/Rocket.php": "web/app/mu-plugins/Rocket.php",
-                    "doc": "doc/wordpress"
-                }
-            },
-            "copy": {
-            },
-            "remove": {
-                "metabolism/rocket-wordpress": [
-                    "web/edition/wp-content",
-                    "app/config/silex.yml",
-                    "web/edition/wp-config-sample.php"
-                ]
-            }
-        },
-        "branch-alias": {
-            "dev-1.2.x": "1.2.x-dev",
-            "dev-1.1.x": "1.1.x-dev",
-            "dev-1.0.x": "1.0.x-dev"
+  "name":"metabolism/rocket-wordpress",
+  "license": "AGPL-3.0",
+  "version": "1.2.2",
+  "description": "Wordpress Scaffolder using Rocket Framework",
+  "config": {
+    "preferred-install": "dist"
+  },
+  "require": {
+    "php" : ">=5.5.0",
+    "metabolism/rocket-installer": "1.0.*",
+    "johnpbloch/wordpress-core": "4.7.*",
+    "mustangostang/spyc": "0.6.*",
+    "symfony/routing":"3.2.*",
+    "dflydev/dot-access-data": "1.0.*",
+    "wpackagist-plugin/cache-enabler": "1.2.*",
+    "wpackagist-plugin/timber-library": "1.2.*",
+    "wpackagist-plugin/clean-image-filenames": "*",
+    "elliotcondon/advanced-custom-fields-pro": "5.*",
+    "wpackagist-plugin/post-types-order": "1.9.*"
+  },
+  "suggest": {
+    "metabolism/rocket-kernel": "*"
+  },
+  "extra": {
+    "file-management": {
+      "create": {
+        "metabolism/rocket-wordpress": {
+          "web/app/uploads": 777,
+          "app/config/acf": 777
         }
-    },
-    "autoload"    : {
-        "psr-4" : {
-            "Rocket\\" : "src/"
+      },
+      "symlink": {
+        "metabolism/rocket-wordpress": {
+          "wp-config.php": "web/edition/wp-config.php",
+          "src/theme": "web/app/themes/rocket",
+          "src/Helper/Rocket.php": "web/app/mu-plugins/Rocket.php",
+          "doc": "doc/wordpress"
         }
+      },
+      "copy": {
+      },
+      "remove": {
+        "metabolism/rocket-wordpress": [
+          "web/edition/wp-content",
+          "app/config/silex.yml",
+          "web/edition/wp-config-sample.php"
+        ]
+      }
+    },
+    "branch-alias": {
+      "dev-1.2.x": "1.2.x-dev",
+      "dev-1.1.x": "1.1.x-dev",
+      "dev-1.0.x": "1.0.x-dev"
     }
+  },
+  "autoload"    : {
+    "psr-4" : {
+      "Rocket\\" : "src/"
+    }
+  }
 }
