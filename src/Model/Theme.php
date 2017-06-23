@@ -22,15 +22,15 @@ class Theme extends Site
     {
         parent::__construct();
 
-        add_filter('timber_context', array($this, 'add_to_context'));
-        add_filter('get_twig', array($this, 'add_to_twig'));
+        add_filter('timber_context', array($this, 'addToContext'));
+        add_filter('get_twig', array($this, 'addToTwig'));
 
 	    /** @var Application $app */
 	    $this->app = Application::getInstance();
     }
 
 
-    public function add_to_context($context)
+    public function addToContext($context)
     {
         $language = explode('-', get_bloginfo('language'));
 
@@ -73,13 +73,13 @@ class Theme extends Site
         $context['footer'] = $context['wp_footer'];
         $context['page_title']  = empty($context['wp_title'])?get_bloginfo('name'):$context['wp_title'];
 
-	    $this->app->timber_context($context);
+	    $this->app->initContext($context);
 
         return $context;
     }
 
 
-    public function add_to_twig($twig)
+    public function addToTwig($twig)
     {
         if ( class_exists( '\\Customer\\Helper\\TwigPlugin' ) )
             $twig->addExtension( new \Customer\Helper\TwigPlugin( get_bloginfo('url'), WP_REMOTE ) );

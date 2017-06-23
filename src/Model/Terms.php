@@ -10,7 +10,7 @@ class Terms{
 
 	public function wp_terms_checklist_args( $args )
 	{
-		add_action( 'admin_footer', [$this, 'admin_footer'] );
+		add_action( 'admin_footer', [$this, 'adminFooter'] );
 
 		$args['checked_ontop'] = false;
 
@@ -18,7 +18,7 @@ class Terms{
 	}
 
 
-	function admin_footer() {
+	function adminFooter() {
 		?>
 		<script type="text/javascript">
 			jQuery(function(){
@@ -41,7 +41,7 @@ class Terms{
 	}
 
 
-	public static function sort_hierarchically($raw_cats){
+	public static function sortHierarchically($raw_cats){
 
 		$cats = [];
 		self::sort($raw_cats, $cats);

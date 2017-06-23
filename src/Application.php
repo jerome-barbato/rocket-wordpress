@@ -14,14 +14,9 @@ use Rocket\Model\CustomPostType,
     Rocket\Model\Taxonomy,
     Rocket\Model\Router,
 	Rocket\Model\PageTemplater,
-	Rocket\Model\Terms,
-	Rocket\Model\Metabox;
+	Rocket\Model\Terms;
 
-use Rocket\Model\Post;
 use Symfony\Component\Routing\Route as Route;
-
-use Timber\Image;
-use Timber\ImageHelper;
 
 /**
  * Class Rocket Framework
@@ -58,6 +53,15 @@ abstract class Application {
 
 
     /**
+     * Get context
+     */
+	protected function getArchivePage($post_type){
+
+		return $this->config->get('post_types.'.$post_type.'.has_archive');
+	}
+
+
+    /**
      * Application Constructor
      */
     public function setup()
@@ -74,9 +78,9 @@ abstract class Application {
         // Register post and taxonomies
         // ******
 
-        $this->add_post_types();
-        $this->add_taxonomies();
-        $this->register_filters();
+        $this->addPostTypes();
+        $this->addTaxonomies();
+        $this->registerFilters();
 
 
         // Global init action
@@ -92,31 +96,32 @@ abstract class Application {
                 if( WP_REMOTE )
                     wp_redirect(WP_REMOTE.'/edition/wp-admin/');
 
-                $this->set_theme();
-                $this->set_permalink();
-                $this->add_option_pages();
+                $this->setTheme();
+                $this->setPermalink();
+                $this->addOptionPages();
             });
 
             // Setup ACF Settings
-            add_action( 'acf/init', [$this, 'acf_init'] );
+            add_action( 'acf/init', [$this, 'ACFInit'] );
 
             // Remove image sizes for thumbnails
-            add_filter( 'intermediate_image_sizes_advanced', [$this, 'intermediate_image_sizes_advanced'] );
+            add_filter( 'intermediate_image_sizes_advanced', [$this, 'intermediateImageSizesAdvanced'] );
+
 	        add_filter( 'wp_terms_checklist_args', [Terms::getInstance(), 'wp_terms_checklist_args'] );
 
             // Removes or add pages
-            add_action( 'admin_menu', [$this, 'admin_menu']);
-	        add_action( 'admin_footer', [$this, 'admin_footer'] );
+            add_action( 'admin_menu', [$this, 'adminMenu']);
+	        add_action( 'admin_footer', [$this, 'adminFooter'] );
 
             //check loaded plugin
-            add_action( 'plugins_loaded', [$this, 'plugin_loaded']);
+            add_action( 'plugins_loaded', [$this, 'pluginsLoaded']);
 
             $this->defineSupport();
         }
         else
         {
-            add_action( 'after_setup_theme', [$this, 'after_setup_theme']);
-            add_action( 'wp_footer', [$this, 'wp_footer']);
+            add_action( 'after_setup_theme', [$this, 'afterSetupTheme']);
+            add_action( 'wp_footer', [$this, 'wpFooter']);
 
             $this->router = new Router();
             $this->router->setLocale(get_locale());
@@ -131,7 +136,7 @@ abstract class Application {
     /**
      * Unset thumbnail image
      */
-    public function intermediate_image_sizes_advanced($sizes)
+    public function intermediateImageSizesAdvanced($sizes)
     {
         unset($sizes['medium'], $sizes['medium_large'], $sizes['large']);
         return $sizes;
@@ -141,7 +146,7 @@ abstract class Application {
     /**
      * Define rocket theme as default theme.
      */
-    public function set_theme()
+    public function setTheme()
     {
         $current_theme = wp_get_theme();
 
@@ -153,7 +158,7 @@ abstract class Application {
     /**
      * Define rocket theme as default theme.
      */
-    public function define_cache()
+    public function defineCache()
     {
         $cache = get_option('cache');
         $cache_options = $this->config->get('cache');
@@ -177,7 +182,7 @@ abstract class Application {
     /**
      * Clean WP Head
      */
-    public function after_setup_theme()
+    public function afterSetupTheme()
     {
         remove_action('wp_head', 'rsd_link');
         remove_action('wp_head', 'wlwmanifest_link');
@@ -194,7 +199,7 @@ abstract class Application {
     /**
      * Clean WP Footer
      */
-    public function wp_footer()
+    public function wpFooter()
     {
         wp_deregister_script( 'wp-embed' );
     }
@@ -203,7 +208,7 @@ abstract class Application {
     /**
      * Set permalink stucture
      */
-    public function set_permalink()
+    public function setPermalink()
     {
         global $wp_rewrite;
 
@@ -234,7 +239,7 @@ abstract class Application {
     /**
      * Adds or remove pages from menu admin.
      */
-    public function admin_menu()
+    public function adminMenu()
     {
     	//clean interface
         foreach ( $this->config->get('remove_menu_page', []) as $page)
@@ -248,7 +253,7 @@ abstract class Application {
      * Adds specific post types here
      * @see CustomPostType
      */
-    public function add_post_types()
+    public function addPostTypes()
     {
         foreach ( $this->config->get('post_types', []) as $slug => $data_post_type )
         {
@@ -266,7 +271,7 @@ abstract class Application {
      * Adds Custom taxonomies
      * @see Taxonomy
      */
-    public function add_taxonomies()
+    public function addTaxonomies()
     {
         foreach ( $this->config->get('taxonomies', []) as $slug => $data_taxonomy )
         {
@@ -280,7 +285,7 @@ abstract class Application {
 
 
     protected function registerRoutes() {}
-    protected function admin_footer() {}
+    protected function adminFooter() {}
 
 
     /**
@@ -302,30 +307,10 @@ abstract class Application {
 
 
     /**
-     * Detect active plugin
-     * @param $plugin
-     * @return bool
-     */
-    private function is_active($plugin )
-    {
-        $network_active = false;
-
-        if ( is_multisite() )
-        {
-            $plugins = get_site_option( 'active_sitewide_plugins' );
-            if ( isset( $plugins[$plugin] ) )
-                $network_active = true;
-        }
-
-        return in_array( $plugin, get_option( 'active_plugins' ) ) || $network_active;
-    }
-
-
-    /**
      * @param $value
      * @return mixed
      */
-    public function rewrite_upload_url($value, $replace=false)
+    public function rewriteUploadURL($value, $replace=false)
     {
         if( $replace and WP_REMOTE )
             $value = str_replace(WP_HOME, WP_REMOTE, $value);
@@ -341,7 +326,7 @@ abstract class Application {
      * @param $path
      * @return mixed
      */
-    public function check_image($path)
+    public function checkImage($path)
     {
         if( WP_REMOTE )
         {
@@ -367,17 +352,18 @@ abstract class Application {
     /**
      * Allows user to add specific process on Wordpress functions
      */
-    public function register_filters()
+    public function registerFilters()
     {
 	    add_filter('woocommerce_template_path', function(){ return '../../../../../src/Woocommerce/'; });
 
-	    add_filter('rewrite_upload_url', function($value){ return $this->rewrite_upload_url($value, true); });
-        add_filter('timber/image/new_url', [$this, 'rewrite_upload_url']);
-        add_filter('timber/image/src', [$this, 'check_image']);
+	    add_filter('rewrite_upload_url', function($value){ return $this->rewriteUploadURL($value, true); });
+        add_filter('timber/image/new_url', [$this, 'rewriteUploadURL']);
+        add_filter('timber/image/src', [$this, 'checkImage']);
 
         add_filter('acf/settings/save_json', function(){ return BASE_URI.'/app/config/acf'; });
         add_filter('acf/settings/load_json', function(){ return [BASE_URI.'/app/config/acf']; });
 
+	    add_filter('timber/post/get_preview/read_more_link', '__return_null' );
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
 
         if( $jpeg_quality = $this->config->get('jpeg_quality') )
@@ -438,23 +424,11 @@ abstract class Application {
 
 
     /**
-     * Get ACF Fields
-     * @param $post_id
-     * @return array
-     */
-    public function acf_to_timber( $post_id )
-    {
-        $ACFHelper = new ACF( $post_id );
-        return $ACFHelper->process();
-    }
-
-
-    /**
      * Add settings to acf
      */
-    public function acf_init()
+    public function ACFInit()
     {
-        acf_update_setting('google_api_key', $this->config->get('options.google_api', ''));
+        acf_update_setting('google_api_key', $this->config->get('options.gmap_api_key', ''));
     }
 
 
@@ -498,7 +472,7 @@ abstract class Application {
     /**
      * Add wordpress configuration 'options_page' fields as ACF Options pages
      */
-    protected function add_option_pages()
+    protected function addOptionPages()
     {
         if( function_exists('acf_add_options_page') )
         {
@@ -506,6 +480,9 @@ abstract class Application {
 
             foreach ( $this->config->get('options_page', []) as $name )
             {
+            	if( isset($name['menu_slug']) )
+		            $name['menu_slug'] = 'acf-options-'.$name['menu_slug'];
+
                 acf_add_options_sub_page($name);
             }
         }
@@ -515,7 +492,7 @@ abstract class Application {
     /**
      * Check if ACF and Timber are enabled
      */
-    public function plugin_loaded()
+    public function pluginsLoaded()
     {
 	    new PageTemplater($this->config->get('page_templates', []));
 
@@ -535,7 +512,7 @@ abstract class Application {
             });
         }
 
-        $this->define_cache();
+        $this->defineCache();
     }
 
 

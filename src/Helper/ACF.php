@@ -31,7 +31,7 @@ class ACF
     }
 
 
-    public function layoutsAsKeyValue( $raw_layouts )
+    public function layoutsAsKeyValue($raw_layouts)
     {
         $layouts = [];
 
@@ -93,6 +93,7 @@ class ACF
 
     public function clean($raw_objects, $depth=0)
     {
+
     	if( $depth > 2 )
     		return $raw_objects;
 
@@ -102,11 +103,22 @@ class ACF
             return [];
 
         foreach ($raw_objects as $object) {
-	        
-            switch ($object['type']) {
+
+	        switch ($object['type']) {
+
+                case 'clone';
+
+	                $layout = reset($object['sub_fields']);
+	                $value = reset($object['value']);
+
+	                $layout['value'] = $value;
+
+	                $value = $this->clean([$layout], $depth+1);
+	                $objects[$object['name']] = reset($value);
+
+                break;
 
                 case 'image';
-
                     if( empty($object['value']) )
                         break;
 
@@ -216,12 +228,12 @@ class ACF
 
                     $objects[$object['name']] = [];
 
-                    if( is_array($object['value']) ){
-
+                    if( is_array($object['value']) )
+                    {
                         $layout = $this->layoutAsKeyValue($object['sub_fields']);
 
-                        foreach ($object['value'] as $value) {
-
+                        foreach ($object['value'] as $value)
+                        {
                             $value = $this->bindLayoutFields($value, $layout);
                             $objects[$object['name']][] = $this->clean($value, $depth+1);
                         }
