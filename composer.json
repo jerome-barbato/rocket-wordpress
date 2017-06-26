@@ -20,9 +20,6 @@
     "elliotcondon/advanced-custom-fields-pro": "5.*",
     "wpackagist-plugin/post-types-order": "1.9.*"
   },
-  "suggest": {
-    "metabolism/rocket-kernel": "*"
-  },
   "extra": {
     "file-management": {
       "create": {
