@@ -9,6 +9,7 @@
   "require": {
     "php" : ">=5.5.0",
     "metabolism/rocket-installer": "1.0.x-dev",
+    "metabolism/rocket-kernel": "1.2.x-dev",
     "johnpbloch/wordpress-core": "4.8.*",
     "mustangostang/spyc": "0.6.*",
     "symfony/routing":"3.2.*",
