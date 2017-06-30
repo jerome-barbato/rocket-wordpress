@@ -19,11 +19,11 @@ class Post extends \Timber\Post
 	/**
 	 * Post constructor.
 	 *
-	 * @param null $pid
+	 * @param null $id
 	 */
-	public function __construct($pid = null) {
+	public function __construct($id = null) {
 
-		parent::__construct( $pid );
+		parent::__construct( $id );
 
 		$this->clean();
 		$this->hydrateCustomFields();

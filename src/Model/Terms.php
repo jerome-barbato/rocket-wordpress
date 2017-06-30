@@ -2,7 +2,7 @@
 
 namespace Rocket\Model;
 
-use Rocket\Application\SingletonTrait;
+use Rocket\Traits\SingletonTrait;
 
 class Terms{
 

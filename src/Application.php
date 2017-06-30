@@ -4,10 +4,8 @@ namespace Rocket;
 
 use Dflydev\DotAccessData\Data as DotAccessData;
 
-use Rocket\Application\ApplicationTrait,
-    Rocket\Application\SingletonTrait;
-
-use Rocket\Helper\ACF;
+use Rocket\Traits\ApplicationTrait,
+    Rocket\Traits\SingletonTrait;
 
 use Rocket\Model\CustomPostType,
     Rocket\Model\Menu,
@@ -355,6 +353,7 @@ abstract class Application {
     public function registerFilters()
     {
 	    add_filter('woocommerce_template_path', function(){ return '../../../../../src/Woocommerce/'; });
+	    add_filter('woocommerce_enqueue_styles', '__return_empty_array' );
 
 	    add_filter('rewrite_upload_url', function($value){ return $this->rewriteUploadURL($value, true); });
         add_filter('timber/image/new_url', [$this, 'rewriteUploadURL']);

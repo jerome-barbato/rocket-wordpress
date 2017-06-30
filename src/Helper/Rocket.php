@@ -7,4 +7,4 @@
  * Author URI: http://www.metabolism.fr
  */
 
-new Customer\Application();
+new FrontBundle\Application();

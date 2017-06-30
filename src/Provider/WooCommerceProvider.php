@@ -5,9 +5,8 @@
 
 namespace Rocket\Provider;
 
+use Rocket\Traits\SingletonTrait;
 
-use Rocket\Application\SingletonTrait;
-use Timber\Post;
 use Timber\Timber;
 
 /**

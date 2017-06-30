@@ -2,11 +2,12 @@
 
 namespace Rocket\Model;
 
-use Customer\Application;
-use Rocket\Application\SingletonTrait;
-use Rocket\Provider\WooCommerceProvider;
-use Timber\Post,
-    Timber\Timber,
+use FrontBundle\Application;
+
+use Rocket\Traits\SingletonTrait,
+	Rocket\Provider\WooCommerceProvider;
+
+use Timber\Timber,
     Timber\Site,
     Timber\Menu as TimberMenu;
 
@@ -81,8 +82,8 @@ class Theme extends Site
 
     public function addToTwig($twig)
     {
-        if ( class_exists( '\\Customer\\Helper\\TwigPlugin' ) )
-            $twig->addExtension( new \Customer\Helper\TwigPlugin( get_bloginfo('url'), WP_REMOTE ) );
+        if ( class_exists( '\\FrontBundle\\Helper\\TwigHelper' ) )
+            $twig->addExtension( new \FrontBundle\Helper\TwigHelper( get_bloginfo('url'), WP_REMOTE ) );
 
         return $twig;
     }
