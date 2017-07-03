@@ -223,10 +223,10 @@ abstract class Application {
      */
     protected function defineSupport()
     {
-        if( $this->config->get('post-thumbnails') )
+        if( $this->config->get('theme-support.post-thumbnails') )
             add_theme_support( 'post-thumbnails' );
 
-	    if( $this->config->get('woocommerce') )
+	    if( $this->config->get('theme-support.woocommerce') )
 		    add_theme_support( 'woocommerce' );
 
         add_post_type_support( 'page', 'excerpt' );
@@ -283,7 +283,9 @@ abstract class Application {
 
 
     protected function registerRoutes() {}
-    protected function adminFooter() {}
+	protected function registerActions() {}
+	public function adminFooter() {}
+	public function initContext() {}
 
 
     /**
@@ -313,8 +315,8 @@ abstract class Application {
         if( $replace and WP_REMOTE )
             $value = str_replace(WP_HOME, WP_REMOTE, $value);
 
-        $value = str_replace(CONTENT_DIR.'/uploads', '/upload', $value);
-        $value = str_replace('/edition/wp-content/uploads', '/upload', $value);
+        $value = str_replace(CONTENT_DIR.'/uploads', '/app/uploads', $value);
+        $value = str_replace('/edition/wp-content/uploads', '/app/uploads', $value);
 
         return $value;
     }
