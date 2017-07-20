@@ -223,10 +223,12 @@ abstract class Application {
      */
     protected function defineSupport()
     {
-        if( $this->config->get('theme-support.post-thumbnails') )
+    	$supports = $this->config->get('theme-support', []);
+
+        if( in_array( 'post-thumbnails', $supports) )
             add_theme_support( 'post-thumbnails' );
 
-	    if( $this->config->get('theme-support.woocommerce') )
+	    if( in_array('woocommerce', $supports) )
 		    add_theme_support( 'woocommerce' );
 
         add_post_type_support( 'page', 'excerpt' );
