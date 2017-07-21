@@ -12,7 +12,7 @@ image_sizes:
 
 post_types:
   partner:
-    menu_icon: dashicons-businessman
+    menu_icon: businessman
     public: true
     has_archive: false
     capability_type: post

@@ -51,7 +51,7 @@ class Post extends \Timber\Post
 	{
 		foreach ($this as $key=>$value){
 
-			if( substr($key,0,1) == '_' and $key != '_content')
+			if( substr($key,0,1) == '_' and $key != '_content' and $key != '_prev' and $key != '_next')
 			{
 				unset($this->$key);
 				$key = substr($key,1);
