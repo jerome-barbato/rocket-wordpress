@@ -614,6 +614,7 @@ class CustomPostType {
         $this->rewrite($data_post_type->get('rewrite', true));
         $this->exclude_from_search($data_post_type->get('exclude_from_search', true));
         $this->query_var($data_post_type->get('query_var', true));
+	    $this->taxonomies($data_post_type->get('taxonomies', []));
 
         $this->show_in_menu($data_post_type->get('show_in_menu'));
         $this->show_in_nav_menus($data_post_type->get('show_in_nav_menus'));

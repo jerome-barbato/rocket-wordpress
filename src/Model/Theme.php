@@ -74,7 +74,7 @@ class Theme extends Site
         $context['footer'] = $context['wp_footer'];
         $context['page_title']  = empty($context['wp_title'])?get_bloginfo('name'):$context['wp_title'];
 
-	    $this->app->initContext($context);
+	    $this->app->initContext();
 
         return $context;
     }
