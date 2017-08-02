@@ -3,9 +3,6 @@
   "license": "AGPL-3.0",
   "version": "1.2.2",
   "description": "Wordpress Scaffolder using Rocket Framework",
-  "config": {
-    "preferred-install": "dist"
-  },
   "require": {
     "php" : ">=5.5.0",
     "metabolism/rocket-installer": "1.0.*",
