@@ -70,8 +70,11 @@ class Theme extends Site
         }
 
         // Rocket compatibility
-        $context['head']   = $context['wp_head'];
-        $context['footer'] = $context['wp_footer'];
+        $context['system']   = [
+        	'head' => $context['wp_head'],
+	        'footer' => $context['wp_footer']
+	    ];
+
         $context['page_title']  = empty($context['wp_title'])?get_bloginfo('name'):$context['wp_title'];
 
 	    $this->app->initContext();

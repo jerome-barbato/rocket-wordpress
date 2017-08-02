@@ -357,7 +357,7 @@ class CustomPostType {
      */
     public function show_in_menu($bool)
     {
-        $this->option['show_in_menu'] = $bool;
+	    $this->option['show_in_menu'] = $bool;
     }
 
     /**

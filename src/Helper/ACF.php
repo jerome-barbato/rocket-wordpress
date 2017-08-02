@@ -6,20 +6,25 @@
  */
 namespace Rocket\Helper;
 
-use Rocket\Model\Post;
+use Rocket\Model\Post,
+	Rocket\Model\Term;
 
 use Timber\Image,
-	Timber\User,
-	Timber\Term;
+	Timber\User;
 
 class ACF
 {
-    private $raw_objects, $objects;
+    private $raw_objects, $objects, $debug;
 
-    public function __construct($post_id)
+    public function __construct($post_id, $debug=false)
     {
         if( function_exists('get_field_objects') )
             $this->raw_objects = get_field_objects($post_id);
+
+        if( $debug )
+	        print_r( $this->raw_objects);
+
+        $this->debug = $debug;
 
         $this->objects = $this->clean( $this->raw_objects);
     }
@@ -93,8 +98,7 @@ class ACF
 
     public function clean($raw_objects, $depth=0)
     {
-
-    	if( $depth > 2 )
+    	if( $depth > 3 )
     		return $raw_objects;
 
         $objects = [];
@@ -103,6 +107,7 @@ class ACF
             return [];
 
         foreach ($raw_objects as $object) {
+
 
 	        switch ($object['type']) {
 
@@ -218,7 +223,7 @@ class ACF
                             $type = $value['acf_fc_layout'];
                             $value = $this->bindLayoutsFields($value, $layouts);
 
-                            $objects[$object['name']][] = ['type'=>$type, 'fields'=>$this->clean($value, $depth+1)];
+                            $objects[$object['name']][] = ['@type'=>$type, 'data'=>$this->clean($value, $depth+1)];
                         }
                     }
 
