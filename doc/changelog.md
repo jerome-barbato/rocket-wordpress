@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 1.2.2 - IN DEV
+# 1.2.3 - 2017-08-05
+### Added
+* Added ACF-cleaner plugin
+* Added ACF Group support for ACF Helper
+
+# 1.2.2
 ### Added
 * WooCommerce Support
   - see [timber integration](https://github.com/timber/timber/wiki/WooCommerce-Integration) for more details about templates.

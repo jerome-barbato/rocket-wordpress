@@ -276,7 +276,17 @@ class ACF
 
                         break;
 
+                    case 'group';
+
+	                    $layout = $this->layoutAsKeyValue($object['sub_fields']);
+	                    $value = $this->bindLayoutFields($object['value'], $layout);
+
+	                    $objects[$object['name']] = $this->clean($value, $depth+1);
+
+                        break;
+
                 default:
+
                     $objects[$object['name']] = $object['value'];
                     break;
             }
