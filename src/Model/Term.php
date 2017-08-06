@@ -28,7 +28,7 @@ class Term extends \Timber\Term
 		parent::__construct( $id );
 
 		$this->ID = 'term_' . $id;
-		$this->description = term_description($id);
+		$this->content = term_description($id);
 
 		$this->clean();
 		$this->hydrateCustomFields();
