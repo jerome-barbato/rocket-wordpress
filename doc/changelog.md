@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.5 - 2017-08-08
+### Added
+* Rocket Term model
+* allow submenu page removal
+### Changed
+* ACF depth recursion max to 4
+
 # 1.2.4 - 2017-08-06
 ### Changed
 * set term description to content var to be iso with post

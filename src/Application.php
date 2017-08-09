@@ -240,9 +240,15 @@ abstract class Application {
     public function adminMenu()
     {
     	//clean interface
-        foreach ( $this->config->get('remove_menu_page', []) as $page)
+        foreach ( $this->config->get('remove_menu_page', []) as $menu)
         {
-            remove_menu_page($page);
+            remove_menu_page($menu);
+        }
+
+    	//clean interface
+        foreach ( $this->config->get('remove_submenu_page', []) as $menu=>$submenu)
+        {
+	        remove_submenu_page($menu, $submenu);
         }
     }
 
@@ -354,6 +360,8 @@ abstract class Application {
      */
     public function registerFilters()
     {
+	    add_filter('posts_request', [$this, 'postsRequest'] );
+
 	    add_filter('woocommerce_template_path', function(){ return '../../../../../src/Woocommerce/'; });
 	    add_filter('woocommerce_enqueue_styles', '__return_empty_array' );
 
@@ -373,6 +381,19 @@ abstract class Application {
         //implement in src/application
         //ex : add_filter( 'page_link', [$this, 'rewrite_common'), 10, 3);
     }
+
+
+	/**
+	 * Create Menu instances from configs
+	 * @see Menu
+	 */
+	public function postsRequest($input)
+	{
+		if( $this->config->get('debug.show_query'))
+			var_dump($input);
+
+		return $input;
+	}
 
 
     /**

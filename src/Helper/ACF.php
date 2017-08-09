@@ -98,7 +98,7 @@ class ACF
 
     public function clean($raw_objects, $depth=0)
     {
-    	if( $depth > 3 )
+    	if( $depth > 4 )
     		return $raw_objects;
 
         $objects = [];
