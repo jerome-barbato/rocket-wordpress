@@ -63,7 +63,7 @@ class Query
 			$args['posts_per_page'] = get_option( 'posts_per_page' );
 
 		$args['fields'] = 'ids';
-
+		
 		$posts = get_posts( $args );
 
 		foreach ($posts as &$post)

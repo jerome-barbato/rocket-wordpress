@@ -67,22 +67,20 @@ abstract class Application {
     	if( defined('WP_INSTALLING') and WP_INSTALLING )
 		    return;
 
-
         $this->definePaths();
         $this->loadConfig();
 
-
-        // ******
-        // Register post and taxonomies
-        // ******
-
-        $this->addPostTypes();
-        $this->addTaxonomies();
         $this->registerFilters();
 
-
         // Global init action
-        add_action( 'init', [$this, 'init']);
+        add_action( 'init', function(){
+
+	        $this->addPostTypes();
+	        $this->addTaxonomies();
+	        $this->addMenus();
+
+	        $this->init();
+        });
 
 
         // When viewing admin
@@ -259,14 +257,15 @@ abstract class Application {
      */
     public function addPostTypes()
     {
-        foreach ( $this->config->get('post_types', []) as $slug => $data_post_type )
+        foreach ( $this->config->get('post_types', []) as $slug => $data )
         {
-            $data_post_type = new DotAccessData($data_post_type);
+            $data = new DotAccessData($data);
 
             $label = __(ucfirst($this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), Application::$domain_name);
 
             $post_type = new CustomPostType($label, $slug);
-            $post_type->hydrate($data_post_type);
+            $post_type->hydrate($data);
+            $post_type->register();
         };
     }
 
@@ -277,13 +276,14 @@ abstract class Application {
      */
     public function addTaxonomies()
     {
-        foreach ( $this->config->get('taxonomies', []) as $slug => $data_taxonomy )
+        foreach ( $this->config->get('taxonomies', []) as $slug => $data )
         {
-            $data_taxonomy = new DotAccessData($data_taxonomy);
+            $data = new DotAccessData($data);
             $label = __(ucfirst( $this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), Application::$domain_name);
 
             $taxonomy = new Taxonomy($label, $slug);
-            $taxonomy->hydrate($data_taxonomy);
+            $taxonomy->hydrate($data);
+            $taxonomy->register();
         }
     }
 
@@ -321,7 +321,6 @@ abstract class Application {
         if( $replace and WP_REMOTE )
             $value = str_replace(WP_HOME, WP_REMOTE, $value);
 
-        $value = str_replace(CONTENT_DIR.'/uploads', '/app/uploads', $value);
         $value = str_replace('/edition/wp-content/uploads', '/app/uploads', $value);
 
         return $value;
@@ -411,13 +410,20 @@ abstract class Application {
      * Create Menu instances from configs
      * @see Menu
      */
-    public function init()
+    public function addMenus()
     {
         foreach ($this->config->get('menus', []) as $slug => $name)
         {
             new Menu($name, $slug);
         }
     }
+
+
+    /**
+     * Init handler
+     * @see Menu
+     */
+    public function init(){}
 
 
     /**

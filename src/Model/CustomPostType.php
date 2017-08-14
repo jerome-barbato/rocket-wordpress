@@ -33,9 +33,8 @@ class CustomPostType {
      * CustomPostType constructor.
      * @param $label
      * @param $slug
-     * @param bool $autodeclare
      */
-    public function __construct($label, $slug, $autodeclare = true)
+    public function __construct($label, $slug)
     {
         if (empty(CustomPostType::$custom_types))
         {
@@ -52,9 +51,6 @@ class CustomPostType {
         );
 
         $this->slug = $slug;
-
-        if ($autodeclare)
-            add_action('init', array($this, 'register'));
     }
 
 

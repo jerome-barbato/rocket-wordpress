@@ -265,6 +265,19 @@ class ACF
                                 $objects[$object['name']][] = new Term($id);
                         }
                     }
+                    else{
+
+	                    $id = false;
+
+	                    if ($object['return_format'] == 'id')
+		                    $id = $object['value'];
+	                    elseif (is_object($object['value']) && $object['return_format'] == 'object')
+		                    $id = $object['value']->term_id;
+
+	                    if( $id )
+		                    $objects[$object['name']] = new Term($id);
+                    }
+
                     break;
 
                     case 'select';

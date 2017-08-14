@@ -15,15 +15,14 @@ use Rocket\Application;
 class Taxonomy
 {
     static $defaults;
-    private $name, $option, $slug, $object_types;
+    private $name, $option, $slug, $object_types, $data;
 
     /**
      * Taxonomy constructor.
      * @param $name
      * @param $slug
-     * @param bool $autodeclare
      */
-    public function __construct($name, $slug, $autodeclare = true)
+    public function __construct($name, $slug)
     {
         $this->name = $name;
 
@@ -31,11 +30,8 @@ class Taxonomy
             'public' => true,
             'labels' => ['name'=>$this->name]
         );
-        $this->slug = $slug;
 
-        if ($autodeclare) {
-            add_action('init', array($this, 'register'));
-        }
+        $this->slug = $slug;
     }
 
     /**
@@ -430,6 +426,9 @@ class Taxonomy
     public function register()
     {
         register_taxonomy($this->slug, $this->object_types, $this->option);
+
+	    if( !get_term_by( 'slug', $this->data->get('default_term', 'default'), $this->slug ) )
+		    $this->insert_term(ucfirst($this->data->get('default_term', 'default')), $this->data->get('default_term', 'default'));
     }
 
     /**
@@ -504,25 +503,26 @@ class Taxonomy
      * Create default dataset for Taxonomu according to configuration file.
      * @param $data_taxonomy DotAccessData Configuration data
      */
-    public function hydrate($data_taxonomy)
+    public function hydrate($data)
     {
-        $this->label_name(__($data_taxonomy->get('labels.name', ucfirst($this->name)), Application::$domain_name));
-        $this->label_all_items(__($data_taxonomy->get('labels.all_items','All '.$this->name), Application::$domain_name));
-        $this->label_singular_name(__($data_taxonomy->get('labels.singular_name',ucfirst($this->slug)), Application::$domain_name));
-        $this->label_add_new_item(__($data_taxonomy->get('labels.add_new_item','Add a '.$this->slug), Application::$domain_name));
-        $this->label_edit_item(__($data_taxonomy->get('labels.edit_item','Edit '.$this->slug), Application::$domain_name));
-        $this->label_not_found(__($data_taxonomy->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$domain_name));
-        $this->label_search_items(__($data_taxonomy->get('labels.search_items','Search in '.$this->name), Application::$domain_name));
-        $this->show_admin_column($data_taxonomy->get('show_admin_column', true));
-        $this->assign_to($data_taxonomy->get('object_type', 'post'));
-        $this->show_in_nav_menus($data_taxonomy->get('show_in_nav_menus', true));
-        $this->setPublic($data_taxonomy->get('public', true));
-        $this->publicly_queryable($data_taxonomy->get('publicly_queryable', true));
-        $this->show_ui($data_taxonomy->get('show_ui', true));
-        $this->hierarchical($data_taxonomy->get('hierarchical', true));
-        $this->query_var($data_taxonomy->get('query_var', true));
-        $this->insert_term(ucfirst($data_taxonomy->get('default_term', 'default')), $data_taxonomy->get('default_term', 'default'));
-        $this->set_default_term($data_taxonomy->get('default_term', 'default'));
-        $this->rewrite($data_taxonomy->get('rewrite', true));
+    	$this->data = $data;
+
+        $this->label_name(__($data->get('labels.name', ucfirst($this->name)), Application::$domain_name));
+        $this->label_all_items(__($data->get('labels.all_items','All '.$this->name), Application::$domain_name));
+        $this->label_singular_name(__($data->get('labels.singular_name',ucfirst($this->slug)), Application::$domain_name));
+        $this->label_add_new_item(__($data->get('labels.add_new_item','Add a '.$this->slug), Application::$domain_name));
+        $this->label_edit_item(__($data->get('labels.edit_item','Edit '.$this->slug), Application::$domain_name));
+        $this->label_not_found(__($data->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$domain_name));
+        $this->label_search_items(__($data->get('labels.search_items','Search in '.$this->name), Application::$domain_name));
+        $this->show_admin_column($data->get('show_admin_column', true));
+        $this->assign_to($data->get('object_type', 'post'));
+        $this->show_in_nav_menus($data->get('show_in_nav_menus', true));
+        $this->setPublic($data->get('public', true));
+        $this->publicly_queryable($data->get('publicly_queryable', true));
+        $this->show_ui($data->get('show_ui', true));
+        $this->hierarchical($data->get('hierarchical', true));
+        $this->query_var($data->get('query_var', true));
+        $this->set_default_term($data->get('default_term', 'default'));
+        $this->rewrite($data->get('rewrite', true));
     }
 }

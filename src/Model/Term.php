@@ -16,7 +16,7 @@ use Rocket\Helper\ACF;
  */
 class Term extends \Timber\Term
 {
-	public $ID, $description;
+	public $ID, $content;
 
 	/**
 	 * Post constructor.

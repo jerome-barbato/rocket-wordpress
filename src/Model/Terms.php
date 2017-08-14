@@ -44,13 +44,17 @@ class Terms{
 	public static function sortHierarchically($raw_cats){
 
 		$cats = [];
+
+		if( is_object($raw_cats) )
+			$raw_cats = (Array)$raw_cats;
+
 		self::sort($raw_cats, $cats);
 
 		return $cats;
 	}
 
 
-	public static function sort(Array &$cats, Array &$into, $parentId = 0)
+	public static function sort(&$cats, &$into, $parentId = 0)
 	{
 		foreach ($cats as $i => $cat)
 		{
