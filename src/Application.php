@@ -108,6 +108,7 @@ abstract class Application {
             // Removes or add pages
             add_action( 'admin_menu', [$this, 'adminMenu']);
 	        add_action( 'admin_footer', [$this, 'adminFooter'] );
+	        add_action( 'admin_init', [$this, 'adminInit'] );
 
             //check loaded plugin
             add_action( 'plugins_loaded', [$this, 'pluginsLoaded']);
@@ -243,6 +244,8 @@ abstract class Application {
             remove_menu_page($menu);
         }
 
+	    remove_submenu_page('themes.php', 'themes.php');
+
     	//clean interface
         foreach ( $this->config->get('remove_submenu_page', []) as $menu=>$submenu)
         {
@@ -294,7 +297,19 @@ abstract class Application {
 	public function initContext() {}
 
 
-    /**
+	/**
+	 * change editor capabilities
+	 */
+	public function adminInit()
+	{
+		$role_object = get_role( 'editor' );
+
+		if( !$role_object->has_cap('edit_theme_options') )
+			$role_object->add_cap( 'edit_theme_options' );
+	}
+
+
+	/**
      * Register wp path
      */
     private function definePaths()
@@ -374,6 +389,10 @@ abstract class Application {
 	    add_filter('timber/post/get_preview/read_more_link', '__return_null' );
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
 
+        // Handle /edition in url
+	    add_filter('option_siteurl', [$this, 'optionSiteURL'] );
+	    add_filter('network_site_url', [$this, 'networkSiteURL'] );
+
         if( $jpeg_quality = $this->config->get('jpeg_quality') )
             add_filter( 'jpeg_quality', function() use ($jpeg_quality){ return $jpeg_quality; });
 
@@ -393,6 +412,27 @@ abstract class Application {
 
 		return $input;
 	}
+
+
+    /**
+     * Add edition folder to option url
+     */
+    public function networkSiteURL($url)
+    {
+	    if( strpos($url,'/edition') === false )
+		    return str_replace('/wp-admin', '/edition/wp-admin', $url);
+	    else
+		    return $url;
+    }
+
+
+    /**
+     * Add edition folder to option url
+     */
+    public function optionSiteURL($url)
+    {
+        return strpos($url, 'edition') === false ? $url.'/edition' : $url;
+    }
 
 
     /**

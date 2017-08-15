@@ -612,7 +612,7 @@ class CustomPostType {
         $this->query_var($data_post_type->get('query_var', true));
 	    $this->taxonomies($data_post_type->get('taxonomies', []));
 
-        $this->show_in_menu($data_post_type->get('show_in_menu'));
-        $this->show_in_nav_menus($data_post_type->get('show_in_nav_menus'));
+        $this->show_in_menu($data_post_type->get('show_in_menu', true));
+        $this->show_in_nav_menus($data_post_type->get('show_in_nav_menus', true));
     }
 }

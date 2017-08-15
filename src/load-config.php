@@ -16,7 +16,6 @@ if (!defined('BASE_URI'))
     $base_uri = preg_replace( "/\\\\vendor\\\\metabolism\\\\rocket-wordpress$/", '', $base_uri );
 
     define( 'BASE_URI', $base_uri);
-
 }
 
 
@@ -61,6 +60,18 @@ define( 'WC_TEMPLATE_DEBUG_MODE', $config->get('debug.woocommerce', 0) );
 if( $config->get('cache.http', 0) and !WP_DEBUG )
     define( 'WP_CACHE', true);
 
+if( $config->get('install-multisite') )
+	define( 'WP_ALLOW_MULTISITE', true );
+
+if( $config->get('multisite') )
+{
+	define( 'MULTISITE', true );
+	define( 'SUBDOMAIN_INSTALL', $config->get('multisite.subdomain_install') );
+	define( 'DOMAIN_CURRENT_SITE', $config->get('multisite.domain', $_SERVER['HTTP_HOST']));
+	define( 'SITE_ID_CURRENT_SITE', $config->get('multisite.site_id', 1));
+	define( 'BLOG_ID_CURRENT_SITE', $config->get('multisite.blog_id', 1));
+}
+
 
 /**
  * URLs
@@ -77,14 +88,15 @@ $base_uri = $isSecure ? 'https' : 'http'.'://'.$_SERVER['HTTP_HOST'];
 
 if (!defined('BASE_PATH'))
 {
-    $request_uri = explode('/edition/', strtok($_SERVER["REQUEST_URI"],'?'));
+    $request_uri = explode('/edition', strtok($_SERVER["REQUEST_URI"],'?'));
     define( 'BASE_PATH', $request_uri[0]);
 }
 
 if( !defined('WP_HOME') )
 	define( 'WP_HOME', $base_uri.BASE_PATH);
 
-define( 'WP_SITEURL', WP_HOME . '/edition');
+define( 'WP_SITEURL', WP_HOME);
+define( 'COOKIE_DOMAIN', $_SERVER[ 'HTTP_HOST' ] );
 
 /**
  * DB settings
@@ -147,7 +159,6 @@ if (!defined('CMS_URI'))
 
 if (!defined('ABSPATH'))
     define( 'ABSPATH', CMS_URI .'/');
-
 
 /**
  * Sets up WordPress vars and included files.
