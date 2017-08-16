@@ -95,7 +95,7 @@ if (!defined('BASE_PATH'))
 if( !defined('WP_HOME') )
 	define( 'WP_HOME', $base_uri.BASE_PATH);
 
-define( 'WP_SITEURL', WP_HOME);
+define( 'WP_SITEURL', WP_HOME.'/edition');
 define( 'COOKIE_DOMAIN', $_SERVER[ 'HTTP_HOST' ] );
 
 /**

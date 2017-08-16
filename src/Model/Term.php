@@ -16,7 +16,7 @@ use Rocket\Helper\ACF;
  */
 class Term extends \Timber\Term
 {
-	public $ID, $content;
+	public $ID, $excerpt;
 
 	/**
 	 * Post constructor.
@@ -28,7 +28,7 @@ class Term extends \Timber\Term
 		parent::__construct( $id );
 
 		$this->ID = 'term_' . $id;
-		$this->content = term_description($id);
+		$this->excerpt = term_description($id);
 
 		$this->clean();
 		$this->hydrateCustomFields();

@@ -16,6 +16,8 @@ use Rocket\Helper\ACF;
  */
 class Post extends \Timber\Post
 {
+	public $excerpt;
+
 	/**
 	 * Post constructor.
 	 *
@@ -24,6 +26,8 @@ class Post extends \Timber\Post
 	public function __construct($id = null) {
 
 		parent::__construct( $id );
+
+		$this->excerpt = $this->post_excerpt;
 
 		$this->clean();
 		$this->hydrateCustomFields();

@@ -27,6 +27,9 @@ class Query
 		if( empty($args) )
 			return new Post();
 
+		if( !is_array($args) )
+			return new Post($args);
+
 		$args['posts_per_page'] = 1;
 
 		$posts = self::get_posts($args, $fields);
@@ -62,8 +65,11 @@ class Query
 		if( !isset($args['posts_per_page']) and !isset($args['numberposts']))
 			$args['posts_per_page'] = get_option( 'posts_per_page' );
 
+		if( isset($args['post_type'], $args['pagename']) )
+			unset($args['pagename']);
+
 		$args['fields'] = 'ids';
-		
+
 		$posts = get_posts( $args );
 
 		foreach ($posts as &$post)
