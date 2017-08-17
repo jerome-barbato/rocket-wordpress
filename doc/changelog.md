@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Term now return excerpt instead of description
 * various minor bugfix
 
+# 1.2.9 - 2017-08-17
+### Fixed
+* ACF Clean recursion
+
 # 1.2.7 - 2017-08-15
 ### Added
 * Multisite support

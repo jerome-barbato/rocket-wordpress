@@ -14,299 +14,334 @@ use Timber\Image,
 
 class ACF
 {
-    private $raw_objects, $objects, $debug;
+	private $raw_objects, $objects, $debug;
+	protected static $DEPTH = 0;
 
-    public function __construct($post_id, $debug=false)
-    {
-        if( function_exists('get_field_objects') )
-            $this->raw_objects = get_field_objects($post_id);
+	public function __construct($post_id, $debug=false)
+	{
+		if( function_exists('get_field_objects') )
+			$this->raw_objects = get_field_objects($post_id);
 
-        if( $debug )
-	        print_r( $this->raw_objects);
+		if( $debug )
+			print_r( $this->raw_objects);
 
-        $this->debug = $debug;
+		$this->debug = $debug;
 
-        $this->objects = $this->clean( $this->raw_objects);
-    }
+		$this->objects = $this->clean( $this->raw_objects);
+	}
 
 
-    public function get()
-    {
-	    return $this->objects;
-    }
+	public function get()
+	{
+		return $this->objects;
+	}
 
 
-    public function layoutsAsKeyValue($raw_layouts)
-    {
-        $layouts = [];
+	public function layoutsAsKeyValue($raw_layouts)
+	{
+		$layouts = [];
 
-        foreach ($raw_layouts as $layout){
+		foreach ($raw_layouts as $layout){
 
-            $layouts[$layout['name']] = [];
-            $subfields = $layout['sub_fields'];
-            foreach ($subfields as $subfield){
-                $layouts[$layout['name']][$subfield['name']] = $subfield;
-            }
-        }
+			$layouts[$layout['name']] = [];
+			$subfields = $layout['sub_fields'];
+			foreach ($subfields as $subfield){
+				$layouts[$layout['name']][$subfield['name']] = $subfield;
+			}
+		}
 
-        return $layouts;
-    }
+		return $layouts;
+	}
 
 
-    public function bindLayoutsFields($fields, $layouts){
+	public function bindLayoutsFields($fields, $layouts){
 
-        $data = [];
-        $type = $fields['acf_fc_layout'];
-        $layout = $layouts[$type];
+		$data = [];
+		$type = $fields['acf_fc_layout'];
+		$layout = $layouts[$type];
 
-        unset($fields['acf_fc_layout']);
+		unset($fields['acf_fc_layout']);
 
-        foreach ($fields as $name=>$value){
+		foreach ($fields as $name=>$value){
 
-            $data[$name] = $layout[$name];
-            $data[$name]['value'] = $value;
-        }
+			$data[$name] = $layout[$name];
+			$data[$name]['value'] = $value;
+		}
 
-        return $data;
-    }
+		return $data;
+	}
 
 
-    public function layoutAsKeyValue( $raw_layout )
-    {
-        $data = [];
+	public function layoutAsKeyValue( $raw_layout )
+	{
+		$data = [];
 
-        foreach ($raw_layout as $value)
-            $data[$value['name']] = $value;
+		foreach ($raw_layout as $value)
+			$data[$value['name']] = $value;
 
-        return $data;
-    }
+		return $data;
+	}
 
 
-    public function bindLayoutFields($fields, $layout){
+	public function bindLayoutFields($fields, $layout){
 
-        $data = [];
+		$data = [];
 
-        foreach ($fields as $name=>$value){
+		foreach ($fields as $name=>$value){
 
-            $data[$name] = $layout[$name];
-            $data[$name]['value'] = $value;
-        }
+			$data[$name] = $layout[$name];
+			$data[$name]['value'] = $value;
+		}
 
-        return $data;
-    }
+		return $data;
+	}
 
 
-    public function clean($raw_objects, $depth=0)
-    {
-    	if( $depth > 4 )
-    		return $raw_objects;
+	public function clean($raw_objects)
+	{
 
-        $objects = [];
+		// Stop recurson
+		if ( ACF::$DEPTH > 4 ){
 
-        if( !$raw_objects or !is_array($raw_objects) )
-            return [];
+			--ACF::$DEPTH;
+			return $raw_objects;
+		}
 
-        foreach ($raw_objects as $object) {
 
+		$objects = [];
 
-	        switch ($object['type']) {
+		// Start analyzing
 
-                case 'clone';
+		if( !$raw_objects or !is_array($raw_objects) ) {
 
-	                $layout = reset($object['sub_fields']);
-	                $value = reset($object['value']);
+			if ( ACF::$DEPTH > 0 )
+				-- ACF::$DEPTH;
 
-	                $layout['value'] = $value;
+			return [];
+		}
 
-	                $value = $this->clean([$layout], $depth+1);
-	                $objects[$object['name']] = reset($value);
+		foreach ($raw_objects as $object) {
 
-                break;
 
-                case 'image';
-                    if( empty($object['value']) )
-                        break;
+			switch ($object['type']) {
 
-                    if ($object['return_format'] == 'id')
-                        $objects[$object['name']] = new Image($object['value']);
-                    elseif ($object['return_format'] == 'array')
-                        $objects[$object['name']] = new Image($object['value']['id']);
-                    else
-                        $objects[$object['name']] = $object['value'];
+				case 'clone';
 
-                    break;
+					$layout = reset($object['sub_fields']);
+					$value = reset($object['value']);
 
-                case 'gallery';
+					$layout['value'] = $value;
 
-                    if( empty($object['value']) )
-                        break;
+					++ACF::$DEPTH;
+					$value = $this->clean([$layout]);
+					$objects[$object['name']] = reset($value);
 
-                    if( is_array($object['value']) ){
+					break;
 
-                        $objects[$object['name']] = [];
+				case 'image';
+					if( empty($object['value']) )
+						break;
 
-                        foreach ($object['value'] as $value) {
+					if ($object['return_format'] == 'id')
+						$objects[$object['name']] = new Image($object['value']);
+					elseif ($object['return_format'] == 'array')
+						$objects[$object['name']] = new Image($object['value']['id']);
+					else
+						$objects[$object['name']] = $object['value'];
 
-                            $objects[$object['name']][] = new Image($value['id']);
+					break;
 
-                        }
-                    }
+				case 'gallery';
 
-                    break;
+					if( empty($object['value']) )
+						break;
 
-                case 'file';
+					if( is_array($object['value']) ){
 
-                    if( empty($object['value']) )
-                        break;
+						$objects[$object['name']] = [];
 
-                    if ($object['return_format'] == 'id')
-                        $objects[$object['name']] = apply_filters('rewrite_upload_url', wp_get_attachment_url( $object['value'] ));
-                    elseif ($object['return_format'] == 'array')
-                        $objects[$object['name']] = $object['value']['url'];
-                    else
-                        $objects[$object['name']] = $object['value'];
+						foreach ($object['value'] as $value) {
 
-                    break;
+							$objects[$object['name']][] = new Image($value['id']);
+						}
+					}
 
-                case 'relationship';
+					break;
 
-                    $objects[$object['name']] = [];
+				case 'file';
 
-                    if( is_array($object['value']) ){
+					if( empty($object['value']) )
+						break;
 
-                        foreach ($object['value'] as $value) {
+					if ($object['return_format'] == 'id')
+						$objects[$object['name']] = apply_filters('rewrite_upload_url', wp_get_attachment_url( $object['value'] ));
+					elseif ($object['return_format'] == 'array')
+						$objects[$object['name']] = $object['value']['url'];
+					else
+						$objects[$object['name']] = $object['value'];
 
-                        	$is_woo_product = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' );
+					break;
 
-                            if ($object['return_format'] == 'id')
-                                $objects[$object['name']][] = $is_woo_product ? ['product'=>wc_get_product($value), 'post'=>new Post($value)] : new Post($value);
-                            elseif ($object['return_format'] == 'object')
-                                $objects[$object['name']][] = $is_woo_product ? ['product'=>wc_get_product($value->ID), 'post'=>new Post($value->ID)] : new Post($value->ID);
-                            else
-                                $objects[$object['name']][] = $object['value'];
-                        }
-                    }
-                    break;
+				case 'relationship';
 
-                case 'post_object';
+					$objects[$object['name']] = [];
 
-                    if( empty($object['value']) )
-                        break;
+					if( is_array($object['value']) ){
 
-	                if ($object['return_format'] == 'id')
-		                $objects[$object['name']] = new Post($object['value']);
-	                elseif ($object['return_format'] == 'object')
-		                $objects[$object['name']] = new Post($object['value']->ID);
-	                else
-		                $objects[$object['name']] = $object['value'];
+						foreach ($object['value'] as $value) {
 
-                    break;
+							$is_woo_product = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' );
 
-                case 'user';
+							if ($object['return_format'] == 'id') {
+								++ACF::$DEPTH;
+								$objects[$object['name']][] = $is_woo_product ? ['product'=>wc_get_product($value), 'post'=>new Post($value)] : new Post($value);
 
-                    if( empty($object['value']) )
-                        break;
-                    
-                    $objects[$object['name']] = new User($object['value']['ID']);
-                    break;
+							}
+							elseif ($object['return_format'] == 'object') {
+								++ACF::$DEPTH;
+								$objects[$object['name']][] = $is_woo_product ? ['product'=>wc_get_product($value->ID), 'post'=>new Post($value->ID)] : new Post($value->ID);
+							}
+							else
+								$objects[$object['name']][] = $object['value'];
+						}
+					}
+					break;
 
-                case 'flexible_content';
+				case 'post_object';
 
-                    $objects[$object['name']] = [];
 
-                    if( is_array($object['value']) ){
+					if( empty($object['value']) )
+						break;
 
-                        $layouts = $this->layoutsAsKeyValue($object['layouts']);
+					if ($object['return_format'] == 'id') {
 
-                        foreach ($object['value'] as $value) {
+						++ACF::$DEPTH;
+						$objects[$object['name']] = new Post($object['value']);
+					}
+					elseif ($object['return_format'] == 'object') {
 
-                            $type = $value['acf_fc_layout'];
-                            $value = $this->bindLayoutsFields($value, $layouts);
+						++ACF::$DEPTH;
+						$objects[$object['name']] = new Post($object['value']->ID);
+					}
+					else
+						$objects[$object['name']] = $object['value'];
 
-                            $objects[$object['name']][] = ['@type'=>$type, 'data'=>$this->clean($value, $depth+1)];
-                        }
-                    }
+					break;
 
-                    break;
+				case 'user';
 
-                case 'repeater';
+					if( empty($object['value']) )
+						break;
 
-                    $objects[$object['name']] = [];
+					$objects[$object['name']] = new User($object['value']['ID']);
+					break;
 
-                    if( is_array($object['value']) )
-                    {
-                        $layout = $this->layoutAsKeyValue($object['sub_fields']);
+				case 'flexible_content';
 
-                        foreach ($object['value'] as $value)
-                        {
-                            $value = $this->bindLayoutFields($value, $layout);
-                            $objects[$object['name']][] = $this->clean($value, $depth+1);
-                        }
-                    }
+					$objects[$object['name']] = [];
 
-                    break;
+					if( is_array($object['value']) ){
 
-                case 'taxonomy';
+						$layouts = $this->layoutsAsKeyValue($object['layouts']);
 
-                    $objects[$object['name']] = [];
+						foreach ($object['value'] as $value) {
 
-                    if( is_array($object['value']) ){
+							$type = $value['acf_fc_layout'];
+							$value = $this->bindLayoutsFields($value, $layouts);
+							++ACF::$DEPTH;
+							$objects[$object['name']][] = ['@type'=>$type, 'data'=>$this->clean($value)];
+						}
+					}
 
-                        foreach ($object['value'] as $value) {
+					break;
 
-                            $id = false;
+				case 'repeater';
 
-                            if ($object['return_format'] == 'id')
-                                $id = $value;
-                            elseif (is_object($value) && $object['return_format'] == 'object')
-                                $id = $value->term_id;
+					$objects[$object['name']] = [];
 
-                            if( $id )
-                                $objects[$object['name']][] = new Term($id);
-                        }
-                    }
-                    else{
+					if( is_array($object['value']) )
+					{
+						$layout = $this->layoutAsKeyValue($object['sub_fields']);
 
-	                    $id = false;
+						foreach ($object['value'] as $value)
+						{
+							$value = $this->bindLayoutFields($value, $layout);
+							++ACF::$DEPTH;
+							$objects[$object['name']][] = $this->clean($value);
+						}
+					}
 
-	                    if ($object['return_format'] == 'id')
-		                    $id = $object['value'];
-	                    elseif (is_object($object['value']) && $object['return_format'] == 'object')
-		                    $id = $object['value']->term_id;
+					break;
 
-	                    if( $id )
-		                    $objects[$object['name']] = new Term($id);
-                    }
+				case 'taxonomy';
 
-                    break;
+					$objects[$object['name']] = [];
 
-                    case 'select';
+					if( is_array($object['value']) ){
 
-                    if( !$object['multiple'] and is_array($object['value']) and count($object['value']) )
-                        $objects[$object['name']] = $object['value'][0];
-                    else
-                        $objects[$object['name']] = $object['value'];
+						foreach ($object['value'] as $value) {
 
-                        break;
+							$id = false;
 
-                    case 'group';
+							if ($object['return_format'] == 'id')
+								$id = $value;
+							elseif (is_object($value) && $object['return_format'] == 'object')
+								$id = $value->term_id;
 
-	                    $layout = $this->layoutAsKeyValue($object['sub_fields']);
-	                    $value = $this->bindLayoutFields($object['value'], $layout);
+							if( $id ) {
 
-	                    $objects[$object['name']] = $this->clean($value, $depth+1);
+								++ACF::$DEPTH;
+								$objects[$object['name']][] = new Term($id);
+							}
+						}
+					}
+					else{
 
-                        break;
+						$id = false;
 
-                default:
+						if ($object['return_format'] == 'id')
+							$id = $object['value'];
+						elseif (is_object($object['value']) && $object['return_format'] == 'object')
+							$id = $object['value']->term_id;
 
-                    $objects[$object['name']] = $object['value'];
-                    break;
-            }
-        }
+						if( $id ) {
 
-        return $objects;
-    }
+							++ACF::$DEPTH;
+							$objects[$object['name']] = new Term($id);
+						}
+					}
 
+					break;
 
+				case 'select';
+
+					if( !$object['multiple'] and is_array($object['value']) and count($object['value']) )
+						$objects[$object['name']] = $object['value'][0];
+					else
+						$objects[$object['name']] = $object['value'];
+
+					break;
+
+				case 'group';
+
+					$layout = $this->layoutAsKeyValue($object['sub_fields']);
+					$value = $this->bindLayoutFields($object['value'], $layout);
+
+					++ACF::$DEPTH;
+					$objects[$object['name']] = $this->clean($value);
+
+					break;
+
+				default:
+
+					$objects[$object['name']] = $object['value'];
+					break;
+			}
+		}
+
+		if (ACF::$DEPTH > 0)
+			--ACF::$DEPTH;
+
+		return $objects;
+	}
 }
