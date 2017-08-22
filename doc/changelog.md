@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.10 - 2017-08-22
+### Added
+* Query::get_term_by
+
 # 1.2.8 - 2017-08-17
 ### Fixed
 * Term now return excerpt instead of description

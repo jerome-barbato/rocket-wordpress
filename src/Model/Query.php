@@ -56,6 +56,17 @@ class Query
 	}
 
 
+	public static function get_term_by($field, $value, $taxonomy)
+	{
+		$term = get_term_by( $field, $value, $taxonomy );
+
+		if( $term )
+			return new Term( $term->term_id );
+		else
+			return false;
+	}
+
+
 	public static function get_posts($args=[], $fields=[])
 	{
 		global $wp_query;
