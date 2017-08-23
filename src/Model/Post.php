@@ -59,7 +59,9 @@ class Post extends \Timber\Post
 			{
 				unset($this->$key);
 				$key = substr($key,1);
-				unset($this->$key);
+				
+				if( isset($this->$key) )
+			    	unset($this->$key);
 			}
 		}
 
