@@ -294,7 +294,7 @@ class CustomPostType {
 
     public function setDescription($description)
     {
-        $this->option['description'] = __($description, Application::$domain_name);
+        $this->option['description'] = __($description, Application::$bo_domain_name);
     }
 
     /**
@@ -593,13 +593,13 @@ class CustomPostType {
      */
     public function hydrate($data_post_type)
     {
-        $this->label_name(__($data_post_type->get('labels.name', ucfirst($this->name)), Application::$domain_name));
-        $this->label_all_items(__($data_post_type->get('labels.all_items','All '.$this->name), Application::$domain_name));
-        $this->label_singular_name(__($data_post_type->get('labels.singular_name',ucfirst($this->slug)), Application::$domain_name));
-        $this->label_add_new_item(__($data_post_type->get('labels.add_new_item','Add a '.$this->slug), Application::$domain_name));
-        $this->label_edit_item(__($data_post_type->get('labels.edit_item','Edit '.$this->slug), Application::$domain_name));
-        $this->label_not_found(__($data_post_type->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$domain_name));
-        $this->label_search_items(__($data_post_type->get('labels.search_items','Search in '.$this->name), Application::$domain_name));
+        $this->label_name(__($data_post_type->get('labels.name', ucfirst($this->name)), Application::$bo_domain_name));
+        $this->label_all_items(__($data_post_type->get('labels.all_items','All '.$this->name), Application::$bo_domain_name));
+        $this->label_singular_name(__($data_post_type->get('labels.singular_name',ucfirst($this->slug)), Application::$bo_domain_name));
+        $this->label_add_new_item(__($data_post_type->get('labels.add_new_item','Add a '.$this->slug), Application::$bo_domain_name));
+        $this->label_edit_item(__($data_post_type->get('labels.edit_item','Edit '.$this->slug), Application::$bo_domain_name));
+        $this->label_not_found(__($data_post_type->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$bo_domain_name));
+        $this->label_search_items(__($data_post_type->get('labels.search_items','Search in '.$this->name), Application::$bo_domain_name));
 
         $this->menu_icon($data_post_type->get('menu_icon','media-default'));
         $this->setPublic($data_post_type->get('public', true));

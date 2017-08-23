@@ -252,7 +252,7 @@ class Taxonomy
 
     public function setDescription($description)
     {
-        $this->option['description'] = __($description, Application::$domain_name);
+        $this->option['description'] = __($description, Application::$bo_domain_name);
     }
 
     /**
@@ -507,13 +507,13 @@ class Taxonomy
     {
     	$this->data = $data;
 
-        $this->label_name(__($data->get('labels.name', ucfirst($this->name)), Application::$domain_name));
-        $this->label_all_items(__($data->get('labels.all_items','All '.$this->name), Application::$domain_name));
-        $this->label_singular_name(__($data->get('labels.singular_name',ucfirst($this->slug)), Application::$domain_name));
-        $this->label_add_new_item(__($data->get('labels.add_new_item','Add a '.$this->slug), Application::$domain_name));
-        $this->label_edit_item(__($data->get('labels.edit_item','Edit '.$this->slug), Application::$domain_name));
-        $this->label_not_found(__($data->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$domain_name));
-        $this->label_search_items(__($data->get('labels.search_items','Search in '.$this->name), Application::$domain_name));
+        $this->label_name(__($data->get('labels.name', ucfirst($this->name)), Application::$bo_domain_name));
+        $this->label_all_items(__($data->get('labels.all_items','All '.$this->name), Application::$bo_domain_name));
+        $this->label_singular_name(__($data->get('labels.singular_name',ucfirst($this->slug)), Application::$bo_domain_name));
+        $this->label_add_new_item(__($data->get('labels.add_new_item','Add a '.$this->slug), Application::$bo_domain_name));
+        $this->label_edit_item(__($data->get('labels.edit_item','Edit '.$this->slug), Application::$bo_domain_name));
+        $this->label_not_found(__($data->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$bo_domain_name));
+        $this->label_search_items(__($data->get('labels.search_items','Search in '.$this->name), Application::$bo_domain_name));
         $this->show_admin_column($data->get('show_admin_column', true));
         $this->assign_to($data->get('object_type', 'post'));
         $this->show_in_nav_menus($data->get('show_in_nav_menus', true));

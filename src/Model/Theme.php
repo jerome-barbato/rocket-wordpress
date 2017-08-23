@@ -86,7 +86,7 @@ class Theme extends Site
     public function addToTwig($twig)
     {
         if ( class_exists( '\\FrontBundle\\Helper\\TwigHelper' ) )
-            $twig->addExtension( new \FrontBundle\Helper\TwigHelper( get_bloginfo('url'), WP_REMOTE ) );
+            $twig->addExtension( new \FrontBundle\Helper\TwigHelper( get_option('home'), WP_REMOTE ) );
 
         return $twig;
     }

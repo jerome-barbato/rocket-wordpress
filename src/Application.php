@@ -30,6 +30,8 @@ abstract class Application {
      * @var string plugin domain name for translations
      */
     public static $domain_name = 'default';
+    public static $bo_domain_name = 'bo_default';
+
     protected $router, $global_context, $class_loader;
     public $remote_url;
 
@@ -266,7 +268,7 @@ abstract class Application {
         {
             $data = new DotAccessData($data);
 
-            $label = __(ucfirst($this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), Application::$domain_name);
+            $label = __(ucfirst($this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), Application::$bo_domain_name);
 
             $post_type = new CustomPostType($label, $slug);
             $post_type->hydrate($data);
@@ -284,7 +286,7 @@ abstract class Application {
         foreach ( $this->config->get('taxonomies', []) as $slug => $data )
         {
             $data = new DotAccessData($data);
-            $label = __(ucfirst( $this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), Application::$domain_name);
+            $label = __(ucfirst( $this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), Application::$bo_domain_name);
 
             $taxonomy = new Taxonomy($label, $slug);
             $taxonomy->hydrate($data);
@@ -444,7 +446,8 @@ abstract class Application {
     {
         $this->config = $this->getConfig('wordpress');
 
-        self::$domain_name = $this->config->get('domain_name');
+        self::$domain_name = $this->config->get('domain_name', 'customer');
+        self::$bo_domain_name = 'bo_'.self::$domain_name;
     }
 
 
