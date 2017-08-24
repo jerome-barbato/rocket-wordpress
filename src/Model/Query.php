@@ -67,17 +67,52 @@ class Query
 	}
 
 
+	public static function get_post_terms($id, $primary=false)
+	{
+		$taxonomies = get_post_taxonomies( $id );
+		$post_terms = [];
+
+		foreach($taxonomies as $taxonomy)
+		{
+			if( $primary and class_exists('WPSEO_Primary_Term') )
+			{
+				$wpseo_primary_term = new \WPSEO_Primary_Term( $taxonomy, $id );
+
+				if($wpseo_primary_term)
+					$post_terms[$taxonomy] = new Term( $wpseo_primary_term->get_primary_term() );
+			}
+			else
+			{
+				$terms = wp_get_post_terms($id, $taxonomy, ['fields' => 'ids']);
+
+				if( $primary )
+				{
+					if( !empty($terms) )
+						$post_terms[$taxonomy] = new Term($terms[0]);
+				}
+				else
+				{
+					foreach($terms as $term)
+					{
+						$post_terms[$taxonomy][] = new Term($term);
+					}
+				}
+			}
+		}
+
+		return $post_terms;
+	}
+
+
 	public static function get_posts($args=[], $fields=[])
 	{
 		global $wp_query;
 
-		$args = array_merge($wp_query->query, $args);
+		if( !isset($args['post_type']) )
+			$args = array_merge($wp_query->query, $args);
 
 		if( !isset($args['posts_per_page']) and !isset($args['numberposts']))
 			$args['posts_per_page'] = get_option( 'posts_per_page' );
-
-		if( isset($args['post_type'], $args['pagename']) )
-			unset($args['pagename']);
 
 		$args['fields'] = 'ids';
 
