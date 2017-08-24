@@ -23,11 +23,36 @@ class Theme extends Site
     {
         parent::__construct();
 
-        add_filter('timber_context', array($this, 'addToContext'));
-        add_filter('get_twig', array($this, 'addToTwig'));
+        add_filter('timber_context', [$this, 'addToContext']);
+        add_filter('get_twig', [$this, 'addToTwig']);
+	    add_action('wp_head', [$this, 'headAction']);
+	    add_action('wp_footer', [$this, 'footerAction']);
 
 	    /** @var Application $app */
 	    $this->app = Application::getInstance();
+    }
+
+
+    public function headAction()
+    {
+	    if( WP_DEBUG )
+		    Timber::render( 'views/header.debug.twig', [
+		    	'config'=>$this->app->config->export()
+		    ]);
+    }
+
+
+    public function footerAction()
+    {
+	    if( WP_DEBUG )
+		    Timber::render( 'views/footer.debug.twig', [
+		    	'config'=>$this->app->config->export(),
+			    'environment' => $this->app->config->get('environment', 'production'),
+			    'last_update' => strtotime(shell_exec('git log -1 --format=%cd')),
+			    'base_url' => get_option('home'),
+			    'cookies' => $_COOKIE,
+			    'host' => 'http://' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 's':'') . $_SERVER['HTTP_HOST']
+	    ]);
     }
 
 
@@ -40,14 +65,14 @@ class Theme extends Site
         else
             $languages = [];
 
-        $context = array_merge($context, array(
+        $context = array_merge($context, [
 
-            'project' => array(
+            'project' => [
                 'name'        => get_bloginfo('name'),
                 'description' => get_bloginfo('description')
-            ),
+            ],
             'debug'          => WP_DEBUG,
-            'environment'    => WP_DEBUG ? 'development' : 'production',
+            'environment'    => $this->app->config->get('environment', 'production'),
             'locale'         => count($language) ? $language[0] : 'en',
             'languages'      => $languages,
             'is_admin'       => current_user_can('manage_options'),
@@ -55,7 +80,7 @@ class Theme extends Site
             'is_child_theme' => is_child_theme(),
             'base_url'       => get_bloginfo('url'),
             'ajax_url'       => admin_url( 'admin-ajax.php' )
-        ));
+        ]);
 
         $menus = get_registered_nav_menus();
         $context['menus'] = [];

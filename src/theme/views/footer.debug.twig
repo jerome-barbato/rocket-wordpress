@@ -1,0 +1,151 @@
+{% if config.debug_bar|default() %}
+	<div class="debug-bar debug-bar--{{ config.debug_bar.theme|default('dark') }}">
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet">
+		<style type="text/css">
+			.debug-bar {
+				font-family: 'Open Sans', sans-serif; position: fixed; padding: 80px 20px; top: 50%; background-color: #2b2e34;
+				transform: translateY(-50%) translateX(-200px); color: #fff; border-radius: 0 8px 8px 0; z-index: 99999;
+				width: 220px; text-transform: uppercase; box-sizing: border-box; transition: 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+			}
+			.debug-bar:hover { transform: translateY(-50%) }
+			.debug-bar__icon { position: absolute; width: 8px; height: 1px; top: 50%; right: 8px; margin-top: -5px; transition: 0.3s cubic-bezier(0.645, 0.045, 0.355, 1.000); opacity: 0.7 }
+			.debug-bar:hover .debug-bar__icon { opacity: 0 }
+			.debug-bar__icon:before, .debug-bar__icon:after { content: ''; position: absolute; width: 100%; height: 100% }
+			.debug-bar__icon, .debug-bar__icon:before, .debug-bar__icon:after { background-color: #fff }
+			.debug-bar__icon:before { top: -500% }
+			.debug-bar__icon:after { top: 500% }
+			.debug-bar__title, .debug-bar__link { font-size: 10px; letter-spacing: 0.4em }
+			.debug-bar__block + .debug-bar__block { margin-top: 40px }
+			.debug-bar__title { opacity: 0.4 }
+			.debug-bar__text { font-size: 16px; font-weight: 700; margin-top: 5px; letter-spacing: 0.2em }
+			.debug-bar__link { display: block; position: relative; cursor: pointer }
+			.debug-bar__link[href] { transition: color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1.000) }
+			.debug-bar__link[href]:hover { color:#6bb559 }
+			.debug-bar__block + .debug-bar__link { margin-top: 80px }
+			.debug-bar__link + .debug-bar__link { margin-top: 20px }
+			.debug-bar__link--toggle { padding-left: 40px }
+			.debug-bar__link--toggle:before, .debug-bar__link--toggle:after { content: ''; position: absolute }
+			body.has-debug [data-function="debug"]:after { left: 16px; background-color: #6bb559 }
+			body.has-livereload [data-function="livereload"]:after { left: 16px; background-color: #6bb559 }
+			.debug-bar__link--toggle:before { height: 8px; width: 30px; background-color: #fff; left: 0; bottom: 0; border-radius: 5px; opacity: 0.2 }
+			.debug-bar__link--toggle:after { width: 14px; height: 14px; background-color: #fff; left: 0; border-radius: 100%; top: -1px; transition: 0.2s cubic-bezier(0.645, 0.045, 0.355, 1.000) }
+			body.has-debug *:hover{ outline: 1px dotted rgba(255,0,0,0.5) }
+			body.has-debug .debug-bar:hover, body.has-debug .debug-bar *:hover{ outline: none }
+		</style>
+
+		<div class="debug-bar__icon"></div>
+
+		{% if page_status|default() %}
+			<div class="debug-bar__block">
+				<div class="debug-bar__title">Page status</div>
+				<div class="debug-bar__text">{{ page_status }}</div>
+			</div>
+		{% endif %}
+
+		<div class="debug-bar__block">
+			<div class="debug-bar__title">Environment</div>
+			<div class="debug-bar__text">{{ environment }}</div>
+		</div>
+
+		<div class="debug-bar__block">
+			<div class="debug-bar__title">Last update</div>
+			<div class="debug-bar__text">{{ last_update|date('m.d.y / H:i', 'Europe/Paris') }}</div>
+		</div>
+
+		{%  if config.debug_bar.styleguide|default() %}
+			<a class="debug-bar__link" href="{{ base_url }}/styleguide.html" target="_blank">Styleguide</a>
+		{% endif %}
+
+		{%  if config.debug_bar.sitemap|default() %}
+			<a class="debug-bar__link" href="{{ base_url }}/sitemap" target="_blank">Sitemap</a>
+		{% endif %}
+
+		{%  if config.export|default() %}
+			<a class="debug-bar__link" href="{{ base_url }}/vulcanize" target="_blank" title="Export website as HTML">Vulcanize</a>
+		{% endif %}
+
+		<a class="debug-bar__link debug-bar__link--toggle" data-function="debug">Debug</a>
+
+		{% if environment == 'local' %}
+			<a class="debug-bar__link debug-bar__link--toggle" data-function="livereload">Livereload</a>
+		{% endif %}
+
+		<script type="text/javascript">
+			function setDebugCookie(cname, cvalue, exdays) { var d = new Date(); d.setTime(d.getTime() + (exdays*24*60*60*1000)); var expires = "expires="+ d.toUTCString(); document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/"; }
+			function getDebugCookie(cname) { var name = cname + "="; var decodedCookie = decodeURIComponent(document.cookie); var ca = decodedCookie.split(';'); for(var i = 0; i <ca.length; i++) { var c = ca[i]; while (c.charAt(0) == ' ') { c = c.substring(1); } if (c.indexOf(name) == 0) { return c.substring(name.length, c.length); } } return ""; }
+
+			$('.debug-bar [data-function="debug"]').click(function(){
+				$('body').toggleClass('has-debug');
+				setDebugCookie('debug-mode', $('body').hasClass('has-debug'));
+			});
+
+			$('.debug-bar [data-function="livereload"]').click(function(){
+				$('body').toggleClass('has-livereload');
+				setDebugCookie('livereload', $('body').hasClass('has-livereload'));
+				location.reload();
+			});
+
+			if( getDebugCookie('debug-mode') === 'true' )
+				$('body').addClass('has-debug');
+
+			if( getDebugCookie('livereload') === 'true' )
+				$('body').addClass('has-livereload');
+		</script>
+	</div>
+{% endif %}
+
+
+{% if config.debug_bar.grid|default() %}
+	<div class="debug-grid">
+		<style type="text/css">
+			.debug-grid{
+				position: fixed; left: 0; top: 0; width: 100%; height: 100%; display: none;
+				pointer-events: none; margin-top: 0!important; z-index: 99999;
+			}
+			body.has-debug .debug-grid{ display: block }
+			.debug-grid [data-col]{ height: 100%; border-left: 1px solid rgba(74,255,255,0.4); float: left!important; display: block }
+			.debug-grid [data-col] span{ height: 100%; display: block; background: rgba(255,100,100,0.05) }
+			.debug-grid [data-col]:last-of-type{ border-right: 1px solid rgba(74,255,255,0.41) }
+			.debug-grid .container{ height: 100% }
+		</style>
+		<div class="container">
+			{% for col in 1..config.debug_bar.grid %}<div data-col="1/{{ config.debug_bar.grid }}"><span>&nbsp;</span></div>{% endfor %}
+		</div>
+	</div>
+{% endif %}
+
+
+
+{% if config.debug_bar.edit|default() %}
+	<div class="debug-edit">
+		<script type="text/javascript">
+			$(document).on('focus', '[contenteditable]', function() {
+				var $this = $(this);
+				$this.data('before', $this.html());
+				return $this;
+			}).on('blur paste', '[contenteditable]', function() {
+				var $this = $(this);
+				if ($this.data('before') !== $this.html()) {
+					$this.data('before', $this.html());
+					$this.trigger('change');
+				}
+				return $this;
+			});
+
+			$(document).on('change', '[contenteditable]', function() {
+
+				var $element = $(this);
+				$.post(app.base_url+'/dico', {node_id:$element.data('node_id'), value:$element.html()}, function(data){
+					if(data.status){
+						$element.addClass('has-changed');
+						setTimeout(function(){ $element.removeClass('has-changed') }, 500);
+					}
+				})
+			});
+		</script>
+	</div>
+{% endif %}
+
+{% if cookies.livereload|default() %}
+	<script type="text/javascript" src="{{ host }}:35729/livereload.js"></script>
+{% endif %}
