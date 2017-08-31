@@ -78,7 +78,7 @@ class Query
 			{
 				$wpseo_primary_term = new \WPSEO_Primary_Term( $taxonomy, $id );
 
-				if($wpseo_primary_term)
+				if( $wpseo_primary_term and $wpseo_primary_term->get_primary_term() )
 					$post_terms[$taxonomy] = new Term( $wpseo_primary_term->get_primary_term() );
 			}
 			else

@@ -64,6 +64,10 @@
 			<a class="debug-bar__link" href="{{ base_url }}/vulcanize" target="_blank" title="Export website as HTML">Vulcanize</a>
 		{% endif %}
 
+		{%  if config.post_types|default() %}
+			<a href="{{ base_url }}/edition/" target="_blank" class="debug-bar__link">Backoffice</a>
+		{% endif %}
+
 		<a class="debug-bar__link debug-bar__link--toggle" data-function="debug">Debug</a>
 
 		{% if environment == 'local' %}

@@ -522,7 +522,10 @@ class Taxonomy
         $this->show_ui($data->get('show_ui', true));
         $this->hierarchical($data->get('hierarchical', true));
         $this->query_var($data->get('query_var', true));
-        $this->set_default_term($data->get('default_term', 'default'));
+
+        if( $data->get('default_term', 'default') )
+	        $this->set_default_term($data->get('default_term', 'default'));
+
         $this->rewrite($data->get('rewrite', true));
     }
 }
