@@ -1,11 +1,11 @@
 {
   "name":"metabolism/rocket-wordpress",
   "license": "AGPL-3.0",
-  "version": "1.2.16",
+  "version": "1.2.17",
   "description": "Wordpress Scaffolder using Rocket Framework",
   "require": {
     "php" : ">=5.5.0",
-    "metabolism/rocket-installer": "1.0.*",
+    "metabolism/rocket-installer": "1.1.*",
     "metabolism/rocket-kernel": "1.2.*",
     "johnpbloch/wordpress-core": "4.8.*",
     "mustangostang/spyc": "0.6.*",
@@ -26,15 +26,11 @@
           "app/config/acf": 777
         }
       },
-      "symlink": {
+      "copy": {
         "metabolism/rocket-wordpress": {
           "src/theme": "web/app/themes/rocket",
           "src/Helper/Rocket.php": "web/app/mu-plugins/Rocket.php",
-          "doc": "doc/wordpress"
-        }
-      },
-      "copy": {
-        "metabolism/rocket-wordpress": {
+          "doc": "doc/wordpress",
           "wp-config.php": "web/wp-config.php"
         }
       },
