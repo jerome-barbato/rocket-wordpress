@@ -39,7 +39,7 @@ class Post extends \Timber\Post
 	 */
 	protected function hydrateCustomFields()
 	{
-		$custom_fields = new ACF( $this->ID);
+		$custom_fields = new ACF( $this->ID );
 
 		foreach ($custom_fields->get() as $name => $value )
 		{

@@ -514,6 +514,7 @@ class Taxonomy
         $this->label_edit_item(__($data->get('labels.edit_item','Edit '.$this->slug), Application::$bo_domain_name));
         $this->label_not_found(__($data->get('labels.not_found',ucfirst($this->slug).' not found'), Application::$bo_domain_name));
         $this->label_search_items(__($data->get('labels.search_items','Search in '.$this->name), Application::$bo_domain_name));
+
         $this->show_admin_column($data->get('show_admin_column', true));
         $this->assign_to($data->get('object_type', 'post'));
         $this->show_in_nav_menus($data->get('show_in_nav_menus', true));

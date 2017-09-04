@@ -608,7 +608,7 @@ class CustomPostType {
         $this->capability_type($data_post_type->get('capability_type', 'page'));
         $this->supports( $data_post_type->get('supports', ['title', 'editor', 'thumbnail']));
         $this->rewrite($data_post_type->get('rewrite', true));
-        $this->exclude_from_search($data_post_type->get('exclude_from_search', true));
+        $this->exclude_from_search($data_post_type->get('exclude_from_search', false));
         $this->query_var($data_post_type->get('query_var', true));
 	    $this->taxonomies($data_post_type->get('taxonomies', []));
 

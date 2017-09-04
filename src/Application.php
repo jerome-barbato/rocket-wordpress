@@ -104,8 +104,9 @@ abstract class Application {
 
             // Remove image sizes for thumbnails
             add_filter( 'intermediate_image_sizes_advanced', [$this, 'intermediateImageSizesAdvanced'] );
-
 	        add_filter( 'wp_terms_checklist_args', [Terms::getInstance(), 'wp_terms_checklist_args'] );
+	        add_filter( 'mce_buttons', [$this, 'TinyMceButtons']);
+	        add_filter( 'wp_editor_settings', [$this, 'editorSettings'], 10, 2);
 
             // Removes or add pages
             add_action( 'admin_menu', [$this, 'adminMenu']);
@@ -121,6 +122,7 @@ abstract class Application {
         {
             add_action( 'after_setup_theme', [$this, 'afterSetupTheme']);
             add_action( 'wp_footer', [$this, 'wpFooter']);
+	        add_action( 'pre_get_posts', [$this, 'preGetPosts'] );
 
             $this->router = new Router();
             $this->router->setLocale(get_locale());
@@ -129,6 +131,83 @@ abstract class Application {
         }
 
         $this->registerActions();
+    }
+
+
+    /**
+     * Add custom post type for taxonomy archive page
+     */
+    public function preGetPosts( $query )
+    {
+	    if( ! $query->is_main_query() || is_admin() )
+		    return;
+
+	    if ( $query->is_tax )
+	    {
+		    $post_type = get_query_var('post_type');
+
+		    if( !$post_type )
+		    {
+			    global $wp_taxonomies;
+
+			    $taxo = get_queried_object();
+			    $post_type = ( isset( $wp_taxonomies[$taxo->taxonomy] ) ) ? $wp_taxonomies[$taxo->taxonomy]->object_type : array();
+
+			    $query->set('post_type', $post_type);
+			    $query->query['post_type'] = $post_type;
+		    }
+	    }
+
+	    return $query;
+    }
+
+
+    /**
+     * Add custom post type for taxonomy archive page
+     */
+    public function editorSettings( $settings, $editor_id )
+    {
+	    if ( $editor_id == 'description' and class_exists('WPSEO_Taxonomy') and \WPSEO_Taxonomy::is_term_edit( $GLOBALS['pagenow'] ) )
+	    {
+		    $settings[ 'tinymce' ] = false;
+		    $settings[ 'wpautop' ] = false;
+		    $settings[ 'media_buttons' ] = false;
+		    $settings[ 'quicktags' ] = false;
+		    $settings[ 'default_editor' ] = '';
+		    $settings[ 'textarea_rows' ] = 4;
+	    }
+
+	    return $settings;
+    }
+
+
+    /**
+     * Configure Tiny MCE first line buttons
+     */
+    public function TinyMceButtons( $mce_buttons )
+    {
+	    $mce_buttons = array(
+		    'bold',				// Applies the bold format to the current selection.
+		    'italic',			// Applies the italic format to the current selection.
+		    'underline',		// Applies the underline format to the current selection.
+		    'strikethrough',	// Applies strike though format to the current selection.
+		    'bullist',			// Formats the current selection as a bullet list.
+		    'numlist',			// Formats the current selection as a numbered list.
+		    'blockquote',		// Applies block quote format to the current block level element.
+		    'hr',				// Inserts a horizontal rule into the editor.
+		    'alignleft',		// Left aligns the current block or image.
+		    'aligncenter',		// Left aligns the current block or image.
+		    'alignright',		// Right aligns the current block or image.
+		    'alignjustify',		// Full aligns the current block or image.
+		    'link',				// Creates/Edits links within the editor.
+		    'unlink',			// Removes links from the current selection.
+		    'wp_more',			// Inserts the <!-- more --> tag.
+		    'spellchecker',		// ???
+		    'wp_adv',			// Toggles the second toolbar on/off.
+		    'dfw' 				// Distraction-free mode on/off.
+	    );
+
+	    return $mce_buttons;
     }
 
 
