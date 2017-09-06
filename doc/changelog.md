@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.18 - 2017-09-06
+### Fixed
+* CRITICAL : Route detection failed with query string
+
 # 1.2.17 - 2017-09-04
 ### Changed
 * Symlinks are no longer supported

@@ -38,11 +38,16 @@ class Router {
     {
         $current_url = ltrim(esc_url_raw(add_query_arg([])), '/');
 
-        $home_path = trim(parse_url(home_url(), PHP_URL_PATH), '/');
-        if ($home_path && strpos($current_url, $home_path) === 0)
-            $current_url = ltrim(substr($current_url, strlen($home_path)), '/');
+	    $home_path = trim(parse_url(home_url(), PHP_URL_PATH), '/');
+	    if ($home_path && strpos($current_url, $home_path) === 0)
+		    $current_url = ltrim(substr($current_url, strlen($home_path)), '/');
 
-        return '/'.strtok($current_url,'?');;
+	    $query_var_pos = strpos($current_url, '?');
+
+	   if( $query_var_pos === false )
+		   return '/'.$current_url;
+	   else
+		   return '/'.substr($current_url, 0, $query_var_pos);
     }
 
 
