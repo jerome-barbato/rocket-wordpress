@@ -7,4 +7,4 @@
  * Author URI: http://www.metabolism.fr
  */
 
-new FrontBundle\Application();
+FrontBundle\Application::getInstance()->setup();

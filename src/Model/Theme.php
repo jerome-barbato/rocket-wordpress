@@ -71,15 +71,16 @@ class Theme extends Site
                 'name'        => get_bloginfo('name'),
                 'description' => get_bloginfo('description')
             ],
-            'debug'          => WP_DEBUG,
-            'environment'    => $this->app->config->get('environment', 'production'),
-            'locale'         => count($language) ? $language[0] : 'en',
-            'languages'      => $languages,
-            'is_admin'       => current_user_can('manage_options'),
-            'body_class'     => get_bloginfo('language') . ' ' . implode(' ', get_body_class()),
-            'is_child_theme' => is_child_theme(),
-            'base_url'       => get_bloginfo('url'),
-            'ajax_url'       => admin_url( 'admin-ajax.php' )
+            'debug'            => WP_DEBUG,
+            'environment'      => $this->app->config->get('environment', 'production'),
+            'locale'           => count($language) ? $language[0] : 'en',
+            'languages'        => $languages,
+            'is_admin'         => current_user_can('manage_options'),
+            'body_class'       => get_bloginfo('language') . ' ' . implode(' ', get_body_class()),
+            'is_child_theme'   => is_child_theme(),
+            'base_url'         => get_bloginfo('url'),
+            'maintenance_mode' => wp_maintenance_mode(),
+            'ajax_url'         => admin_url( 'admin-ajax.php' )
         ]);
 
         $menus = get_registered_nav_menus();

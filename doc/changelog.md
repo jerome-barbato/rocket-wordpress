@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.19 - 2017-09-11
+### Fixed
+* App initialised twice
+* Delayed route initialisation
+* Format select in wysiwyg toolbar
+
+### Added
+* maintenance mode -> checkbox in settings + wp_maintenance_mode()
+
 # 1.2.18 - 2017-09-06
 ### Fixed
 * CRITICAL : Route detection failed with query string

@@ -16,6 +16,8 @@ use Rocket\Model\CustomPostType,
 
 use Symfony\Component\Routing\Route as Route;
 
+include 'Helper/Functions.php';
+
 /**
  * Class Rocket Framework
  */
@@ -75,11 +77,13 @@ abstract class Application {
         $this->registerFilters();
 
         // Global init action
-        add_action( 'init', function(){
-
+        add_action( 'init', function()
+        {
 	        $this->addPostTypes();
 	        $this->addTaxonomies();
 	        $this->addMenus();
+	        $this->addMaintenanceMode();
+	        $this->registerActions();
 
 	        $this->init();
         });
@@ -124,15 +128,48 @@ abstract class Application {
             add_action( 'wp_footer', [$this, 'wpFooter']);
 	        add_action( 'pre_get_posts', [$this, 'preGetPosts'] );
 
-            $this->router = new Router();
-            $this->router->setLocale(get_locale());
+	        add_action( 'init', function()
+	        {
+		        $this->router = new Router();
+		        $this->router->setLocale(get_locale());
 
-            $this->registerRoutes();
+		        $this->registerRoutes();
+	        });
         }
-
-        $this->registerActions();
     }
 
+
+    /**
+     * Add custom post type for taxonomy archive page
+     */
+    public function addMaintenanceMode()
+    {
+    	if( is_admin() )
+	    {
+		    add_action( 'admin_init', function(){
+
+		    	add_settings_field('maintenance_field', __('Maintenance Mode'), function(){
+
+				    echo '<input type="checkbox" id="maintenance_field" name="maintenance_field" value="1" ' . checked( 1, get_option('maintenance_field'), false ) . ' />'.__('Activate maintenance mode');
+
+			    }, 'general');
+
+			    register_setting('general', 'maintenance_field');
+		    });
+	    }
+
+	    add_action( 'admin_bar_menu', function( $wp_admin_bar )
+	    {
+		    $args = array(
+			    'id'    => 'maintenance',
+			    'title' => __('Maintenance mode').' : '.( get_option( 'maintenance_field', false) ? __('On') : __('Off')),
+			    'href'  => get_admin_url( null, '/options-general.php#maintenance_field' )
+		    );
+
+		    $wp_admin_bar->add_node( $args );
+
+	    }, 999 );
+    }
 
     /**
      * Add custom post type for taxonomy archive page
@@ -151,7 +188,7 @@ abstract class Application {
 			    global $wp_taxonomies;
 
 			    $taxo = get_queried_object();
-			    $post_type = ( isset( $wp_taxonomies[$taxo->taxonomy] ) ) ? $wp_taxonomies[$taxo->taxonomy]->object_type : array();
+			    $post_type = ( isset($taxo->taxonomy, $wp_taxonomies[$taxo->taxonomy] ) ) ? $wp_taxonomies[$taxo->taxonomy]->object_type : array();
 
 			    $query->set('post_type', $post_type);
 			    $query->query['post_type'] = $post_type;
@@ -187,6 +224,7 @@ abstract class Application {
     public function TinyMceButtons( $mce_buttons )
     {
 	    $mce_buttons = array(
+		    'formatselect',		// Applies the bold format to the current selection.
 		    'bold',				// Applies the bold format to the current selection.
 		    'italic',			// Applies the italic format to the current selection.
 		    'underline',		// Applies the underline format to the current selection.
@@ -675,7 +713,5 @@ abstract class Application {
 
         if( !defined('WPINC') )
             include CMS_URI.'/wp-blog-header.php';
-        else
-            $this->setup();
     }
 }

@@ -20,5 +20,6 @@
  */
 
  // Add your configuration here
+define('WP_REMOTE', false);
 
 include dirname(__DIR__) . '/vendor/metabolism/rocket-wordpress/src/load-config.php';
