@@ -127,29 +127,29 @@ class Theme extends Site
                 Timber::$locations = BASE_URI . '/app/views/';
                 $context = Timber::get_context();
 
-                if( $this->app ){
+                if( $this->app ) {
 
-                    //clean context
-                    unset($context['posts'], $context['request'], $context['theme'], $context['wp_head'], $context['wp_footer'], $context['wp_title']);
+	                $route = false;
 
-                    $this->app->setContext($context);
+	                //clean context
+	                unset($context['posts'], $context['request'], $context['theme'], $context['wp_head'], $context['wp_footer'], $context['wp_title']);
 
-                    if( !is_404() and $route = $this->app->solve() ){
+	                $this->app->setContext($context);
 
-                        $page = $route[0];
-                        $context = (count($route)>1 and is_array($route[1])) ? array_merge($context, $route[1]): $context;
+	                if (!is_404())
+		                $route = $this->app->solve();
 
-                        Timber::render( 'page/'.$page, $context );
-                    }
-                    else{
+	                if (!$route)
+		                $route = $this->app->getErrorPage(404);
 
-                        $context['code'] = 404;
-                        Timber::render( 'page/error.html.twig', $context );
-                    }
+	                $page = $route[0];
+	                $context = (count($route) > 1 and is_array($route[1])) ? array_merge($context, $route[1]) : $context;
+
+	                Timber::render('page/' . $page, $context);
                 }
-                else{
+                else {
 
-                    wp_redirect( wp_login_url() );
+	                wp_redirect(wp_login_url());
                 }
             }
 

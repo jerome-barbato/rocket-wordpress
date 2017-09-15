@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Matcher\UrlMatcher,
 class Router {
 
 
-    protected $routes, $locale;
+    protected $routes, $locale, $errors;
 
     public function __construct()
     {
@@ -87,12 +87,37 @@ class Router {
      */
     public function add($pattern, $controller)
     {
-        $route = new Route($pattern, ['_controller' => $controller]);
-        $name  = $this->generateRouteName($route);
+    	if( is_int($pattern) )
+	    {
+		    $this->errors[$pattern] = $controller;
+	    }
+	    else
+	    {
+		    $route = new Route($pattern, ['_controller' => $controller]);
+		    $name  = $this->generateRouteName($route);
 
-        $this->routes->add($name, $route);
+		    $this->routes->add($name, $route);
 
-        return $route;
+		    return $route;
+	    }
+    }
+
+	/**
+	 * Define error manager
+	 * @param $code
+	 * @return Route
+	 * @internal param $pattern
+	 * @internal param $controller
+	 */
+    public function error($code)
+    {
+	    if( isset($this->errors[$code] ) )
+	    {
+		    $controller = $this->errors[$code];
+		    return call_user_func_array($controller, [$this->locale]);
+	    }
+	    else
+	    	return false;
     }
 
 

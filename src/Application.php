@@ -659,6 +659,17 @@ abstract class Application {
     }
 
 
+	/**
+	 * Define route manager
+	 * @param int $code
+	 * @return bool|mixed
+	 */
+    public function getErrorPage($code=404)
+    {
+        return $this->router->error($code);
+    }
+
+
     /**
      * Add wordpress configuration 'options_page' fields as ACF Options pages
      */
