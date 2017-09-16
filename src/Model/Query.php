@@ -125,10 +125,18 @@ class Query
 				$id   = $post;
 				$post = [];
 
-				foreach ($fields as $key)
+				if( is_array($fields) )
 				{
-					$post[$key] = get_field($key, $id);
+					foreach ($fields as $key)
+					{
+						$post[$key] = get_field($key, $id);
+					}
 				}
+				else
+				{
+					$post = get_field($fields, $id);
+				}
+
 			}
 			else
 				$post = new Post( $post );

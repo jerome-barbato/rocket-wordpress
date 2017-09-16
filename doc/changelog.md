@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.21 - 2017-09-16
+### Added
+* add_ghost_page
+
 # 1.2.20 - 2017-09-15
 ### Fixed
 * Better 404 handling
