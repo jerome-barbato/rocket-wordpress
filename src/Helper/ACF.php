@@ -15,12 +15,17 @@ use Timber\Image,
 class ACF
 {
 	private $raw_objects, $objects, $debug;
+
+	protected static $MAX_DEPTH = 2;
 	protected static $DEPTH = 0;
+	protected static $CACHE = [];
 
 	public function __construct($post_id, $debug=false)
 	{
 		if( function_exists('get_field_objects') )
 			$this->raw_objects = get_field_objects($post_id);
+		else
+			$this->raw_objects = [];
 
 		if( $debug )
 			print_r( $this->raw_objects);
@@ -28,6 +33,12 @@ class ACF
 		$this->debug = $debug;
 
 		$this->objects = $this->clean( $this->raw_objects);
+	}
+
+
+	public static function setMaxDepth( $value )
+	{
+		ACF::$MAX_DEPTH = $value;
 	}
 
 
@@ -97,31 +108,62 @@ class ACF
 	}
 
 
-	public function clean($raw_objects)
+	public function getCache($type, $id)
 	{
+		if( isset(ACF::$CACHE[$type], ACF::$CACHE[$type][$id]))
+			return ACF::$CACHE[$type][$id];
 
-		// Stop recurson
-		if ( ACF::$DEPTH > 4 ){
+		if( !isset(ACF::$CACHE[$type]) )
+			ACF::$CACHE[$type] = [];
 
-			--ACF::$DEPTH;
-			return $raw_objects;
+		$value = '';
+
+		switch ($type)
+		{
+			case 'image':
+				$value = new Image($id);
+				break;
+
+			case 'file':
+				$value = apply_filters('rewrite_upload_url', wp_get_attachment_url( $id ));
+				break;
+
+			case 'product':
+				$value = wc_get_product( $id );
+				break;
+
+			case 'post':
+				$value = new Post( $id );
+				break;
+
+			case 'user':
+				$value = new User( $id );
+				break;
+
+			case 'term':
+				$value = new Term( $id );
+				break;
 		}
 
+		ACF::$CACHE[$type][$id] = $value;
 
+		return $value;
+	}
+
+
+	public function clean($raw_objects, $check_depth=true)
+	{
 		$objects = [];
+
+		if( !$raw_objects or !is_array($raw_objects) or ( $check_depth and  ACF::$DEPTH > ACF::$MAX_DEPTH ) )
+			return $objects;
+
+		if( $check_depth )
+			++ACF::$DEPTH;
 
 		// Start analyzing
 
-		if( !$raw_objects or !is_array($raw_objects) ) {
-
-			if ( ACF::$DEPTH > 0 )
-				-- ACF::$DEPTH;
-
-			return [];
-		}
-
 		foreach ($raw_objects as $object) {
-
 
 			switch ($object['type']) {
 
@@ -131,8 +173,6 @@ class ACF
 					$value = reset($object['value']);
 
 					$layout['value'] = $value;
-
-					++ACF::$DEPTH;
 					$value = $this->clean([$layout]);
 					$objects[$object['name']] = reset($value);
 
@@ -143,9 +183,9 @@ class ACF
 						break;
 
 					if ($object['return_format'] == 'id')
-						$objects[$object['name']] = new Image($object['value']);
+						$objects[$object['name']] = $this->getCache('image', $object['value']);
 					elseif ($object['return_format'] == 'array')
-						$objects[$object['name']] = new Image($object['value']['id']);
+						$objects[$object['name']] = $this->getCache('image', $object['value']['id']);
 					else
 						$objects[$object['name']] = $object['value'];
 
@@ -160,10 +200,8 @@ class ACF
 
 						$objects[$object['name']] = [];
 
-						foreach ($object['value'] as $value) {
-
-							$objects[$object['name']][] = new Image($value['id']);
-						}
+						foreach ($object['value'] as $value)
+							$objects[$object['name']][] = $this->getCache('image', $value['id']);
 					}
 
 					break;
@@ -174,7 +212,7 @@ class ACF
 						break;
 
 					if ($object['return_format'] == 'id')
-						$objects[$object['name']] = apply_filters('rewrite_upload_url', wp_get_attachment_url( $object['value'] ));
+						$objects[$object['name']] = $this->getCache('file', $object['value']);
 					elseif ($object['return_format'] == 'array')
 						$objects[$object['name']] = $object['value']['url'];
 					else
@@ -192,15 +230,10 @@ class ACF
 
 							$is_woo_product = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' );
 
-							if ($object['return_format'] == 'id') {
-								++ACF::$DEPTH;
-								$objects[$object['name']][] = $is_woo_product ? ['product'=>wc_get_product($value), 'post'=>new Post($value)] : new Post($value);
-
-							}
-							elseif ($object['return_format'] == 'object') {
-								++ACF::$DEPTH;
-								$objects[$object['name']][] = $is_woo_product ? ['product'=>wc_get_product($value->ID), 'post'=>new Post($value->ID)] : new Post($value->ID);
-							}
+							if ($object['return_format'] == 'id')
+								$objects[$object['name']][] = $is_woo_product ? ['product'=>$this->getCache('product', $value), 'post'=>$this->getCache('post', $value)] : $this->getCache('post', $value);
+							elseif ($object['return_format'] == 'object')
+								$objects[$object['name']][] = $is_woo_product ? ['product'=>$this->getCache('product', $value->ID), 'post'=>$this->getCache('post', $value->ID)] : $this->getCache('post', $value->ID);
 							else
 								$objects[$object['name']][] = $object['value'];
 						}
@@ -213,16 +246,10 @@ class ACF
 					if( empty($object['value']) )
 						break;
 
-					if ($object['return_format'] == 'id') {
-
-						++ACF::$DEPTH;
-						$objects[$object['name']] = new Post($object['value']);
-					}
-					elseif ($object['return_format'] == 'object') {
-
-						++ACF::$DEPTH;
-						$objects[$object['name']] = new Post($object['value']->ID);
-					}
+					if ($object['return_format'] == 'id')
+						$objects[$object['name']] = $this->getCache('post', $object['value']);
+					elseif ($object['return_format'] == 'object')
+						$objects[$object['name']] = $this->getCache('post', $object['value']->ID);
 					else
 						$objects[$object['name']] = $object['value'];
 
@@ -233,7 +260,7 @@ class ACF
 					if( empty($object['value']) )
 						break;
 
-					$objects[$object['name']] = new User($object['value']['ID']);
+					$objects[$object['name']] = $this->getCache('user', $object['value']['ID']);
 					break;
 
 				case 'flexible_content';
@@ -245,10 +272,8 @@ class ACF
 						$layouts = $this->layoutsAsKeyValue($object['layouts']);
 
 						foreach ($object['value'] as $value) {
-
 							$type = $value['acf_fc_layout'];
 							$value = $this->bindLayoutsFields($value, $layouts);
-							++ACF::$DEPTH;
 							$objects[$object['name']][] = ['@type'=>$type, 'data'=>$this->clean($value)];
 						}
 					}
@@ -266,7 +291,6 @@ class ACF
 						foreach ($object['value'] as $value)
 						{
 							$value = $this->bindLayoutFields($value, $layout);
-							++ACF::$DEPTH;
 							$objects[$object['name']][] = $this->clean($value);
 						}
 					}
@@ -288,11 +312,8 @@ class ACF
 							elseif (is_object($value) && $object['return_format'] == 'object')
 								$id = $value->term_id;
 
-							if( $id ) {
-
-								++ACF::$DEPTH;
-								$objects[$object['name']][] = new Term($id);
-							}
+							if( $id )
+								$objects[$object['name']][] = $this->getCache('term', $id);
 						}
 					}
 					else{
@@ -304,11 +325,8 @@ class ACF
 						elseif (is_object($object['value']) && $object['return_format'] == 'object')
 							$id = $object['value']->term_id;
 
-						if( $id ) {
-
-							++ACF::$DEPTH;
-							$objects[$object['name']] = new Term($id);
-						}
+						if( $id )
+							$objects[$object['name']] = $this->getCache('term', $id);
 					}
 
 					break;
@@ -326,9 +344,7 @@ class ACF
 
 					$layout = $this->layoutAsKeyValue($object['sub_fields']);
 					$value = $this->bindLayoutFields($object['value'], $layout);
-
-					++ACF::$DEPTH;
-					$objects[$object['name']] = $this->clean($value);
+					$objects[$object['name']] = $this->clean($value, false);
 
 					break;
 
@@ -339,7 +355,7 @@ class ACF
 			}
 		}
 
-		if (ACF::$DEPTH > 0)
+		if (ACF::$DEPTH > 0 and $check_depth)
 			--ACF::$DEPTH;
 
 		return $objects;
