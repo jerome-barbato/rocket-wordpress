@@ -73,32 +73,30 @@ class Query
 		$post_terms = [];
 
 		foreach($taxonomies as $taxonomy)
+			$post_terms[$taxonomy] = Query::get_post_term($id, $taxonomy, $primary);
+
+		return $post_terms;
+	}
+
+
+	public static function get_post_term($id, $taxonomy, $primary=false)
+	{
+		if( $primary and class_exists('WPSEO_Primary_Term') )
 		{
-			if( $primary and class_exists('WPSEO_Primary_Term') )
-			{
-				$wpseo_primary_term = new \WPSEO_Primary_Term( $taxonomy, $id );
+			$wpseo_primary_term = new \WPSEO_Primary_Term( $taxonomy, $id );
 
-				if( $wpseo_primary_term and $wpseo_primary_term->get_primary_term() )
-					$post_terms[$taxonomy] = new Term( $wpseo_primary_term->get_primary_term() );
-			}
-			else
-			{
-				$terms = wp_get_post_terms($id, $taxonomy, ['fields' => 'ids']);
-
-				if( $primary )
-				{
-					if( !empty($terms) )
-						$post_terms[$taxonomy] = new Term($terms[0]);
-				}
-				else
-				{
-					foreach($terms as $term)
-					{
-						$post_terms[$taxonomy][] = new Term($term);
-					}
-				}
-			}
+			if( $wpseo_primary_term and $wpseo_primary_term->get_primary_term() )
+				return new Term( $wpseo_primary_term->get_primary_term() );
 		}
+
+		$terms = wp_get_post_terms($id, $taxonomy, ['fields' => 'ids']);
+
+		if( $primary and !empty($terms) )
+			return new Term($terms[0]);
+
+		$post_terms = [];
+		foreach($terms as $term)
+			$post_terms[$taxonomy][] = new Term($term);
 
 		return $post_terms;
 	}

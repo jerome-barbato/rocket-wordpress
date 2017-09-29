@@ -7,6 +7,7 @@ namespace Rocket\Model;
 
 
 use Rocket\Helper\ACF;
+use Timber\Image;
 
 /**
  * Class Post
@@ -16,7 +17,7 @@ use Rocket\Helper\ACF;
  */
 class Post extends \Timber\Post
 {
-	public $excerpt;
+	public $excerpt, $thumbnail;
 
 	/**
 	 * Post constructor.
@@ -28,6 +29,7 @@ class Post extends \Timber\Post
 		parent::__construct( $id );
 
 		$this->excerpt = $this->post_excerpt;
+		$this->thumbnail = new Image($this->_thumbnail_id);
 
 		$this->clean();
 		$this->hydrateCustomFields();
