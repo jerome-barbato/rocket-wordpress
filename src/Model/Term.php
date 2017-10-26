@@ -27,6 +27,14 @@ class Term extends \Timber\Term
 
 		parent::__construct( $id );
 
+		if( is_array($id) ){
+
+			if( empty($id) )
+				return false;
+
+			$id = $id[0];
+		}
+
 		$this->ID = 'term_' . $id;
 		$this->excerpt = strip_tags(term_description($id),'<b><i><strong><em><br>');
 

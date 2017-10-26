@@ -16,7 +16,7 @@ class ACF
 {
 	private $raw_objects, $objects, $debug;
 
-	protected static $MAX_DEPTH = 2;
+	protected static $MAX_DEPTH = 3;
 	protected static $DEPTH = 0;
 	protected static $CACHE = [];
 
@@ -75,7 +75,9 @@ class ACF
 
 		foreach ($fields as $name=>$value){
 
-			$data[$name] = $layout[$name];
+			if( isset($layout[$name]) )
+				$data[$name] = $layout[$name];
+
 			$data[$name]['value'] = $value;
 		}
 
@@ -100,7 +102,9 @@ class ACF
 
 		foreach ($fields as $name=>$value){
 
-			$data[$name] = $layout[$name];
+			if( isset($layout[$name]) )
+				$data[$name] = $layout[$name];
+
 			$data[$name]['value'] = $value;
 		}
 
@@ -164,6 +168,9 @@ class ACF
 		// Start analyzing
 
 		foreach ($raw_objects as $object) {
+
+			if(!isset($object['type']))
+				continue;
 
 			switch ($object['type']) {
 
