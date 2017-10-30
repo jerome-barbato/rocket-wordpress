@@ -29,7 +29,7 @@ class Term extends \Timber\Term
 
 		if( is_array($id) ){
 
-			if( empty($id) )
+			if( empty($id) || isset($id['invalid_taxonomy']) )
 				return false;
 
 			$id = $id[0];
