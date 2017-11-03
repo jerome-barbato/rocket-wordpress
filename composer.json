@@ -12,8 +12,8 @@
     "symfony/routing":"3.2.*",
     "dflydev/dot-access-data": "1.0.*",
     "wpackagist-plugin/cache-enabler": "1.2.*",
-    "wpackagist-plugin/timber-library": "1.4.*",
-    "wpackagist-plugin/clean-image-filenames": "*",
+    "wpackagist-plugin/timber-library": "1.5.2",
+    "wpackagist-plugin/clean-image-filenames": "1.*",
     "elliotcondon/advanced-custom-fields-pro": "5.*",
     "wpackagist-plugin/post-types-order": "1.9.*"
   },
