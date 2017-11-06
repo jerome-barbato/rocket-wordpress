@@ -32,6 +32,9 @@ abstract class Application {
      * @var string plugin domain name for translations
      */
     public static $domain_name = 'default';
+    public static $acf_folder = BASE_URI.'/app/config/acf';
+    public static $languages_folder = BASE_URI . '/app/languages';
+
     public static $bo_domain_name = 'bo_default';
 
     protected $router, $global_context, $class_loader;
@@ -300,7 +303,10 @@ abstract class Application {
      */
     public function afterSetupTheme()
     {
-        remove_action('wp_head', 'rsd_link');
+    	if( is_dir($this::$languages_folder) )
+		    load_theme_textdomain( $this::$domain_name, $this::$languages_folder );
+
+	    remove_action('wp_head', 'rsd_link');
         remove_action('wp_head', 'wlwmanifest_link');
         remove_action('wp_head', 'wp_generator');
         remove_action('wp_head', 'wp_shortlink_wp_head');
@@ -504,8 +510,8 @@ abstract class Application {
         add_filter('timber/image/new_url', [$this, 'rewriteUploadURL']);
         add_filter('timber/image/src', [$this, 'checkImage']);
 
-        add_filter('acf/settings/save_json', function(){ return BASE_URI.'/app/config/acf'; });
-        add_filter('acf/settings/load_json', function(){ return [BASE_URI.'/app/config/acf']; });
+        add_filter('acf/settings/save_json', function(){ return $this::$acf_folder; });
+        add_filter('acf/settings/load_json', function(){ return [$this::$acf_folder]; });
 
 	    add_filter('timber/post/get_preview/read_more_link', '__return_null' );
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
