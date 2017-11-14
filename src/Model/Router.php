@@ -51,6 +51,25 @@ class Router {
     }
 
 
+	/**
+	 * Get ordered paramerters
+	 * @return array
+	 */
+	private function getClosureArgs( $func ){
+
+		$closure    = &$func;
+		$reflection = new \ReflectionFunction($closure);
+		$arguments  = $reflection->getParameters();
+
+		$args = [];
+
+		foreach ($arguments as $arg)
+			$args[] = $arg->getName();
+
+		return $args;
+	}
+
+
     /**
      * Define route manager
      * @return bool|mixed
@@ -62,16 +81,19 @@ class Router {
         $request_context = new RequestContext('/');
         $matcher = new UrlMatcher($this->routes, $request_context);
 
-        if( isset($_GET['debug']) and $_GET['debug']=="route" )
-	        echo '<!-- current url : '.$current_url.' -->';
+        $resource = $matcher->match($current_url);
 
-        $parameters = $matcher->match($current_url);
-
-        if( $parameters and isset($parameters['_controller']) )
+        if( $resource and isset($resource['_controller']) )
         {
-            $controller = $parameters['_controller'];
-            $params = array_filter($parameters, function($key){ return substr($key,0,1) != '_'; }, ARRAY_FILTER_USE_KEY);
-            array_unshift($params, $this->locale);
+            $controller = $resource['_controller'];
+            $args = $this->getClosureArgs($controller);
+
+	        $resource['locale'] = $this->locale;
+
+	        $params = [];
+
+            foreach ($args as $arg)
+	            $params[] = isset($resource[$arg])?$resource[$arg]:null;
 
             return call_user_func_array($controller, $params);
         }

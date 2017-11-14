@@ -91,14 +91,22 @@ class Query
 
 		$terms = wp_get_post_terms($id, $taxonomy, ['fields' => 'ids']);
 
-		if( $primary and !empty($terms) )
-			return new Term($terms[0]);
+		if( $primary ){
 
-		$post_terms = [];
-		foreach($terms as $term)
-			$post_terms[$taxonomy][] = new Term($term);
+			if( !empty($terms) )
+				return new Term($terms[0]);
+			else
+				return false;
+		}
+		else{
 
-		return $post_terms;
+			$post_terms = [];
+
+			foreach($terms as $term)
+				$post_terms[$taxonomy][] = new Term($term);
+
+			return $post_terms;
+		}
 	}
 
 

@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.28 - 2017-11-14
+### Fixed
+* Route args order was wrong at call
+* Query::get_post_term when using primary param now return false instead of array
+
 # 1.2.27 - 2017-11-14
 ### Added
 * WYSIWYG Iframe support for editor
