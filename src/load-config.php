@@ -55,6 +55,7 @@ if( $config->get('environment', 'production') == 'production' )
 
 define( 'WP_ENV', $config->get('environment', 'production'));
 define( 'WP_DEBUG', $config->get('debug.php_error', 0));
+define( 'WP_DEBUG_TWIG', $config->get('debug.twig', 0));
 define( 'WC_TEMPLATE_DEBUG_MODE', $config->get('debug.woocommerce', 0) );
 
 if( $config->get('cache.http', 0) and !WP_DEBUG )

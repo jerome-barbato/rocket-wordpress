@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.27 - 2017-11-14
+### Added
+* WYSIWYG Iframe support for editor
+* page name as comment when debugging
+### Removed
+* Wordpress upgrade notice for non admin
+
 # 1.2.26 - 2017-11-06
 ### Added
 * Internationalization support via mo/po

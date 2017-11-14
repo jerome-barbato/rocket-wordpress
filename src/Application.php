@@ -114,11 +114,13 @@ abstract class Application {
 	        add_filter( 'wp_terms_checklist_args', [Terms::getInstance(), 'wp_terms_checklist_args'] );
 	        add_filter( 'mce_buttons', [$this, 'TinyMceButtons']);
 	        add_filter( 'wp_editor_settings', [$this, 'editorSettings'], 10, 2);
+	        add_filter( 'map_meta_cap', [$this, 'addUnfilteredHtmlCapabilityToEditors'], 1, 3 );
 
             // Removes or add pages
             add_action( 'admin_menu', [$this, 'adminMenu']);
 	        add_action( 'admin_footer', [$this, 'adminFooter'] );
 	        add_action( 'admin_init', [$this, 'adminInit'] );
+	        add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );
 
             //check loaded plugin
             add_action( 'plugins_loaded', [$this, 'pluginsLoaded']);
@@ -139,6 +141,16 @@ abstract class Application {
 		        $this->registerRoutes();
 	        });
         }
+    }
+
+
+    /**
+     * hide dashboard update notices
+     */
+    public function hideUpdateNotice()
+    {
+	    if (!current_user_can('update_core'))
+		    remove_action( 'admin_notices', 'update_nag', 3 );
     }
 
 
@@ -221,32 +233,44 @@ abstract class Application {
     }
 
 
-    /**
-     * Configure Tiny MCE first line buttons
-     */
-    public function TinyMceButtons( $mce_buttons )
-    {
-	    $mce_buttons = array(
-		    'formatselect',		// Applies the bold format to the current selection.
-		    'bold',				// Applies the bold format to the current selection.
-		    'italic',			// Applies the italic format to the current selection.
-		    'underline',		// Applies the underline format to the current selection.
-		    'strikethrough',	// Applies strike though format to the current selection.
-		    'bullist',			// Formats the current selection as a bullet list.
-		    'numlist',			// Formats the current selection as a numbered list.
-		    'blockquote',		// Applies block quote format to the current block level element.
-		    'hr',				// Inserts a horizontal rule into the editor.
-		    'alignleft',		// Left aligns the current block or image.
-		    'aligncenter',		// Left aligns the current block or image.
-		    'alignright',		// Right aligns the current block or image.
-		    'alignjustify',		// Full aligns the current block or image.
-		    'link',				// Creates/Edits links within the editor.
-		    'unlink',			// Removes links from the current selection.
-		    'wp_more',			// Inserts the <!-- more --> tag.
-		    'spellchecker',		// ???
-		    'wp_adv',			// Toggles the second toolbar on/off.
-		    'dfw' 				// Distraction-free mode on/off.
-	    );
+	/**
+	 * Allow iframe for editor in WYSIWYG
+	 */
+	public function addUnfilteredHtmlCapabilityToEditors( $caps, $cap, $user_id )
+	{
+		if ( 'unfiltered_html' === $cap && user_can( $user_id, 'editor' ) )
+			$caps = array( 'unfiltered_html' );
+
+		return $caps;
+	}
+
+
+	/**
+	 * Configure Tiny MCE first line buttons
+	 */
+	public function TinyMceButtons( $mce_buttons )
+	{
+		$mce_buttons = array(
+			'formatselect',		// Applies the bold format to the current selection.
+			'bold',				// Applies the bold format to the current selection.
+			'italic',			// Applies the italic format to the current selection.
+			'underline',		// Applies the underline format to the current selection.
+			'strikethrough',	// Applies strike though format to the current selection.
+			'bullist',			// Formats the current selection as a bullet list.
+			'numlist',			// Formats the current selection as a numbered list.
+			'blockquote',		// Applies block quote format to the current block level element.
+			'hr',				// Inserts a horizontal rule into the editor.
+			'alignleft',		// Left aligns the current block or image.
+			'aligncenter',		// Left aligns the current block or image.
+			'alignright',		// Right aligns the current block or image.
+			'alignjustify',		// Full aligns the current block or image.
+			'link',				// Creates/Edits links within the editor.
+			'unlink',			// Removes links from the current selection.
+			'wp_more',			// Inserts the <!-- more --> tag.
+			'spellchecker',		// ???
+			'wp_adv',			// Toggles the second toolbar on/off.
+			'dfw' 				// Distraction-free mode on/off.
+		);
 
 	    return $mce_buttons;
     }
