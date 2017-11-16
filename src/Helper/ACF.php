@@ -120,7 +120,7 @@ class ACF
 		if( !isset(ACF::$CACHE[$type]) )
 			ACF::$CACHE[$type] = [];
 
-		$value = '';
+		$value = false;
 
 		switch ($type)
 		{
@@ -133,11 +133,13 @@ class ACF
 				break;
 
 			case 'product':
-				$value = wc_get_product( $id );
+				$post_status = get_post_status( $id );
+				$value = ( $post_status && $post_status !== 'publish' ) ? false : wc_get_product( $id );
 				break;
 
 			case 'post':
-				$value = new Post( $id );
+				$post_status = get_post_status( $id );
+				$value = ( $post_status && $post_status !== 'publish' ) ? false : new Post( $id );
 				break;
 
 			case 'user':
@@ -238,17 +240,19 @@ class ACF
 							$is_woo_product = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' );
 
 							if ($object['return_format'] == 'id')
-								$objects[$object['name']][] = $is_woo_product ? ['product'=>$this->getCache('product', $value), 'post'=>$this->getCache('post', $value)] : $this->getCache('post', $value);
+								$element = $is_woo_product ? ['product'=>$this->getCache('product', $value), 'post'=>$this->getCache('post', $value)] : $this->getCache('post', $value);
 							elseif ($object['return_format'] == 'object')
-								$objects[$object['name']][] = $is_woo_product ? ['product'=>$this->getCache('product', $value->ID), 'post'=>$this->getCache('post', $value->ID)] : $this->getCache('post', $value->ID);
+								$element = $is_woo_product ? ['product'=>$this->getCache('product', $value->ID), 'post'=>$this->getCache('post', $value->ID)] : $this->getCache('post', $value->ID);
 							else
-								$objects[$object['name']][] = $object['value'];
+								$element = $object['value'];
+
+							if( $element )
+								$objects[$object['name']][] = $element;
 						}
 					}
 					break;
 
 				case 'post_object';
-
 
 					if( empty($object['value']) )
 						break;

@@ -145,8 +145,8 @@ class Theme extends Site
 	                $page = $route[0];
 	                $context = (count($route) > 1 and is_array($route[1])) ? array_merge($context, $route[1]) : $context;
 
-	                if( WP_DEBUG_TWIG )
-		                echo '<!-- page/'.$page.' -->';
+	                if( WP_DEBUG_TWIG && strpos($page, '.css') == -1 && strpos($page, '.json') == -1 )
+		                echo "<!-- page/.$page. -->\n";
 
 	                Timber::render('page/' . $page, $context);
                 }
