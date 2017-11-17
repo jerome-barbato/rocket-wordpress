@@ -1,10 +1,10 @@
 {
   "name":"metabolism/rocket-wordpress",
   "license": "AGPL-3.0",
-  "version": "1.2.29",
+  "version": "1.2.30",
   "description": "Wordpress Scaffolder using Rocket Framework",
   "require": {
-    "php" : ">=5.5.0",
+    "php" : ">=5.6.0",
     "metabolism/rocket-installer": "1.1.*",
     "metabolism/rocket-kernel": "1.2.*",
     "johnpbloch/wordpress-core": "4.8.*",

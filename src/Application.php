@@ -121,6 +121,7 @@ abstract class Application {
 	        add_action( 'admin_footer', [$this, 'adminFooter'] );
 	        add_action( 'admin_init', [$this, 'adminInit'] );
 	        add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );
+	        add_action( 'wpmu_options', [$this, 'wpmuOptions'] );
 
             //check loaded plugin
             add_action( 'plugins_loaded', [$this, 'pluginsLoaded']);
@@ -251,27 +252,9 @@ abstract class Application {
 	public function TinyMceButtons( $mce_buttons )
 	{
 		$mce_buttons = array(
-			'formatselect',		// Applies the bold format to the current selection.
-			'bold',				// Applies the bold format to the current selection.
-			'italic',			// Applies the italic format to the current selection.
-			'underline',		// Applies the underline format to the current selection.
-			'strikethrough',	// Applies strike though format to the current selection.
-			'bullist',			// Formats the current selection as a bullet list.
-			'numlist',			// Formats the current selection as a numbered list.
-			'blockquote',		// Applies block quote format to the current block level element.
-			'hr',				// Inserts a horizontal rule into the editor.
-			'alignleft',		// Left aligns the current block or image.
-			'aligncenter',		// Left aligns the current block or image.
-			'alignright',		// Right aligns the current block or image.
-			'alignjustify',		// Full aligns the current block or image.
-			'link',				// Creates/Edits links within the editor.
-			'unlink',			// Removes links from the current selection.
-			'wp_more',			// Inserts the <!-- more --> tag.
-			'spellchecker',		// ???
-			'wp_adv',			// Toggles the second toolbar on/off.
-			'dfw' 				// Distraction-free mode on/off.
+			'formatselect','bold','italic','underline','strikethrough','bullist','numlist','blockquote','hr','alignleft',
+			'aligncenter','alignright','alignjustify','link','unlink','wp_more','spellchecker','wp_adv','dfw'
 		);
-
 	    return $mce_buttons;
     }
 
@@ -449,15 +432,95 @@ abstract class Application {
 
 
 	/**
-	 * change editor capabilities
+	 * add network parameters
+	 */
+	public function wpmuOptions()
+	{
+		// Remove generated thumbnails option
+		$thumbnails = $this->getThumbnails(true);
+
+		if( count($thumbnails) )
+		{
+			echo '<h2>Images</h2>';
+			echo '<table id="thumbnails" class="form-table">
+			<tbody><tr>
+				<th scope="row">Generated thumbnails</th>
+				<td><a class="button button-primary" href="'.get_admin_url().'?clear_all_thumbnails">Remove '.count($thumbnails).' images</a></td>
+			</tr>
+		</tbody></table>';
+		}
+	}
+
+
+	/**
+	 * add admin parameters
 	 */
 	public function adminInit()
 	{
+		if( isset($_GET['clear_thumbnails']) )
+			$this->clearThumbnails();
+
+		if( isset($_GET['clear_all_thumbnails']) )
+			$this->clearThumbnails(true);
+
 		$role_object = get_role( 'editor' );
 
 		if( !$role_object->has_cap('edit_theme_options') )
 			$role_object->add_cap( 'edit_theme_options' );
+
+		// Remove generated thumbnails option
+		add_settings_field('clean_image_thumbnails', 'Generated thumbnails', function(){
+
+			$thumbnails = $this->getThumbnails();
+
+			if( count($thumbnails) )
+				echo '<a class="button button-primary" href="'.get_admin_url().'?clear_thumbnails">Remove '.count($thumbnails).' images</a>';
+
+		}, 'media');
+
 	}
+
+
+	/**
+     * Remove all thumbnails
+     */
+    private function getThumbnails($all=false)
+    {
+    	$folder = BASE_URI. '/web/app/uploads' . ( is_multisite() && !$all ? '/sites/'.get_current_blog_id() : '') . '/';
+	    $file_list = [];
+
+    	if( is_dir($folder) )
+	    {
+		    $dir = new \RecursiveDirectoryIterator($folder);
+		    $ite = new \RecursiveIteratorIterator($dir);
+		    $files = new \RegexIterator($ite, '/(?!.*150x150).*-[0-9]+x[0-9]+(-c-default|-c-center)?\.[a-z]{3,4}$/', \RegexIterator::GET_MATCH);
+		    $file_list = [];
+
+		    foreach($files as $file)
+			    $file_list[] = $file[0];
+	    }
+
+	   return $file_list;
+    }
+
+
+	/**
+     * Remove all thumbnails
+     */
+    private function clearThumbnails($all=false)
+    {
+	    if ( current_user_can('administrator') && (!$all || is_super_admin()) )
+	    {
+		    $thumbnails = $this->getThumbnails($all);
+
+		    foreach($thumbnails as $file)
+			    @unlink($file);
+	    }
+
+	    clearstatcache();
+
+	    wp_redirect( get_admin_url(null, $all?'network/settings.php':'options-media.php') );
+    }
 
 
 	/**
