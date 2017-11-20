@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.31 - 2017-11-20
+### Added
+* Query::wp_query
+### Changed
+* Query::get_posts now use self::wp_query
+
 # 1.2.30 - 2017-11-17
 ### Added
 * Option to remove generated thumbnails, per site ( Settings > Media ) or globally ( Network Settings )
