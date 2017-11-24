@@ -23,7 +23,7 @@
         "metabolism/rocket-wordpress": {
           "src/WordpressBundle/uploads": 777,
           "src/WordpressBundle/languages": 777,
-          "app/config/acf": 777
+          "src/WordpressBundle/acf-json": 777
         }
       },
       "copy": {

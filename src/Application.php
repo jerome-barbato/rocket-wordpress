@@ -32,12 +32,13 @@ abstract class Application {
      * @var string plugin domain name for translations
      */
     public static $domain_name = 'default';
-    public static $acf_folder = BASE_URI.'/app/config/acf';
-    public static $languages_folder = BASE_URI . '/app/languages';
+    public static $acf_folder = WP_CONTENT_DIR.'/acf-json';
+    public static $languages_folder = BASE_URI . '/web/app/languages';
 
     public static $bo_domain_name = 'bo_default';
 
     protected $router, $global_context, $class_loader;
+
     public $remote_url;
 
 
@@ -58,7 +59,7 @@ abstract class Application {
 
 
     /**
-     * Get context
+     * Get archive id
      */
 	protected function getArchivePage($post_type){
 
