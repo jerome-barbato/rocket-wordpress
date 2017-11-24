@@ -124,7 +124,7 @@ class Theme extends Site
 
             if (class_exists('Timber')) {
 
-                Timber::$locations = BASE_URI . '/app/views/';
+                Timber::$locations = BASE_URI . '/src/FrontBundle/Views/';
                 $context = Timber::get_context();
 
                 if( $this->app ) {

@@ -7,7 +7,7 @@
     "php" : ">=5.6.0",
     "metabolism/rocket-installer": "1.1.*",
     "metabolism/rocket-kernel": "1.2.*",
-    "johnpbloch/wordpress-core": "4.8.*",
+    "johnpbloch/wordpress-core": "4.9.*",
     "mustangostang/spyc": "0.6.*",
     "symfony/routing":"3.2.*",
     "dflydev/dot-access-data": "1.0.*",
@@ -31,12 +31,13 @@
           "src/theme": "src/WordpressBundle/themes/rocket",
           "src/Helper/Rocket.php": "src/WordpressBundle/mu-plugins/Rocket.php",
           "doc": "doc/wordpress",
-          "wp-config.php": "web/wp-config.php"
+          "wp-config.php": "web/wp-config.php",
+          "doc/wordpress.yml.sample": "config/wordpress.yml"
         }
       },
       "remove": {
         "metabolism/rocket-wordpress": [
-          "app/config/silex.yml"
+          "config/silex.yml"
         ],
         "johnpbloch/wordpress-core": [
           "wp-content",

@@ -355,7 +355,7 @@ abstract class Application {
      */
     protected function defineSupport()
     {
-    	$theme_support = $this->config->get('theme_support');
+    	$theme_support = $this->config->get('theme_support', []);
 
         if( in_array('post_thumbnails', $theme_support) )
             add_theme_support( 'post-thumbnails' );

@@ -42,7 +42,7 @@ $data = array();
 
 foreach (['global', 'wordpress', 'local'] as $config)
 {
-    $file = BASE_URI . '/app/config/' . $config . '.yml';
+    $file = BASE_URI . '/config/' . $config . '.yml';
 
     if (file_exists($file))
         $data = array_merge($data, \Spyc::YAMLLoad($file));
