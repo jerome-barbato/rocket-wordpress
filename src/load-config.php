@@ -130,10 +130,10 @@ define( 'NONCE_SALT', $config->get('salt.nonce','gelPRQb4NzO=4pOG_5YnuN(5G~YJCIu
  * Custom Content Directory
  */
 if (!defined('WP_CONTENT_DIR'))
-	define( 'WP_CONTENT_DIR', BASE_URI . '/web/app');
+	define( 'WP_CONTENT_DIR', BASE_URI . '/src/WordpressBundle');
 
 if (!defined('WP_CONTENT_URL'))
-	define( 'WP_CONTENT_URL', WP_HOME . '/app');
+	define( 'WP_CONTENT_URL', WP_HOME );
 
 
 /**

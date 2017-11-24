@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.3.0 - 2017-11-24
+### Changed
+* Wordpress app now stored in src/WordpressBundle
+
 # 1.2.31 - 2017-11-20
 ### Added
 * Query::wp_query
