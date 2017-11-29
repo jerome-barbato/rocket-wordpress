@@ -35,6 +35,12 @@
           "doc/wordpress.yml.sample": "config/wordpress.yml"
         }
       },
+      "symlink": {
+        "metabolism/rocket-wordpress": {
+          "../../../src/WordpressBundle/uploads": "web/uploads",
+          "../../../src/WordpressBundle/plugins": "web/plugins"
+        }
+      },
       "remove": {
         "metabolism/rocket-wordpress": [
           "config/silex.yml"

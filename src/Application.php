@@ -61,9 +61,12 @@ abstract class Application {
     /**
      * Get archive id
      */
-	protected function getArchivePage($post_type){
+	protected function getSlug($id, $type){
 
-		return $this->config->get('post_types.'.$post_type.'.has_archive');
+		if( $type == 'archive' )
+			return $this->config->get('post_types.'.$id.'.has_archive');
+		if( $type == 'post' )
+			return $this->config->get('post_types.'.$id.'.rewrite.slug', $id);
 	}
 
 
@@ -103,7 +106,6 @@ abstract class Application {
                     wp_redirect(WP_REMOTE.'/edition/wp-admin/');
 
                 $this->setTheme();
-                $this->setPermalink();
                 $this->addOptionPages();
             });
 
@@ -336,21 +338,6 @@ abstract class Application {
 
 
     /**
-     * Set permalink stucture
-     */
-    public function setPermalink()
-    {
-        global $wp_rewrite;
-
-        $wp_rewrite->set_permalink_structure('/%postname%');
-
-        update_option( "rewrite_rules", FALSE );
-
-        $wp_rewrite->flush_rules( true );
-    }
-
-
-    /**
      * Custom theme compatibilities according to created project.
      */
     protected function defineSupport()
@@ -401,9 +388,12 @@ abstract class Application {
 
             $label = __(ucfirst($this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), Application::$bo_domain_name);
 
-            $post_type = new CustomPostType($label, $slug);
-            $post_type->hydrate($data);
-            $post_type->register();
+            if( $slug != 'post' )
+            {
+	            $post_type = new CustomPostType($label, $slug);
+	            $post_type->hydrate($data);
+	            $post_type->register();
+            }
         };
     }
 

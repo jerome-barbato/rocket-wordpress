@@ -7,10 +7,10 @@
 namespace Rocket\Helper;
 
 use Rocket\Model\Post,
-	Rocket\Model\Term;
+	Rocket\Model\Term,
+	Rocket\Model\Image;
 
-use Timber\Image,
-	Timber\User;
+use Timber\User;
 
 class ACF
 {
@@ -69,6 +69,10 @@ class ACF
 
 		$data = [];
 		$type = $fields['acf_fc_layout'];
+
+		if( !isset($layouts[$type]) )
+			return false;
+
 		$layout = $layouts[$type];
 
 		unset($fields['acf_fc_layout']);
@@ -157,7 +161,7 @@ class ACF
 	}
 
 
-	public function clean($raw_objects, $check_depth=true)
+	public function clean($raw_objects, $check_depth=true, $debug=false)
 	{
 		$objects = [];
 
@@ -188,10 +192,11 @@ class ACF
 					break;
 
 				case 'image';
+
 					if( empty($object['value']) )
 						break;
 
-					if ($object['return_format'] == 'id')
+					if ($object['return_format'] == 'id' or is_int($object['value']) )
 						$objects[$object['name']] = $this->getCache('image', $object['value']);
 					elseif ($object['return_format'] == 'array')
 						$objects[$object['name']] = $this->getCache('image', $object['value']['id']);
@@ -239,7 +244,7 @@ class ACF
 
 							$is_woo_product = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' );
 
-							if ($object['return_format'] == 'id')
+							if ($object['return_format'] == 'id' or is_int($value) )
 								$element = $is_woo_product ? ['product'=>$this->getCache('product', $value), 'post'=>$this->getCache('post', $value)] : $this->getCache('post', $value);
 							elseif ($object['return_format'] == 'object')
 								$element = $is_woo_product ? ['product'=>$this->getCache('product', $value->ID), 'post'=>$this->getCache('post', $value->ID)] : $this->getCache('post', $value->ID);
@@ -257,7 +262,7 @@ class ACF
 					if( empty($object['value']) )
 						break;
 
-					if ($object['return_format'] == 'id')
+					if ($object['return_format'] == 'id' or is_int($object['value']) )
 						$objects[$object['name']] = $this->getCache('post', $object['value']);
 					elseif ($object['return_format'] == 'object')
 						$objects[$object['name']] = $this->getCache('post', $object['value']->ID);
@@ -285,7 +290,12 @@ class ACF
 						foreach ($object['value'] as $value) {
 							$type = $value['acf_fc_layout'];
 							$value = $this->bindLayoutsFields($value, $layouts);
-							$objects[$object['name']][] = ['@type'=>$type, 'data'=>$this->clean($value)];
+							$data = $this->clean($value);
+
+							if( is_array($value) and count($value) == 1 and is_string(key($value)) )
+								$data = reset($data);
+
+							$objects[$object['name']][] = ['@type'=>$type, 'data'=>$data];
 						}
 					}
 
@@ -355,6 +365,7 @@ class ACF
 
 					$layout = $this->layoutAsKeyValue($object['sub_fields']);
 					$value = $this->bindLayoutFields($object['value'], $layout);
+
 					$objects[$object['name']] = $this->clean($value, false);
 
 					break;
