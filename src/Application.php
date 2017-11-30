@@ -435,7 +435,7 @@ abstract class Application {
 			echo '<h2>Images</h2>';
 			echo '<table id="thumbnails" class="form-table">
 			<tbody><tr>
-				<th scope="row">Generated thumbnails</th>
+				<th scope="row">'.__('Generated thumbnails').'</th>
 				<td><a class="button button-primary" href="'.get_admin_url().'?clear_all_thumbnails">Remove '.count($thumbnails).' images</a></td>
 			</tr>
 		</tbody></table>';
@@ -460,12 +460,14 @@ abstract class Application {
 			$role_object->add_cap( 'edit_theme_options' );
 
 		// Remove generated thumbnails option
-		add_settings_field('clean_image_thumbnails', 'Generated thumbnails', function(){
+		add_settings_field('clean_image_thumbnails', __('Generated thumbnails'), function(){
 
 			$thumbnails = $this->getThumbnails();
 
 			if( count($thumbnails) )
-				echo '<a class="button button-primary" href="'.get_admin_url().'?clear_thumbnails">Remove '.count($thumbnails).' images</a>';
+				echo '<a class="button button-primary" href="'.get_admin_url().'?clear_thumbnails">'.__('Remove').' '.count($thumbnails).' images</a>';
+			else
+				echo __('Nothing to remove');
 
 		}, 'media');
 
@@ -477,7 +479,7 @@ abstract class Application {
      */
     private function getThumbnails($all=false)
     {
-    	$folder = BASE_URI. '/web/app/uploads' . ( is_multisite() && !$all ? '/sites/'.get_current_blog_id() : '') . '/';
+    	$folder = BASE_URI. '/src/WordpressBundle/uploads' . ( is_multisite() && !$all ? '/sites/'.get_current_blog_id() : '') . '/';
 	    $file_list = [];
 
     	if( is_dir($folder) )
@@ -541,7 +543,7 @@ abstract class Application {
         if( $replace and WP_REMOTE )
             $value = str_replace(WP_HOME, WP_REMOTE, $value);
 
-        $value = str_replace('/edition/wp-content/uploads', '/app/uploads', $value);
+        $value = str_replace('/edition/wp-content/uploads', '/uploads', $value);
 
         return $value;
     }

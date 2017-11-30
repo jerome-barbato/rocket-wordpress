@@ -31,8 +31,7 @@
           "src/theme": "src/WordpressBundle/themes/rocket",
           "src/Helper/Rocket.php": "src/WordpressBundle/mu-plugins/Rocket.php",
           "doc": "doc/wordpress",
-          "wp-config.php": "web/wp-config.php",
-          "doc/wordpress.yml.sample": "config/wordpress.yml"
+          "wp-config.php": "web/wp-config.php"
         }
       },
       "symlink": {
