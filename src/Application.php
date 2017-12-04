@@ -31,9 +31,10 @@ abstract class Application {
     /**
      * @var string plugin domain name for translations
      */
+	public static $acf_folder;
+
     public static $domain_name = 'default';
-    public static $acf_folder = WP_CONTENT_DIR.'/acf-json';
-    public static $languages_folder = BASE_URI . '/web/app/languages';
+	public static $languages_folder = BASE_URI . '/web/app/languages';
 
     public static $bo_domain_name = 'bo_default';
 
@@ -583,7 +584,7 @@ abstract class Application {
     {
 	    add_filter('posts_request', [$this, 'postsRequest'] );
 
-	    add_filter('woocommerce_template_path', function(){ return '../../../../../src/Woocommerce/'; });
+	    add_filter('woocommerce_template_path', function(){ return '../../../../../src/WoocommerceBundle/'; });
 	    add_filter('woocommerce_enqueue_styles', '__return_empty_array' );
 
 	    add_filter('rewrite_upload_url', function($value){ return $this->rewriteUploadURL($value, true); });
@@ -651,6 +652,8 @@ abstract class Application {
 
         self::$domain_name = $this->config->get('domain_name', 'customer');
         self::$bo_domain_name = 'bo_'.self::$domain_name;
+
+	    self::$acf_folder = WP_CONTENT_DIR.'/acf-json';
     }
 
 
