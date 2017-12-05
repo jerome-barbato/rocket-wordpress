@@ -31,11 +31,9 @@ abstract class Application {
     /**
      * @var string plugin domain name for translations
      */
-	public static $acf_folder;
+	public static $acf_folder, $languages_folder;
 
     public static $domain_name = 'default';
-	public static $languages_folder = BASE_URI . '/web/app/languages';
-
     public static $bo_domain_name = 'bo_default';
 
     protected $router, $global_context, $class_loader;
@@ -180,11 +178,25 @@ abstract class Application {
 
 	    add_action( 'admin_bar_menu', function( $wp_admin_bar )
 	    {
-		    $args = array(
+		    if( !is_admin() && is_post_type_archive() )
+		    {
+		    	$object = get_queried_object();
+
+			    $args = [
+				    'id'    => 'edit',
+				    'title' => __('Edit Posts'),
+				    'href'  => get_admin_url( null, '/edit.php?post_type='.$object->name ),
+				    'meta'   => ['class' => 'ab-item']
+			    ];
+
+			    $wp_admin_bar->add_node( $args );
+		    }
+
+		    $args = [
 			    'id'    => 'maintenance',
 			    'title' => __('Maintenance mode').' : '.( get_option( 'maintenance_field', false) ? __('On') : __('Off')),
 			    'href'  => get_admin_url( null, '/options-general.php#maintenance_field' )
-		    );
+		    ];
 
 		    $wp_admin_bar->add_node( $args );
 
@@ -654,6 +666,7 @@ abstract class Application {
         self::$bo_domain_name = 'bo_'.self::$domain_name;
 
 	    self::$acf_folder = WP_CONTENT_DIR.'/acf-json';
+	    self::$languages_folder = WP_CONTENT_DIR . '/languages';
     }
 
 
