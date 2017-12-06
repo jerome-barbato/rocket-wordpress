@@ -8,3 +8,7 @@
 		})(document, 'script');
 	</script>
 {% endif %}
+
+{% if config.options.trackduck_id|default() %}
+	<script src="//cdn.trackduck.com/toolbar/prod/td.js" async data-trackduck-id="5a2803d5024cc9dc5545b252"></script>
+{% endif %}

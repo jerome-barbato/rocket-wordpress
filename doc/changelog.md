@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 # 1.3.0 - 2017-11-24
 ### Changed
 * Wordpress app now stored in src/WordpressBundle
+### Added
+* trackduck_id handling
 
 # 1.2.31 - 2017-11-20
 ### Added
