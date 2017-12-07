@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.3.1 - 2017-12-07
+### Fixed
+* invalid $base_uri when ssl is active
+
 # 1.3.0 - 2017-11-24
 ### Changed
 * Wordpress app now stored in src/WordpressBundle
