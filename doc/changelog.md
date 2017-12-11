@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 # 1.3.2 - 2017-12-11
 ### Removed
 * cache plugin
+* clean image filename plugin
+### Added
+* clean image filename included in core
 
 # 1.3.1 - 2017-12-07
 ### Fixed

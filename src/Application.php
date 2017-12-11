@@ -124,6 +124,7 @@ abstract class Application {
 	        add_action( 'admin_init', [$this, 'adminInit'] );
 	        add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );
 	        add_action( 'wpmu_options', [$this, 'wpmuOptions'] );
+	        add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
 
             //check loaded plugin
             add_action( 'plugins_loaded', [$this, 'pluginsLoaded']);
@@ -504,6 +505,18 @@ abstract class Application {
 	    wp_redirect( get_admin_url(null, $all?'network/settings.php':'options-media.php') );
     }
 
+
+	/**
+	 * Clean filename
+	 */
+	function cleanFilename($file) {
+
+		$path = pathinfo($file['name']);
+		$new_filename = preg_replace('/.' . $path['extension'] . '$/', '', $file['name']);
+		$file['name'] = sanitize_title($new_filename) . '.' . $path['extension'];
+
+		return $file;
+	}
 
 	/**
      * Register wp path
