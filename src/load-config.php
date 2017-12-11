@@ -84,7 +84,7 @@ if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on')
 elseif (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' || !empty($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] == 'on')
     $isSecure = true;
 
-$base_uri = $isSecure ? 'https' : 'http'.'://'.$_SERVER['HTTP_HOST'];
+$base_uri = ($isSecure ? 'https' : 'http') . '://'.$_SERVER['HTTP_HOST'];
 
 
 if (!defined('BASE_PATH'))

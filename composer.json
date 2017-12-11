@@ -1,7 +1,7 @@
 {
   "name":"metabolism/rocket-wordpress",
   "license": "AGPL-3.0",
-  "version": "1.2.31",
+  "version": "1.2.32",
   "description": "Wordpress Scaffolder using Rocket Framework",
   "require": {
     "php" : ">=5.6.0",
@@ -11,7 +11,6 @@
     "mustangostang/spyc": "0.6.*",
     "symfony/routing":"3.2.*",
     "dflydev/dot-access-data": "1.0.*",
-    "wpackagist-plugin/cache-enabler": "1.2.*",
     "wpackagist-plugin/timber-library": "1.5.*",
     "wpackagist-plugin/clean-image-filenames": "1.*",
     "elliotcondon/advanced-custom-fields-pro": "5.*",
