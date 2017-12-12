@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.33 - 2017-12-12
+### Removed
+* Link in response headers
+* wp-config.php direct access
+
 # 1.2.32 - 2017-12-11
 ### Removed
 * Cache plugin
