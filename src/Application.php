@@ -315,6 +315,8 @@ abstract class Application {
         remove_action('wp_head', 'rest_output_link_wp_head');
         remove_action('wp_head', 'wp_resource_hints', 2 );
         remove_action('wp_head', 'wp_oembed_add_discovery_links');
+	    remove_action('template_redirect', 'rest_output_link_header', 11, 0 );
+	    remove_action('template_redirect', 'wp_shortlink_header', 11, 0 );
     }
 
 
@@ -583,6 +585,10 @@ abstract class Application {
      */
     public function registerFilters()
     {
+
+	    add_filter('pings_open', '__return_false');
+	    add_filter('xmlrpc_enabled', '__return_false');
+
 	    add_filter('posts_request', [$this, 'postsRequest'] );
 
 	    add_filter('woocommerce_template_path', function(){ return '../../../../../src/WoocommerceBundle/'; });

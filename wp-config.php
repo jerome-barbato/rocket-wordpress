@@ -19,6 +19,13 @@
  *  WP_HOME is automatically generated from $_SERVER but you can set it here
  */
 
+// prevent direct access
+if( !defined('AUTOLOAD') && !defined('ABSPATH') ){
+
+	header("HTTP/1.0 404 Not Found");
+	exit;
+}
+
  // Add your configuration here
 define('WP_REMOTE', false);
 
