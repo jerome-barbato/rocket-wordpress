@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.2.34 - 2017-12-14
+### Added
+* you can use a define section in the yml to define constants
+
 # 1.2.33 - 2017-12-12
 ### Removed
 * Link in response headers

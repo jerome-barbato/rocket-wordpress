@@ -1,10 +1,17 @@
 domain_name: rocket
 
+
 remove_menu_page:
   edit-comments.php
 
+
+define:
+  wp_remote: false
+
+
 options:
   gmap_api_key:
+
 
 image_sizes:
   full-hd: 1920 1080 1
