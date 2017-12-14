@@ -50,9 +50,25 @@ foreach (['global', 'wordpress', 'local'] as $config)
 
 $config = new Data($data);
 
+
+/**
+* Set debug default
+*/
+
 if( $config->get('environment', 'production') == 'production' )
     $config->set('debug', false);
 
+
+/**
+ * Define constant
+ */
+foreach ($config->get('define', []) as $constant=>$value)
+	define( strtoupper($constant), $value);
+
+
+/**
+ * Define basic environment
+ */
 define( 'WP_ENV', $config->get('environment', 'production'));
 define( 'WP_DEBUG', $config->get('debug.php_error', 0));
 define( 'WP_DEBUG_TWIG', $config->get('debug.twig', 0));
@@ -61,6 +77,10 @@ define( 'WC_TEMPLATE_DEBUG_MODE', $config->get('debug.woocommerce', 0) );
 if( $config->get('cache.http', 0) and !WP_DEBUG )
     define( 'WP_CACHE', true);
 
+
+/**
+ * Enable multisite
+ */
 if( $config->get('install-multisite') )
 	define( 'WP_ALLOW_MULTISITE', true );
 
@@ -75,7 +95,7 @@ if( $config->get('multisite') )
 
 
 /**
- * URLs
+ * Configure URLs
  */
 $isSecure = false;
 
@@ -99,8 +119,9 @@ if( !defined('WP_HOME') )
 define( 'WP_SITEURL', WP_HOME.'/edition');
 define( 'COOKIE_DOMAIN', $_SERVER[ 'HTTP_HOST' ] );
 
+
 /**
- * DB settings
+ * Define DB settings
  */
 define( 'DB_NAME', $config->get('database.name'));
 define( 'DB_USER', $config->get('database.user'));

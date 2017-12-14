@@ -4,6 +4,8 @@ remove_menu_page:
   edit.php
   edit-comments.php
 
+define:
+  wp_remote: false
 
 remove_submenu_page:
   themes.php: customize.php?return=%2Fedition%2Fwp-admin%2F

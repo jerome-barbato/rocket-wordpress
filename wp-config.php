@@ -11,12 +11,13 @@
  *   Taxonomies
  *   Admin page removal
  *   Image size
- *   theme support
- *   menus
- *   options page
- *   page templates
+ *   Theme support
+ *   Menus
+ *   Options page
+ *   Page templates
  *
- *  WP_HOME is automatically generated from $_SERVER but you can set it here
+ *  to define other constants, please use a define section in your app/config/local.yml file
+ *  see local.sample.yml
  */
 
 // prevent direct access
@@ -26,7 +27,5 @@ if( !defined('AUTOLOAD') && !defined('ABSPATH') ){
 	exit;
 }
 
- // Add your configuration here
-define('WP_REMOTE', false);
-
+// load yml config files
 include dirname(__DIR__) . '/vendor/metabolism/rocket-wordpress/src/load-config.php';
