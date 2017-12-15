@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 # 1.3.4 - IN DEV
 ### Added
 * define constant via YML files
+* symlink and folder chmod check
 
 # 1.3.3 - 2017-12-12
 ### Removed

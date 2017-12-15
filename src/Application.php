@@ -128,6 +128,7 @@ abstract class Application {
 
             //check loaded plugin
             add_action( 'plugins_loaded', [$this, 'pluginsLoaded']);
+            add_action( 'admin_notices', [$this, 'adminNotices']);
 
             $this->defineSupport();
         }
@@ -810,6 +811,42 @@ abstract class Application {
             });
         }
     }
+
+
+	/**
+	 * Check symlinks and forders
+	 */
+	public function adminNotices(){
+
+		$notices = [];
+
+		//check folder wright
+		foreach (['src/WordpressBundle/languages', 'src/WordpressBundle/uploads'] as $folder ){
+
+			$path = BASE_URI.'/'.$folder;
+
+			if( !file_exists($path) or !is_writable($path) )
+				$notices [] = $folder.' folder doesn\'t exist or is not writable';
+		}
+
+		if( !empty($notices) )
+			echo '<div class="error"><p>'.implode('<br/>', $notices ).'</p></div>';
+
+
+		$notices = [];
+
+		//check symlink
+		foreach (['web/uploads', 'web/plugins'] as $file ){
+
+			$path = BASE_URI.'/'.$file;
+
+			if( !is_link($path) )
+				$notices [] = $file.' is not a valid symlink';
+		}
+
+		if( !empty($notices) )
+			echo '<div class="error"><p>'.implode('<br/>', $notices ).'</p></div>';
+	}
 
 
     public function __construct($autoloader=false)
