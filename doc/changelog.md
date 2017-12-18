@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * define constant via YML files
 * symlink and folder chmod check
 * multisite media synchronisation
+* sendForm and uploadFile
 ### Removed
 * wp remote features
 * useless uploads folder rewrite path

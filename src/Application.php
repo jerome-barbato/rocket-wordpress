@@ -70,6 +70,105 @@ abstract class Application {
 
 
     /**
+     * Quickly upload file
+     */
+	protected function uploadFile($file='file', $allowed_type = ['image/jpeg', 'image/gif', 'image/png'], $path='/user', $max_size=1048576){
+
+		if( !isset($_FILES[$file]) or empty($_FILES[$file]) )
+			return false;
+
+		$file = $_FILES[$file];
+
+		if ($file['error'] !== UPLOAD_ERR_OK)
+			return ['error' => true, 'message' => 'Sorry, there was an error uploading your file.' ];
+
+		if ($file['size'] > $max_size)
+			return ['error' => true, 'message' => 'Sorry, the file is too large.' ];
+
+		$mime_type = mime_content_type($file['tmp_name']);
+
+		if( !in_array($mime_type, $allowed_type) )
+			return ['error' => true, 'message' => 'Sorry, this file format is not permitted' ];
+
+		$name = preg_replace("/[^A-Z0-9._-]/i", "_", basename( $file['name']) );
+
+		$target_file = '/uploads'.$path.'/'.uniqid().'_'.$name;
+		$upload_dir = WP_CONTENT_DIR.'/uploads'.$path;
+
+		if( !is_dir($upload_dir) )
+			mkdir($upload_dir, 0777, true);
+
+		if( !is_writable($upload_dir) )
+			return ['error' => true, 'message' => 'Sorry, upload directory is not writable.' ];
+
+		if( move_uploaded_file($file['tmp_name'], WP_CONTENT_DIR.$target_file) )
+			return ['filename' => $target_file, 'original_filename' => basename( $file['name']), 'type' => $mime_type ];
+		else
+			return ['error' => true, 'message' => 'Sorry, there was an error uploading your file.' ];
+	}
+
+
+	/**
+	 * Quickly send form
+	 */
+	protected function sendForm($fields=[], $files=[], $subject='New message from website', $email_id='email', $delete_attachements=true){
+
+		$email = $this->getRequest( $email_id );
+
+		if ( $email && is_email( $email ) )
+		{
+			$body = $subject." :\n\n";
+
+			foreach ( $fields as $key )
+			{
+				$value = $this->getRequest( $key );
+				$body  .= ( $value ? ' - ' . $key . ' : ' . $value . "\n" : '' );
+			}
+
+			$attachments = [];
+
+			foreach ( $files as $file )
+			{
+				$file = $this->getRequest( $file );
+
+				if ( file_exists( WP_CONTENT_DIR.$file ) )
+					$attachments[] = WP_CONTENT_DIR.$file;
+			}
+
+			if ( wp_mail( get_option( 'admin_email' ), $subject, $body, $attachments ) )
+			{
+				if( $delete_attachements )
+				{
+					foreach ( $attachments as $file )
+						@unlink($file);
+				}
+
+				return true;
+			}
+			else
+				return ['error' => 2, 'message' => "Sorry, the server wasn't able to complete this request"];
+
+		}
+		else
+		{
+			return $this->json( ['error' => 1, 'message' => "Invalid email address. Please type a valid email address."] );
+		}
+	}
+
+
+	/**
+	 * Get request parameter
+	 */
+	protected function getRequest( $key, $limit=500 ) {
+
+		if ( !isset( $_REQUEST[ $key ] ) )
+			return false;
+		else
+			return substr( trim(sanitize_text_field( $_REQUEST[ $key ] )), 0, $limit );
+	}
+
+
+    /**
      * Application Constructor
      */
     public function setup()
@@ -208,6 +307,7 @@ abstract class Application {
 	    return $data;
     }
 
+
     /**
      * delete attachment reference on other blog
      */
@@ -248,8 +348,9 @@ abstract class Application {
 	    $this->prevent_recurssion = false;
     }
 
+
     /**
-     * add attachment to oher blog by reference
+     * add attachment to other blog by reference
      */
     public function addAttachment( $attachment_ID )
     {
@@ -343,6 +444,7 @@ abstract class Application {
 
 	    }, 999 );
     }
+
 
     /**
      * Add custom post type for taxonomy archive page
@@ -659,6 +761,7 @@ abstract class Application {
 
 		return $file;
 	}
+
 
 	/**
      * Register wp path

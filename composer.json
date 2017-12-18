@@ -35,7 +35,8 @@
       "symlink": {
         "metabolism/rocket-wordpress": {
           "../../../src/WordpressBundle/uploads": "web/uploads",
-          "../../../src/WordpressBundle/plugins": "web/plugins"
+          "../../../src/WordpressBundle/plugins": "web/plugins",
+          "../../../web/edition/admin-ajax.php": "web/ajax.php"
         }
       },
       "remove": {
