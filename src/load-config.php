@@ -82,9 +82,10 @@ if( $config->get('cache.http', 0) and !WP_DEBUG )
  * Enable multisite
  */
 if( $config->get('install-multisite') )
+{
 	define( 'WP_ALLOW_MULTISITE', true );
-
-if( $config->get('multisite') )
+}
+elseif( $config->get('multisite') )
 {
 	define( 'MULTISITE', true );
 	define( 'SUBDOMAIN_INSTALL', $config->get('multisite.subdomain_install') );

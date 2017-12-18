@@ -4,14 +4,15 @@ remove_menu_page:
   edit.php
   edit-comments.php
 
-define:
-  wp_remote: false
+#define:
+#  disallow_file_edit: false
 
 remove_submenu_page:
   themes.php: customize.php?return=%2Fedition%2Fwp-admin%2F
 
 # multisite:
 #  subdomain_install: true
+#  shared_media: true
 
 options:
   gmap_api_key: AIzaSyDEv5UrZbosf5H8MFSFLvoVS7djfsTCQFc

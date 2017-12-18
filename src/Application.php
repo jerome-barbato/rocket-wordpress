@@ -36,7 +36,7 @@ abstract class Application {
     public static $domain_name = 'default';
     public static $bo_domain_name = 'bo_default';
 
-    protected $router, $global_context, $class_loader;
+    protected $router, $global_context, $class_loader, $prevent_recurssion;
 
     public $remote_url;
 
@@ -101,9 +101,6 @@ abstract class Application {
             // Set default theme
             add_action( 'init', function()
             {
-                if( WP_REMOTE )
-                    wp_redirect(WP_REMOTE.'/edition/wp-admin/');
-
                 $this->setTheme();
                 $this->addOptionPages();
             });
@@ -125,6 +122,16 @@ abstract class Application {
 	        add_action( 'admin_head', [$this, 'hideUpdateNotice'], 1 );
 	        add_action( 'wpmu_options', [$this, 'wpmuOptions'] );
 	        add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
+
+	        // Replicate media on network
+	        if( $this->config->get('multisite.shared_media') and is_multisite() )
+	        {
+		        add_action( 'add_attachment', [$this, 'addAttachment']);
+		        add_action( 'delete_attachment', [$this, 'deleteAttachment']);
+		        add_filter( 'wp_update_attachment_metadata', [$this, 'updateAttachment'], 10, 2);
+		        add_filter( 'wpmu_delete_blog_upload_dir', '__return_false' );
+		        add_filter( 'upload_dir', [$this, 'uploadDir'], 11 );
+	        }
 
             //check loaded plugin
             add_action( 'plugins_loaded', [$this, 'pluginsLoaded']);
@@ -156,6 +163,138 @@ abstract class Application {
     {
 	    if (!current_user_can('update_core'))
 		    remove_action( 'admin_notices', 'update_nag', 3 );
+    }
+
+
+    /**
+     * delete attachment reference on other blog
+     */
+    public function updateAttachment($data, $attachment_ID )
+    {
+	    if( $this->prevent_recurssion || !isset($_REQUEST['action']) || $_REQUEST['action'] != 'image-editor')
+		    return $data;
+
+	    $this->prevent_recurssion = true;
+
+	    global $wpdb;
+
+	    $current_site_id = get_current_blog_id();
+	    $original_attachment_id = get_post_meta( $attachment_ID, '_wp_original_attachment_id', true );
+
+	    foreach ( get_sites() as $site ) {
+
+		    if ( (int) $site->blog_id !== $current_site_id ) {
+
+			    switch_to_blog( $site->blog_id );
+
+			    if( $original_attachment_id )
+			    {
+				    $results = $wpdb->get_results( "select `post_id` from $wpdb->postmeta where `meta_value` = '$original_attachment_id' AND `meta_key` = '_wp_original_attachment_id'", ARRAY_A );
+
+				    if( !empty($results) )
+					    wp_update_attachment_metadata($results[0]['post_id'], $data);
+			    }
+			    else
+			    {
+				    wp_update_attachment_metadata($attachment_ID, $data);
+			    }
+		    }
+	    }
+
+	    restore_current_blog();
+
+	    $this->prevent_recurssion = false;
+
+	    return $data;
+    }
+
+    /**
+     * delete attachment reference on other blog
+     */
+    public function deleteAttachment( $attachment_ID )
+    {
+	    if( $this->prevent_recurssion )
+		    return;
+
+	    $this->prevent_recurssion = true;
+
+	    global $wpdb;
+
+	    $current_site_id = get_current_blog_id();
+	    $original_attachment_id = get_post_meta( $attachment_ID, '_wp_original_attachment_id', true );
+
+	    foreach ( get_sites() as $site ) {
+
+		    if ( (int) $site->blog_id !== $current_site_id ) {
+
+			    switch_to_blog( $site->blog_id );
+
+			    if( $original_attachment_id )
+			    {
+				    $results = $wpdb->get_results( "select `post_id` from $wpdb->postmeta where `meta_value` = '$original_attachment_id' AND `meta_key` = '_wp_original_attachment_id'", ARRAY_A );
+
+				    if( !empty($results) )
+					    wp_delete_attachment($results[0]['post_id']);
+			    }
+			    else
+			    {
+				    wp_delete_attachment($attachment_ID);
+			    }
+		    }
+	    }
+
+	    restore_current_blog();
+
+	    $this->prevent_recurssion = false;
+    }
+
+    /**
+     * add attachment to oher blog by reference
+     */
+    public function addAttachment( $attachment_ID )
+    {
+	    if( $this->prevent_recurssion )
+		    return;
+
+	    $this->prevent_recurssion = true;
+
+	    $attachment = get_post( $attachment_ID );
+	    $current_site_id = get_current_blog_id();
+
+	    $attr = [
+		    'post_mime_type' => $attachment->post_mime_type,
+		    'filename'       => $attachment->guid,
+		    'post_title'     => $attachment->post_title,
+		    'post_status'    => $attachment->post_status,
+		    'post_parent'    => 0,
+		    'post_content'   => $attachment->post_content,
+		    'guid'           => $attachment->guid
+	    ];
+
+	    $file = get_attached_file( $attachment_ID );
+	    $attachment_metadata = wp_generate_attachment_metadata( $attachment_ID, $file );
+
+	    add_post_meta( $attachment_ID, '_wp_original_attachment_id', $attachment_ID );
+
+	    foreach ( get_sites() as $site ) {
+
+		    if ( (int) $site->blog_id !== $current_site_id ) {
+
+			    switch_to_blog( $site->blog_id );
+
+			    $inserted_id = wp_insert_attachment( $attr, $file );
+			    if ( !is_wp_error($inserted_id) )
+			    {
+				    wp_update_attachment_metadata( $inserted_id, $attachment_metadata );
+				    add_post_meta( $inserted_id, '_wp_original_attachment_id', $attachment_ID );
+			    }
+
+		    }
+	    }
+
+	    restore_current_blog();
+
+	    $this->prevent_recurssion = false;
     }
 
 
@@ -316,8 +455,8 @@ abstract class Application {
         remove_action('wp_head', 'rest_output_link_wp_head');
         remove_action('wp_head', 'wp_resource_hints', 2 );
         remove_action('wp_head', 'wp_oembed_add_discovery_links');
-	    remove_action('template_redirect', 'rest_output_link_header', 11, 0 );
-	    remove_action('template_redirect', 'wp_shortlink_header', 11, 0 );
+	    remove_action('template_redirect', 'rest_output_link_header', 11 );
+	    remove_action('template_redirect', 'wp_shortlink_header', 11 );
     }
 
 
@@ -528,56 +667,6 @@ abstract class Application {
     {
         $this->paths = $this->getPaths();
         $this->paths['wp'] = CMS_URI;
-
-        if( !defined('WP_REMOTE') and is_blog_installed())
-        {
-            global $wpdb;
-            $remote = preg_replace('/\/edition$/', '', $wpdb->get_var( "SELECT `option_value` FROM $wpdb->options WHERE `option_name` = 'siteurl'" ));
-
-            define('WP_REMOTE', $remote!=WP_HOME?$remote:false);
-        }
-    }
-
-
-    /**
-     * @param $value
-     * @return mixed
-     */
-    public function rewriteUploadURL($value, $replace=false)
-    {
-        if( $replace and WP_REMOTE )
-            $value = str_replace(WP_HOME, WP_REMOTE, $value);
-
-        $value = str_replace('/edition/wp-content/uploads', '/uploads', $value);
-
-        return $value;
-    }
-
-
-    /**
-     * @param $path
-     * @return mixed
-     */
-    public function checkImage($path)
-    {
-        if( WP_REMOTE )
-        {
-            $base   = str_replace(WP_HOME, '', $path);
-            $file   = BASE_URI.$base;
-            $remote = WP_REMOTE.$base;
-
-            if( !file_exists($file) )
-            {
-                $dir = dirname($file) ;
-
-                if( !is_dir($dir) )
-                    mkdir($dir, 0777, true);
-
-                file_put_contents($file, file_get_contents($remote));
-            }
-        }
-
-        return $path;
     }
 
 
@@ -586,7 +675,6 @@ abstract class Application {
      */
     public function registerFilters()
     {
-
 	    add_filter('pings_open', '__return_false');
 	    add_filter('xmlrpc_enabled', '__return_false');
 
@@ -594,10 +682,6 @@ abstract class Application {
 
 	    add_filter('woocommerce_template_path', function(){ return '../../../../../src/WoocommerceBundle/'; });
 	    add_filter('woocommerce_enqueue_styles', '__return_empty_array' );
-
-	    add_filter('rewrite_upload_url', function($value){ return $this->rewriteUploadURL($value, true); });
-        add_filter('timber/image/new_url', [$this, 'rewriteUploadURL']);
-        add_filter('timber/image/src', [$this, 'checkImage']);
 
         add_filter('acf/settings/save_json', function(){ return $this::$acf_folder; });
         add_filter('acf/settings/load_json', function(){ return [$this::$acf_folder]; });
@@ -611,9 +695,6 @@ abstract class Application {
 
         if( $jpeg_quality = $this->config->get('jpeg_quality') )
             add_filter( 'jpeg_quality', function() use ($jpeg_quality){ return $jpeg_quality; });
-
-        //implement in src/application
-        //ex : add_filter( 'page_link', [$this, 'rewrite_common'), 10, 3);
     }
 
 
@@ -627,6 +708,24 @@ abstract class Application {
 			var_dump($input);
 
 		return $input;
+	}
+
+
+	/**
+	 * Create Menu instances from configs
+	 * @see Menu
+	 */
+	public function uploadDir($dirs)
+	{
+		$dirs['baseurl'] = str_replace($dirs['relative'],'/uploads', $dirs['baseurl']);
+		$dirs['basedir'] = str_replace($dirs['relative'],'/uploads', $dirs['basedir']);
+
+		$dirs['url']  = str_replace($dirs['relative'],'/uploads', $dirs['url']);
+		$dirs['path'] = str_replace($dirs['relative'],'/uploads', $dirs['path']);
+
+		$dirs['relative'] = '/uploads';
+
+		return $dirs;
 	}
 
 

@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * define constant via YML files
 * symlink and folder chmod check
+* multisite media synchronisation
+### Removed
+* wp remote features
+* useless uploads folder rewrite path
 
 # 1.3.3 - 2017-12-12
 ### Removed
