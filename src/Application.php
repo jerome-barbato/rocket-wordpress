@@ -229,7 +229,6 @@ abstract class Application {
 		        add_action( 'delete_attachment', [$this, 'deleteAttachment']);
 		        add_filter( 'wp_update_attachment_metadata', [$this, 'updateAttachment'], 10, 2);
 		        add_filter( 'wpmu_delete_blog_upload_dir', '__return_false' );
-		        add_filter( 'upload_dir', [$this, 'uploadDir'], 11 );
 	        }
 
             //check loaded plugin
@@ -778,6 +777,9 @@ abstract class Application {
      */
     public function registerFilters()
     {
+	    if( $this->config->get('multisite.shared_media') and is_multisite() )
+		    add_filter( 'upload_dir', [$this, 'uploadDir'], 11 );
+
 	    add_filter('pings_open', '__return_false');
 	    add_filter('xmlrpc_enabled', '__return_false');
 
