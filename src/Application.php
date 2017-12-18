@@ -713,7 +713,11 @@ abstract class Application {
      */
     private function getThumbnails($all=false)
     {
-    	$folder = BASE_URI. '/src/WordpressBundle/uploads' . ( is_multisite() && !$all ? '/sites/'.get_current_blog_id() : '') . '/';
+	    $folder = BASE_URI. '/src/WordpressBundle/uploads/';
+
+	    if( is_multisite() && get_current_blog_id() != 1 && !$this->config->get('multisite.shared_media') && !$all )
+		    $folder = BASE_URI. '/src/WordpressBundle/uploads/sites/' . get_current_blog_id() . '/';
+
 	    $file_list = [];
 
     	if( is_dir($folder) )
@@ -741,7 +745,7 @@ abstract class Application {
 		    $thumbnails = $this->getThumbnails($all);
 
 		    foreach($thumbnails as $file)
-			    @unlink($file);
+			    unlink($file);
 	    }
 
 	    clearstatcache();
