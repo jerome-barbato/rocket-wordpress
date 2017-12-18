@@ -189,6 +189,7 @@ abstract class Application {
 	        $this->addMenus();
 	        $this->addMaintenanceMode();
 	        $this->registerActions();
+	        $this->setPermalink();
 
 	        $this->init();
         });
@@ -834,7 +835,22 @@ abstract class Application {
 	}
 
 
-    /**
+	/**
+	 * Set permalink stucture
+	 */
+	public function setPermalink()
+	{
+		global $wp_rewrite;
+
+		$wp_rewrite->set_permalink_structure('/%postname%');
+
+		update_option( "rewrite_rules", FALSE );
+
+		$wp_rewrite->flush_rules( true );
+	}
+
+
+	/**
      * Add edition folder to option url
      */
     public function networkSiteURL($url)
