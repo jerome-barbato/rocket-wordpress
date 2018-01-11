@@ -1,6 +1,6 @@
 <?php
 
-namespace Rocket\Model;
+namespace Rocket\Helper;
 
 use FrontBundle\Application;
 
