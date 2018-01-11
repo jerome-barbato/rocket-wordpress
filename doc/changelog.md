@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 1.3.4 - IN DEV
+### Changed
+* optimize ACF Helper for woocommerce
+* folder reorganisation
+### Bugfix
+* Invalid woocomerce path
+### Removed
+*debug view moved to kernel
+
 # 1.3.3 - 2017-12-20
 ### Added
 * define constant via YML files

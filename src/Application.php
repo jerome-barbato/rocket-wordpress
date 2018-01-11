@@ -63,7 +63,8 @@ abstract class Application {
 	protected function getSlug($id, $type){
 
 		if( $type == 'archive' )
-			return $this->config->get('post_types.'.$id.'.has_archive');
+			return $this->config->get('post_types.'.$id.'.has_archive', $id.'s');
+
 		if( $type == 'post' )
 			return $this->config->get('post_types.'.$id.'.rewrite.slug', $id);
 	}
@@ -790,7 +791,7 @@ abstract class Application {
 
 	    add_filter('posts_request', [$this, 'postsRequest'] );
 
-	    add_filter('woocommerce_template_path', function(){ return '../../../../../src/WoocommerceBundle/'; });
+	    add_filter('woocommerce_template_path', function($array){ return '../../../WoocommerceBundle/'; });
 	    add_filter('woocommerce_enqueue_styles', '__return_empty_array' );
 
         add_filter('acf/settings/save_json', function(){ return $this::$acf_folder; });

@@ -4,6 +4,7 @@ namespace Rocket\Model;
 
 use FrontBundle\Application;
 
+use Rocket\Helper\Manifest;
 use Rocket\Traits\SingletonTrait,
 	Rocket\Provider\WooCommerceProvider;
 
@@ -17,41 +18,51 @@ class Theme extends Site
     use SingletonTrait;
 
     public $theme_name = 'rocket';
-	private $app;
+	private $app, $manifest;
 
     public function __construct()
     {
         parent::__construct();
 
-        add_filter('timber_context', [$this, 'addToContext']);
-        add_filter('get_twig', [$this, 'addToTwig']);
-	    add_action('wp_head', [$this, 'headAction']);
-	    add_action('wp_footer', [$this, 'footerAction']);
+	    if (class_exists('Timber'))
+		    Timber::$locations = [BASE_URI . '/src/FrontBundle/Views/', BASE_URI . '/vendor/metabolism/rocket-kernel/web/views'];
+
+        add_filter( 'timber_context', [$this, 'addToContext']);
+        add_filter( 'get_twig', [$this, 'addToTwig']);
+	    add_action( 'wp_head', [$this, 'headAction']);
+	    add_action( 'wp_footer', [$this, 'footerAction']);
 
 	    /** @var Application $app */
 	    $this->app = Application::getInstance();
+	    $this->manifest = new Manifest();
     }
 
 
     public function headAction()
     {
+    	echo $this->manifest->getStyles();
+
 	    if( WP_DEBUG )
-		    Timber::render( 'views/header.debug.twig', [
-		    	'config'=>$this->app->config->export()
+		    Timber::render( 'component/header.debug.twig', [
+		    	'config'    => $this->app->config->export(),
+			    'framework' => 'wordpress'
 		    ]);
     }
 
 
     public function footerAction()
     {
+	    echo $this->manifest->getScripts();
+
 	    if( WP_DEBUG )
-		    Timber::render( 'views/footer.debug.twig', [
-		    	'config'=>$this->app->config->export(),
+		    Timber::render( 'component/footer.debug.twig', [
+		    	'config'      =>$this->app->config->export(),
 			    'environment' => $this->app->config->get('environment', 'production'),
 			    'last_update' => strtotime(shell_exec('git log -1 --format=%cd')),
-			    'base_url' => get_option('home'),
-			    'cookies' => $_COOKIE,
-			    'host' => 'http://' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 's':'') . $_SERVER['HTTP_HOST']
+			    'base_url'    => get_option('home'),
+			    'cookies'     => $_COOKIE,
+			    'host'        => 'http://' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 's':'') . $_SERVER['HTTP_HOST'],
+			    'framework'   => 'wordpress'
 	    ]);
     }
 
@@ -124,7 +135,6 @@ class Theme extends Site
 
             if (class_exists('Timber')) {
 
-                Timber::$locations = BASE_URI . '/src/FrontBundle/Views/';
                 $context = Timber::get_context();
 
                 if( $this->app ) {

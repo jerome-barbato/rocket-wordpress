@@ -133,7 +133,6 @@ define( 'DB_COLLATE', '');
 
 $table_prefix = $config->get('database.prefix', 'wp_');
 
-
 /**
  * Authentication Unique Keys and Salts
  */

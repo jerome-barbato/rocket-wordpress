@@ -138,7 +138,14 @@ class ACF
 
 			case 'product':
 				$post_status = get_post_status( $id );
-				$value = ( $post_status && $post_status !== 'publish' ) ? false : wc_get_product( $id );
+				if( $post_status && $post_status !== 'publish' )
+					$value = false;
+				else
+				{
+					$value = new Post( $id );
+					$value->wc = wc_get_product( $id );
+				}
+
 				break;
 
 			case 'post':
@@ -242,12 +249,12 @@ class ACF
 
 						foreach ($object['value'] as $value) {
 
-							$is_woo_product = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' );
+							$type = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' ) ? 'product' : 'post';
 
 							if ($object['return_format'] == 'id' or is_int($value) )
-								$element = $is_woo_product ? ['product'=>$this->getCache('product', $value), 'post'=>$this->getCache('post', $value)] : $this->getCache('post', $value);
+								$element = $this->getCache($type, $value);
 							elseif ($object['return_format'] == 'object')
-								$element = $is_woo_product ? ['product'=>$this->getCache('product', $value->ID), 'post'=>$this->getCache('post', $value->ID)] : $this->getCache('post', $value->ID);
+								$element = $this->getCache($type, $value->ID);
 							else
 								$element = $object['value'];
 
@@ -262,10 +269,12 @@ class ACF
 					if( empty($object['value']) )
 						break;
 
+					$type = count($object['post_type']) === 1 && $object['post_type'][0] == 'product' && class_exists( 'WooCommerce' ) ? 'product' : 'post';
+
 					if ($object['return_format'] == 'id' or is_int($object['value']) )
-						$objects[$object['name']] = $this->getCache('post', $object['value']);
+						$objects[$object['name']] = $this->getCache($type, $object['value']);
 					elseif ($object['return_format'] == 'object')
-						$objects[$object['name']] = $this->getCache('post', $object['value']->ID);
+						$objects[$object['name']] = $this->getCache($type, $object['value']->ID);
 					else
 						$objects[$object['name']] = $object['value'];
 
