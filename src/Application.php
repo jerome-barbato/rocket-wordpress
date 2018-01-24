@@ -189,8 +189,21 @@ abstract class Application {
 	        $this->addTaxonomies();
 	        $this->addMenus();
 	        $this->addMaintenanceMode();
-	        $this->registerActions();
 	        $this->setPermalink();
+	        $this->registerActions();
+
+	        if( is_admin() )
+	        {
+		        $this->setTheme();
+		        $this->addOptionPages();
+	        }
+	        else
+	        {
+		        $this->router = new Router();
+		        $this->router->setLocale(get_locale());
+
+		        $this->registerRoutes();
+	        }
 
 	        $this->init();
         });
@@ -199,13 +212,6 @@ abstract class Application {
         // When viewing admin
         if( is_admin() )
         {
-            // Set default theme
-            add_action( 'init', function()
-            {
-                $this->setTheme();
-                $this->addOptionPages();
-            });
-
             // Setup ACF Settings
             add_action( 'acf/init', [$this, 'ACFInit'] );
 
@@ -244,14 +250,6 @@ abstract class Application {
             add_action( 'after_setup_theme', [$this, 'afterSetupTheme']);
             add_action( 'wp_footer', [$this, 'wpFooter']);
 	        add_action( 'pre_get_posts', [$this, 'preGetPosts'] );
-
-	        add_action( 'init', function()
-	        {
-		        $this->router = new Router();
-		        $this->router->setLocale(get_locale());
-
-		        $this->registerRoutes();
-	        });
         }
     }
 
@@ -928,9 +926,9 @@ abstract class Application {
 	 * @param $data
 	 * @return bool
 	 */
-    protected function json($data)
+    protected function json($data, $status_code = null)
     {
-        wp_send_json($data);
+        wp_send_json($data, $status_code);
 
         return true;
     }
@@ -965,10 +963,18 @@ abstract class Application {
 	 */
     protected function action($id, $controller, $no_private=true)
     {
-	    add_action( 'wp_ajax_'.$id, $controller );
+    	if( class_exists( 'WooCommerce' ) )
+	    {
+		    add_action( 'woocommerce_api_'.$id, $controller );
+	    }
+	    else
+	    {
 
-	    if( $no_private )
-		    add_action( 'wp_ajax_nopriv_'.$id, $controller );
+		    add_action( 'wp_ajax_'.$id, $controller );
+
+		    if( $no_private )
+			    add_action( 'wp_ajax_nopriv_'.$id, $controller );
+	    }
     }
 
 
@@ -1046,7 +1052,7 @@ abstract class Application {
 		$notices = [];
 
 		//check folder wright
-		foreach (['src/WordpressBundle/languages', 'src/WordpressBundle/uploads'] as $folder ){
+		foreach (['src/WordpressBundle/languages', 'src/WordpressBundle/uploads', 'src/WordpressBundle/upgrade'] as $folder ){
 
 			$path = BASE_URI.'/'.$folder;
 
@@ -1061,7 +1067,7 @@ abstract class Application {
 		$notices = [];
 
 		//check symlink
-		foreach (['web/uploads', 'web/plugins'] as $file ){
+		foreach (['web/uploads', 'web/plugins', 'web/ajax.php', 'web/static'] as $file ){
 
 			$path = BASE_URI.'/'.$file;
 
