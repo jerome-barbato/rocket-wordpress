@@ -10,6 +10,7 @@
     "johnpbloch/wordpress-core": "4.9.*",
     "mustangostang/spyc": "0.6.*",
     "symfony/routing":"3.2.*",
+    "ifsnop/mysqldump-php":"2.*",
     "dflydev/dot-access-data": "1.*",
     "wpackagist-plugin/timber-library": "1.*",
     "elliotcondon/advanced-custom-fields-pro": "5.*",

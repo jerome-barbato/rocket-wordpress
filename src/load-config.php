@@ -133,6 +133,7 @@ define( 'DB_COLLATE', '');
 
 $table_prefix = $config->get('database.prefix', 'wp_');
 
+
 /**
  * Authentication Unique Keys and Salts
  */
@@ -181,6 +182,7 @@ if (!defined('CMS_URI'))
 
 if (!defined('ABSPATH'))
     define( 'ABSPATH', CMS_URI .'/');
+
 
 /**
  * Sets up WordPress vars and included files.
