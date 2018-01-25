@@ -11,7 +11,7 @@ class BackupPlugin {
 
 	protected $config;
 
-	private function archive($source, $destination, $exclude = [])
+	private function dumpFolder($source, $destination, $exclude = [])
 	{
 		if ( !extension_loaded( 'zip' ) )
 			return 'Zip Extension is not loaded';
@@ -85,7 +85,7 @@ class BackupPlugin {
 	{
 		try {
 
-			$dump = new IMysqldump\Mysqldump('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
+			$dump = new IMysqldump\Mysqldump('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD, ['add-drop-table' => true]);
 			$dump->start($file);
 
 			return true;
@@ -96,6 +96,31 @@ class BackupPlugin {
 		}
 	}
 
+
+	/**
+	 * Remove all thumbnails
+	 */
+	private function create($all=false)
+	{
+		$backup = false;
+
+		if ( current_user_can('administrator') && (!$all || is_super_admin()) )
+		{
+			$rootPath = BASE_URI. '/src/WordpressBundle/uploads/';
+			$backup   = $rootPath.'backup-'.date('Ymd').'.zip';
+
+			$this->dumpDatabase($rootPath.'bdd.sql');
+			$this->dumpFolder($rootPath, $backup);
+
+			unlink($rootPath.'bdd.sql');
+
+			return $backup;
+		}
+
+		return $backup;
+	}
+
+
 	/**
 	 * Remove all thumbnails
 	 */
@@ -103,15 +128,24 @@ class BackupPlugin {
 	{
 		if ( current_user_can('administrator') && (!$all || is_super_admin()) )
 		{
-			$rootPath = BASE_URI. '/src/WordpressBundle/uploads/';
-			$tmpPath = BASE_URI. '/src/WordpressBundle/uploads/tmp/';
+			if( $backup = $this->create($all) )
+			{
+				header('Content-Description: File Transfer');
+				header('Content-Type: application/octet-stream');
+				header('Content-Disposition: attachment; filename='.basename($backup));
+				header('Content-Transfer-Encoding: binary');
+				header('Expires: 0');
+				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+				header('Pragma: public');
+				header('Content-Length: ' . filesize($backup));
 
-			mkdir($tmpPath, 077);
+				ob_clean();
+				flush();
 
-			$this->dumpDatabase($tmpPath.'bdd.sql');
-			$this->archive($rootPath, $tmpPath.'backup.zip');
+				readfile($backup);
 
-			unlink($tmpPath.'bdd.sql');
+				unlink($backup);
+			}
 		}
 
 		wp_redirect( get_admin_url(null, $all?'network/settings.php':'options-general.php') );
