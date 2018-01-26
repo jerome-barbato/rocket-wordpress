@@ -37,7 +37,7 @@
           "../../../src/WordpressBundle/plugins": "web/plugins",
           "../../../web/edition/admin-ajax.php": "web/ajax.php",
           "src/Bundle/theme": "src/WordpressBundle/themes/rocket",
-          "src/Bundle/mu-plugins/rocket.php": "src/WordpressBundle/mu-plugins/rocket.php",
+          "src/Bundle/mu-plugins/rocket.php": "src/WordpressBundle/mu-plugins/rocket.php"
         }
       },
       "remove": {
