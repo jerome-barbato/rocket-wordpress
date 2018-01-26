@@ -68,12 +68,10 @@ class SecurityPlugin {
 		remove_action('template_redirect', 'rest_output_link_header', 11 );
 		remove_action('template_redirect', 'wp_shortlink_header', 11 );
 	}
-	
+
+
 	public function __construct($config)
 	{
-		add_filter('pings_open', '__return_false');
-		add_filter('xmlrpc_enabled', '__return_false');
-		
 		if( is_admin() )
 		{
 			add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
@@ -82,6 +80,9 @@ class SecurityPlugin {
 		}
 		else
 		{
+			add_filter( 'pings_open', '__return_false');
+			add_filter( 'xmlrpc_enabled', '__return_false');
+
 			add_action( 'after_setup_theme', [$this, 'cleanHeader']);
 			add_action( 'wp_footer', [$this, 'cleanFooter']);
 		}

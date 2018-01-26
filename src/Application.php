@@ -16,7 +16,8 @@ use	Rocket\Plugin\MediaPlugin,
 	Rocket\Plugin\MaintenancePlugin,
 	Rocket\Plugin\ConfigPlugin,
 	Rocket\Plugin\NoticePlugin,
-	Rocket\Plugin\BackupPlugin;
+	Rocket\Plugin\BackupPlugin,
+    Rocket\Plugin\TemplatePlugin;
 
 use Symfony\Component\Routing\Route as Route;
 
@@ -86,10 +87,7 @@ abstract class Application {
 
 		        $this->registerRoutes();
 	        }
-
-	        $this->init();
         });
-
 
         // When viewing admin
         if( is_admin() )
@@ -107,6 +105,7 @@ abstract class Application {
         {
             add_action( 'after_setup_theme', [$this, 'loadThemeTextdomain']);
 	        add_action( 'pre_get_posts', [$this, 'preGetPosts'] );
+	        add_action( 'wp_loaded', [$this, 'init']);
         }
     }
 
@@ -172,14 +171,10 @@ abstract class Application {
 
 
     protected function registerRoutes() {}
+
 	protected function registerActions() {}
+
 	public function adminFooter() {}
-
-
-	public function initContext()
-	{
-    	$this->context = new Contest();
-	}
 	
 
 	/**
@@ -206,6 +201,7 @@ abstract class Application {
     public function registerPlugins()
     {
 	    new ConfigPlugin($this->config);
+	    new TemplatePlugin($this->config);
 	    new MediaPlugin($this->config);
 	    new FormPlugin($this->config);
 	    new MaintenancePlugin($this->config);
@@ -278,9 +274,9 @@ abstract class Application {
     {
         $this->config = $this->getConfig('wordpress');
 
-        self::$domain_name = $this->config->get('domain_name', 'customer');
-        self::$bo_domain_name = 'bo_'.$this->config->get('domain_name', 'customer');
-	    self::$acf_folder = WP_CONTENT_DIR.'/acf-json';
+        self::$domain_name      = $this->config->get('domain_name', 'customer');
+        self::$bo_domain_name   = 'bo_'.$this->config->get('domain_name', 'customer');
+	    self::$acf_folder       = WP_CONTENT_DIR.'/acf-json';
 	    self::$languages_folder = WP_CONTENT_DIR . '/languages';
     }
 
@@ -289,7 +285,10 @@ abstract class Application {
      * Init handler
      * @see Menu
      */
-    public function init(){}
+    public function init()
+    {
+	    $this->context = new Context();
+    }
 
 
     /**

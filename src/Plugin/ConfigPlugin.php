@@ -141,8 +141,6 @@ class ConfigPlugin {
 
 		$this->bo_domain_name = 'bo_'.$this->config->get('domain_name', 'customer');
 
-		new PageTemplater($this->config->get('page_templates', []));
-
 
 		if( $jpeg_quality = $this->config->get('jpeg_quality') )
 			add_filter( 'jpeg_quality', function() use ($jpeg_quality){ return $jpeg_quality; });

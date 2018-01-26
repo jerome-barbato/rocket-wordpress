@@ -301,9 +301,9 @@ class MediaPlugin {
 		if( $this->config->get('multisite.shared_media') and is_multisite() )
 			add_filter( 'upload_dir', [$this, 'uploadDir'], 11 );
 
-		add_action( 'init', function()
+		if( is_admin() )
 		{
-			if( is_admin() )
+			add_action( 'init', function()
 			{
 				add_action( 'admin_init', [$this, 'adminInit'] );
 				add_action( 'wpmu_options', [$this, 'wpmuOptions'] );
@@ -316,7 +316,7 @@ class MediaPlugin {
 					add_filter( 'wp_update_attachment_metadata', [$this, 'updateAttachment'], 10, 2);
 					add_filter( 'wpmu_delete_blog_upload_dir', '__return_false' );
 				}
-			}
-		});
+			});
+		}
 	}
 }

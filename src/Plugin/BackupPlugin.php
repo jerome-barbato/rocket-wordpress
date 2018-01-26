@@ -191,13 +191,13 @@ class BackupPlugin {
 	{
 		$this->config = $config;
 
+		if( !is_admin() )
+			return;
+
 		add_action( 'init', function()
 		{
-			if( is_admin() )
-			{
-				add_action( 'admin_init', [$this, 'adminInit'] );
-				add_action( 'wpmu_options', [$this, 'wpmuOptions'] );
-			}
+			add_action( 'admin_init', [$this, 'adminInit'] );
+			add_action( 'wpmu_options', [$this, 'wpmuOptions'] );
 		});
 	}
 }

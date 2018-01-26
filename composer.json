@@ -27,8 +27,6 @@
       },
       "copy": {
         "metabolism/rocket-wordpress": {
-          "src/Bundle/theme": "src/WordpressBundle/themes/rocket",
-          "src/Bundle/mu-plugins/rocket.php": "src/WordpressBundle/mu-plugins/rocket.php",
           "wp-config.php": "web/wp-config.php"
         }
       },
@@ -37,7 +35,9 @@
           "doc": "doc/wordpress",
           "../../../src/WordpressBundle/uploads": "web/uploads",
           "../../../src/WordpressBundle/plugins": "web/plugins",
-          "../../../web/edition/admin-ajax.php": "web/ajax.php"
+          "../../../web/edition/admin-ajax.php": "web/ajax.php",
+          "src/Bundle/theme": "src/WordpressBundle/themes/rocket",
+          "src/Bundle/mu-plugins/rocket.php": "src/WordpressBundle/mu-plugins/rocket.php",
         }
       },
       "remove": {
@@ -56,12 +56,6 @@
           "wp-content",
           "wp-config-sample.php"
         ]
-      },
-      "copy": {
-        "metabolism/rocket-wordpress": {
-          "src/Bundle/theme": "src/WordpressBundle/themes/rocket",
-          "src/Bundle/mu-plugins/rocket.php": "src/WordpressBundle/mu-plugins/rocket.php"
-        }
       }
     },
     "branch-alias": {

@@ -76,7 +76,10 @@ class NoticePlugin {
 	{
 		$this->config = $config;
 
-		add_action( 'plugins_loaded', [$this, 'pluginsLoaded']);
-		add_action( 'admin_notices', [$this, 'adminNotices']);
+		if( is_admin() )
+		{
+			add_action( 'plugins_loaded', [$this, 'pluginsLoaded']);
+			add_action( 'admin_notices', [$this, 'adminNotices']);
+		}
 	}
 }
