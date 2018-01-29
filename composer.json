@@ -27,7 +27,8 @@
       },
       "copy": {
         "metabolism/rocket-wordpress": {
-          "wp-config.php": "web/wp-config.php"
+          "wp-config.php": "web/wp-config.php",
+          "doc/wordpress.sample.yml": "config/wordpress.yml"
         }
       },
       "symlink": {
@@ -35,7 +36,7 @@
           "doc": "doc/wordpress",
           "../../../src/WordpressBundle/uploads": "web/uploads",
           "../../../src/WordpressBundle/plugins": "web/plugins",
-          "../../../web/edition/admin-ajax.php": "web/ajax.php",
+          "../../../web/edition/wp-admin/admin-ajax.php": "web/ajax.php",
           "src/Bundle/theme": "src/WordpressBundle/themes/rocket",
           "src/Bundle/mu-plugins/rocket.php": "src/WordpressBundle/mu-plugins/rocket.php"
         }
