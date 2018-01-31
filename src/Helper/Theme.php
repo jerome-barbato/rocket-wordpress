@@ -22,7 +22,7 @@ class Theme extends Site
 
     public function __construct()
     {
-        parent::__construct();
+	    parent::__construct();
 
 	    if (class_exists('Timber'))
 		    Timber::$locations = [BASE_URI . '/src/FrontBundle/Views/', BASE_URI . '/vendor/metabolism/rocket-kernel/web/views'];

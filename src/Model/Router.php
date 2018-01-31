@@ -76,7 +76,7 @@ class Router {
      */
     public function solve()
     {
-        $current_url = $this->get_current_url();
+	    $current_url = $this->get_current_url();
 
         $request_context = new RequestContext('/');
         $matcher = new UrlMatcher($this->routes, $request_context);

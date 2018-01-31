@@ -276,7 +276,7 @@ abstract class Application {
 
         self::$domain_name      = $this->config->get('domain_name', 'customer');
         self::$bo_domain_name   = 'bo_'.$this->config->get('domain_name', 'customer');
-	    self::$acf_folder       = WP_CONTENT_DIR.'/acf-json';
+	    self::$acf_folder       = WP_CONTENT_DIR . '/acf-json';
 	    self::$languages_folder = WP_CONTENT_DIR . '/languages';
     }
 

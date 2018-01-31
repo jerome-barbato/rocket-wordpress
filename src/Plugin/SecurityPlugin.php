@@ -72,6 +72,8 @@ class SecurityPlugin {
 
 	public function __construct($config)
 	{
+		add_filter( 'flush_rewrite_rules_hard', '__return_false');
+
 		if( is_admin() )
 		{
 			add_action( 'wp_handle_upload_prefilter', [$this, 'cleanFilename']);
