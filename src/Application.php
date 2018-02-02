@@ -17,7 +17,8 @@ use	Rocket\Plugin\MediaPlugin,
 	Rocket\Plugin\ConfigPlugin,
 	Rocket\Plugin\NoticePlugin,
 	Rocket\Plugin\BackupPlugin,
-    Rocket\Plugin\TemplatePlugin;
+    Rocket\Plugin\TemplatePlugin,
+    Rocket\Plugin\ThumbnailPlugin;
 
 use Symfony\Component\Routing\Route as Route;
 
@@ -208,6 +209,7 @@ abstract class Application {
 	    new SecurityPlugin($this->config);
 	    new NoticePlugin($this->config);
 	    new BackupPlugin($this->config);
+	    new ThumbnailPlugin($this->config);
     }
 
 
