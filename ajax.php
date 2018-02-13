@@ -1,5 +1,6 @@
 <?php
-// Note: This file exists as a near-copy of /edition/wp-admin/admin-ajax.php so that caching on this URL can occur.
+// Note: This file exists as a near-copy of wp-admin/admin-ajax.php so that caching on this URL can occur.
+// This is an optimized and obfuscated version based on https://gist.github.com/yllus/8181d8670fd296854c1e41078d969cc1
 
 /**
  * WordPress Ajax Process Execution
@@ -23,7 +24,7 @@ if ( ! defined( 'WP_ADMIN' ) ) {
 // Fake being the real admin-ajax.php so some WordPress functions run correctly.
 $_SERVER['PHP_SELF'] = '/wp-admin/admin-ajax.php';
 
-require_once( dirname( __FILE__ ) . '/edition/wp-load.php' );
+require_once( str_replace('/vendor/metabolism/rocket-wordpress', '/web', dirname( __FILE__ )) . '/edition/wp-load.php' );
 
 /** Allow for cross-domain requests (from the front end). */
 send_origin_headers();
