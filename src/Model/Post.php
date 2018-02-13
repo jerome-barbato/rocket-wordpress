@@ -26,6 +26,14 @@ class Post extends \Timber\Post
 	 */
 	public function __construct($id = null) {
 
+		if( is_object($id) )
+		{
+			if( !isset($id->ID) )
+				return false;
+
+			$id = $id->ID;
+		}
+
 		parent::__construct( $id );
 
 		$this->excerpt = $this->post_excerpt;
@@ -69,7 +77,7 @@ class Post extends \Timber\Post
 
 		unset(
 			$this->custom, $this->guid, $this->post_content_filtered, $this->to_ping, $this->pinged, $this->ping_status,
-			$this->ImageClass
+			$this->ImageClass, $this->PostClass
 		);
 	}
 }

@@ -1,24 +1,60 @@
 <?php
 
-namespace Rocket\Plugin;
+namespace Rocket\Helper;
 
 
 /**
  * Class Rocket Framework
  */
-class FormPlugin {
+class Form {
 
 	/**
 	 * Get request parameter
 	 */
-	public static function get( $key, $limit=500 ) {
+	public static function get( $key, $limit_lengh=500 ) {
 
 		if ( !isset( $_REQUEST[ $key ] ) )
 			return false;
 		else
-			return substr( trim(sanitize_text_field( $_REQUEST[ $key ] )), 0, $limit );
+			return substr( trim(sanitize_text_field( $_REQUEST[ $key ] )), 0, $limit_lengh );
 	}
 
+
+	/**
+	 * Serialize REQUEST data
+	 */
+	public static function meetRequirement( $id, $value='', $validation = [] ) {
+
+		//todo check for type
+		$id = str_replace('[]', '', $id);
+		return isset( $validation[$id] ) && ( !isset($validation[$id]['required']) || !empty($value) );
+	}
+
+
+	/**
+	 * Serialize REQUEST data
+	 */
+	public static function serialize( $key = 'data', $validation = [], $limit_lengh=500 ) {
+
+		$form_data = isset($_REQUEST[$key])?$_REQUEST[$key]:[];
+		$data = [];
+
+		foreach ($form_data as $field)
+		{
+			$id    = trim( sanitize_text_field($field['name']) );
+			$value = substr( trim( sanitize_text_field($field['value'])), 0, $limit_lengh );
+
+			if( strpos($id, '[]') !== false )
+				$data[str_replace('[]', '', $id)][] = $value;
+			else
+				$data[$id] = $value;
+
+			if( !empty($validation) && !self::meetRequirement($id, $value, $validation) )
+				return false;
+		}
+
+		return $data;
+	}
 
 	/**
 	 * Quickly send form

@@ -11,7 +11,6 @@ use Rocket\Model\Router,
 	Rocket\Model\Terms;
 
 use	Rocket\Plugin\MediaPlugin,
-	Rocket\Plugin\FormPlugin,
 	Rocket\Plugin\SecurityPlugin,
 	Rocket\Plugin\MaintenancePlugin,
 	Rocket\Plugin\ConfigPlugin,
@@ -116,23 +115,26 @@ abstract class Application {
      */
     public function preGetPosts( $query )
     {
-	    if( ! $query->is_main_query() || is_admin() )
+	    if( !$query->is_main_query() || is_admin() )
 		    return;
 
-	    if ( $query->is_tax )
+	    $post_type = get_query_var('post_type');
+
+	    if ( $query->is_archive and $post_type )
 	    {
-		    $post_type = get_query_var('post_type');
+	    	if( $ppp = $this->config->get('post_types.'.$post_type.'.posts_per_page') )
+			    $query->set( 'posts_per_page', $ppp );
+	    }
 
-		    if( !$post_type )
-		    {
-			    global $wp_taxonomies;
+	    if ( $query->is_tax and !$post_type )
+	    {
+		    global $wp_taxonomies;
 
-			    $taxo = get_queried_object();
-			    $post_type = ( isset($taxo->taxonomy, $wp_taxonomies[$taxo->taxonomy] ) ) ? $wp_taxonomies[$taxo->taxonomy]->object_type : array();
+		    $taxo = get_queried_object();
+		    $post_type = ( isset($taxo->taxonomy, $wp_taxonomies[$taxo->taxonomy] ) ) ? $wp_taxonomies[$taxo->taxonomy]->object_type : array();
 
-			    $query->set('post_type', $post_type);
-			    $query->query['post_type'] = $post_type;
-		    }
+		    $query->set('post_type', $post_type);
+		    $query->query['post_type'] = $post_type;
 	    }
 
 	    return $query;
@@ -204,7 +206,6 @@ abstract class Application {
 	    new ConfigPlugin($this->config);
 	    new TemplatePlugin($this->config);
 	    new MediaPlugin($this->config);
-	    new FormPlugin($this->config);
 	    new MaintenancePlugin($this->config);
 	    new SecurityPlugin($this->config);
 	    new NoticePlugin($this->config);

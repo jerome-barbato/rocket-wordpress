@@ -65,6 +65,8 @@ class Context
 	public function addCommon()
 	{
 		$this->context['options'] = $this->options;
+		$this->context['posts_per_page'] = get_option( 'posts_per_page' );
+
 	}
 
 

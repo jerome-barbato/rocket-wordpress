@@ -122,14 +122,24 @@ class Query
 	{
 		global $wp_query;
 
-		if( !isset($args['post_type']) )
-			$args = array_merge($wp_query->query, $args);
+		if( empty($args) )
+		{
+			$query = $wp_query;
+		}
+		else
+		{
+			if( !isset($args['post_type']) )
+				$args = array_merge($wp_query->query, $args);
 
-		if( !isset($args['posts_per_page']) and !isset($args['numberposts']))
-			$args['posts_per_page'] = get_option( 'posts_per_page' );
+			if( !isset($args['posts_per_page']) and !isset($args['numberposts']))
+				$args['posts_per_page'] = get_option( 'posts_per_page' );
 
-		$args['fields'] = 'ids';
-		$query = new \WP_Query( $args );
+			$args['fields'] = 'ids';
+			$query = new \WP_Query( $args );
+		}
+
+		if( !isset($query->posts) || !is_array($query->posts) )
+			return false;
 
 		foreach ($query->posts as &$post)
 		{
@@ -152,7 +162,9 @@ class Query
 
 			}
 			else
+			{
 				$post = new Post( $post );
+			}
 		}
 
 		return $query;
