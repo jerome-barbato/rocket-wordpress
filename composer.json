@@ -28,6 +28,7 @@
       "copy": {
         "metabolism/rocket-wordpress": {
           "wp-config.php": "web/wp-config.php",
+          "ajax.php": "web/ajax.php",
           "doc/wordpress.sample.yml": "config/wordpress.yml"
         }
       },
@@ -57,7 +58,12 @@
           "wp-content",
           "wp-config-sample.php"
         ]
-      }
+      },
+      "copy": {
+        "metabolism/rocket-wordpress": {
+          "ajax.php": "web/ajax.php"
+        }
+      },
     },
     "branch-alias": {
       "dev-1.3.x": "1.3.x-dev",

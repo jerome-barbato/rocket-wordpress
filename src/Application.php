@@ -230,6 +230,10 @@ abstract class Application {
 	    add_filter('timber/post/get_preview/read_more_link', '__return_null' );
         add_filter('wp_calculate_image_srcset_meta', '__return_null');
 
+	    add_filter( "site_option_siteurl", function($value){
+	    	return str_replace('/ajax.php/', '/', $value);
+	    });
+
         // Handle /edition in url
 	    add_filter('option_siteurl', [$this, 'optionSiteURL'] );
 	    add_filter('network_site_url', [$this, 'networkSiteURL'] );

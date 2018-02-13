@@ -2,6 +2,8 @@
 
 namespace Rocket\Helper;
 
+use Rocket\Plugin\MediaPlugin as Media;
+
 
 /**
  * Class Rocket Framework
@@ -11,12 +13,25 @@ class Form {
 	/**
 	 * Get request parameter
 	 */
-	public static function get( $key, $limit_lengh=500 ) {
+	public static function get( $key, $limit_lengh=500 )
+	{
+		if( isset($_FILES[$key]))
+		{
+			$upload = Media::upload($key, ['image/jpeg', 'image/gif', 'image/png', 'application/pdf', 'application/zip']);
 
-		if ( !isset( $_REQUEST[ $key ] ) )
+			if( isset($upload['error']))
+				return false;
+
+			return $upload['filename'];
+		}
+		elseif ( !isset( $_REQUEST[ $key ] ) )
+		{
 			return false;
+		}
 		else
+		{
 			return substr( trim(sanitize_text_field( $_REQUEST[ $key ] )), 0, $limit_lengh );
+		}
 	}
 
 
