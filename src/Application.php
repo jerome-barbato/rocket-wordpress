@@ -234,6 +234,13 @@ abstract class Application {
 	    	return str_replace('/ajax.php/', '/', $value);
 	    });
 
+	    if( !is_admin() )
+	    {
+		    add_filter( 'site_url', function($url){
+			    return str_replace('/edition', '', $url);
+		    });
+	    }
+
         // Handle /edition in url
 	    add_filter('option_siteurl', [$this, 'optionSiteURL'] );
 	    add_filter('network_site_url', [$this, 'networkSiteURL'] );
