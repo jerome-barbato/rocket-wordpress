@@ -236,7 +236,7 @@ abstract class Application {
 
 	    if( !is_admin() )
 	    {
-		    add_filter( 'site_url', function($url){
+		    add_filter( 'timber/URLHelper/file_system_to_url', function($url){
 			    return str_replace('/edition', '', $url);
 		    });
 	    }
