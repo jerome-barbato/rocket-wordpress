@@ -55,6 +55,9 @@ class ConfigPlugin {
 	{
 		foreach ( $this->config->get('post_types', []) as $slug => $data )
 		{
+			if( in_array($slug, ['post', 'page', 'attachment', 'revision', 'nav_menu_item', 'custom_css', 'customize_changeset', 'action', 'author', 'order', 'theme']) )
+				wp_die('Cannot redeclare '.$slug.' post type');
+
 			$data = new DotAccessData($data);
 
 			$label = __(ucfirst($this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), $this->bo_domain_name);
@@ -110,12 +113,16 @@ class ConfigPlugin {
 	{
 		foreach ( $this->config->get('taxonomies', []) as $slug => $data )
 		{
+			if( $slug == 'category')
+				wp_die('Cannot redeclare category taxonomy');
+
 			$data = new DotAccessData($data);
 			$label = __(ucfirst( $this->config->get('taxonomies.'.$slug.'.name', $slug.'s')), $this->bo_domain_name);
 
 			$taxonomy = new Taxonomy($label, $slug);
 			$taxonomy->hydrate($data);
 			$taxonomy->register();
+
 		}
 	}
 

@@ -188,6 +188,8 @@ class Context
 			array_map($callback, $posts);
 
 		$this->context[$key] = array_merge($this->context[$key], $posts);
+
+		return $this->context[$key];
 	}
 
 
@@ -204,9 +206,10 @@ class Context
 			]]
 		], $args);
 
-		$this->context[$key] = Query::get_post($args);
-
-		return $this->context[$key]->ID;
+		if( $this->context[$key] = Query::get_post($args) )
+			return $this->context[$key]->ID;
+		else
+			return false;
 	}
 
 
