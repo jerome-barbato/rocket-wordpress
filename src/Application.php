@@ -105,7 +105,7 @@ abstract class Application {
         {
             add_action( 'after_setup_theme', [$this, 'loadThemeTextdomain']);
 	        add_action( 'pre_get_posts', [$this, 'preGetPosts'] );
-	        add_action( 'wp_loaded', [$this, 'init']);
+	        add_action( 'wp_loaded', [$this, 'init'], 99);
         }
     }
 
