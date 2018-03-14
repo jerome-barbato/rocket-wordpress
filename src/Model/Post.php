@@ -76,7 +76,7 @@ class Post extends \Timber\Post
 		}
 
 		unset(
-			$this->custom, $this->guid, $this->post_content_filtered, $this->to_ping, $this->pinged, $this->ping_status,
+			$this->guid, $this->post_content_filtered, $this->to_ping, $this->pinged, $this->ping_status,
 			$this->ImageClass
 		);
 	}
