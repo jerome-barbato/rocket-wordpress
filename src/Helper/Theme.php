@@ -4,7 +4,6 @@ namespace Rocket\Helper;
 
 use FrontBundle\Application;
 
-use Rocket\Helper\Manifest;
 use Rocket\Traits\SingletonTrait,
 	Rocket\Provider\WooCommerceProvider;
 
@@ -34,14 +33,11 @@ class Theme extends Site
 
 	    /** @var Application $app */
 	    $this->app = Application::getInstance();
-	    $this->manifest = new Manifest();
     }
 
 
     public function headAction()
     {
-    	echo $this->manifest->getStyles();
-
 	    if( WP_DEBUG )
 		    Timber::render( 'component/header.debug.twig', [
 		    	'config'    => $this->app->config->export(),
@@ -52,8 +48,6 @@ class Theme extends Site
 
     public function footerAction()
     {
-	    echo $this->manifest->getScripts();
-
 	    if( WP_DEBUG )
 		    Timber::render( 'component/footer.debug.twig', [
 		    	'config'      =>$this->app->config->export(),
