@@ -16,7 +16,7 @@ class MediaPlugin {
 	public static function upload($file='file', $allowed_type = ['image/jpeg', 'image/gif', 'image/png'], $path='/user', $max_size=1048576){
 
 		if( !isset($_FILES[$file]) or empty($_FILES[$file]) )
-			return false;
+			return ['error' => true, 'message' => $file. ' is empty' ];
 
 		$file = $_FILES[$file];
 
