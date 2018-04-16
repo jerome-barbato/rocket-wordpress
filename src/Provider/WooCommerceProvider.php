@@ -26,8 +26,8 @@ class WooCommerceProvider
     {
 
         // WooCommerce Notices
-        $context['wc_notices'] = wc_get_notices();
-        wc_clear_notices();
+        //$context['wc_notices'] = wc_get_notices();
+        //wc_clear_notices();
 
     }
 
