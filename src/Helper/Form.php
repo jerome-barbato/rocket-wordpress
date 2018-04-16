@@ -42,7 +42,7 @@ class Form {
 
 		//todo check for type
 		$id = str_replace('[]', '', $id);
-		return isset( $validation[$id] ) && ( !isset($validation[$id]['required']) || !empty($value) );
+		return isset( $validation[$id] ) && ( !isset($validation[$id]['required']) || !empty($value) || $value == "0" );
 	}
 
 
