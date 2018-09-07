@@ -106,7 +106,10 @@ abstract class Application {
                 $this->addOptionPages();
             });
 
-            // Setup ACF Settings
+            // display custom permalink form
+	        add_action( 'load-options-permalink.php', [$this, 'LoadPermalinks']);
+
+	        // Setup ACF Settings
             add_action( 'acf/init', [$this, 'ACFInit'] );
 
             // Remove image sizes for thumbnails
@@ -319,7 +322,7 @@ abstract class Application {
     {
         global $wp_rewrite;
 
-        $wp_rewrite->set_permalink_structure('/%postname%');
+        $wp_rewrite->set_permalink_structure('/%category%/%postname%');
 
         update_option( "rewrite_rules", FALSE );
 
@@ -344,6 +347,68 @@ abstract class Application {
     }
 
 
+	public function LoadPermalinks()
+	{
+		$updated = false;
+
+		add_settings_section('custom_post_type_rewrite', 'Custom post type', false,'permalink');
+
+		foreach ( get_post_types(['public'=> true, '_builtin' => false], 'objects') as $post_type=>$args )
+		{
+			foreach( ['slug', 'archive'] as $type)
+			{
+				if( ($type == 'slug' and $args->rewrite) or ($type == 'archive' and $args->has_archive ))
+				{
+					if( isset( $_POST[$post_type. '_rewrite_'.$type] ) && !empty($_POST[$post_type. '_rewrite_'.$type]) )
+					{
+						update_option( $post_type. '_rewrite_'.$type,  $_POST[$post_type. '_rewrite_'.$type] );
+						$updated = true;
+					}
+
+					add_settings_field( $post_type. '_rewrite_'.$type, __( ucfirst(str_replace('_', ' ', $post_type)).' '.$type ),function () use($post_type, $type)
+					{
+						$value = get_option( $post_type. '_rewrite_'.$type );
+						if( is_null($value) || empty($value))
+							$value = $this->config->get('post_types.'.$post_type.($type=='slug'?'.rewrite.slug':'has_archive'), $post_type);
+
+						echo '<input type="text" value="' .  $value  . '" name="'.$post_type.'_rewrite_'.$type.'" placeholder="'.$post_type.'" id="'.$post_type.'_rewrite_'.$type.'" class="regular-text" />';
+
+					}, 'permalink', 'custom_post_type_rewrite' );
+				}
+			}
+		}
+
+		add_settings_section('custom_taxonomy_rewrite', 'Custom taxonomy', false,'permalink');
+
+		foreach ( get_taxonomies(['public'=> true, '_builtin' => false], 'objects') as $taxonomy=>$args )
+		{
+			if( $args->rewrite )
+			{
+				if( isset( $_POST[$taxonomy. '_rewrite_slug'] ) && !empty($_POST[$taxonomy. '_rewrite_slug']) )
+				{
+					update_option( $taxonomy. '_rewrite_slug', $_POST[$taxonomy. '_rewrite_slug']  );
+					$updated = true;
+				}
+
+				add_settings_field( $taxonomy. '_rewrite_slug', __( ucfirst(str_replace('_', ' ', $taxonomy)) ),function () use($taxonomy)
+				{
+					$value = get_option( $taxonomy. '_rewrite_slug' );
+					if( is_null($value) || empty($value))
+						$value = $this->config->get('taxonomies.'.$taxonomy.'.rewrite.slug', $taxonomy);
+
+					echo '<input type="text" value="' .  $value  . '" name="'.$taxonomy.'_rewrite_slug" placeholder="'.$taxonomy.'" id="'.$taxonomy.'_rewrite_slug" class="regular-text" />';
+
+				}, 'permalink', 'custom_taxonomy_rewrite' );
+			}
+		}
+
+
+		if( $updated )
+		{
+			global $wp_rewrite;
+			$wp_rewrite->flush_rules( true );
+		}
+	}
 
     /**
      * Adds or remove pages from menu admin.
@@ -770,7 +835,7 @@ abstract class Application {
      */
     public function pluginsLoaded()
     {
-	    new PageTemplater($this->config->get('page_templates', []));
+	    new PageTemplater($this->config->get('page_templates', []),$this->config->get('post_templates', []));
 
 	    $notices = [];
 

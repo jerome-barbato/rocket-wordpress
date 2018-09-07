@@ -14,25 +14,27 @@ use Timber\Image,
 
 class ACF
 {
-	private $raw_objects, $objects, $debug;
+	private $raw_objects, $objects;
 
-	protected static $MAX_DEPTH = 3;
+	protected static $MAX_DEPTH = 1;
 	protected static $DEPTH = 0;
 	protected static $CACHE = [];
 
-	public function __construct($post_id, $debug=false)
+	public function __construct( $post_id )
 	{
-		if( function_exists('get_field_objects') )
-			$this->raw_objects = get_field_objects($post_id);
+		if( ACF::$DEPTH > ACF::$MAX_DEPTH )
+		{
+			$this->objects = [];
+		}
 		else
-			$this->raw_objects = [];
+		{
+			++ACF::$DEPTH;
 
-		if( $debug )
-			print_r( $this->raw_objects);
+			$this->objects = $this->getCache('objects', $post_id);
 
-		$this->debug = $debug;
-
-		$this->objects = $this->clean( $this->raw_objects);
+			if( ACF::$DEPTH > 0 )
+				--ACF::$DEPTH;
+		}
 	}
 
 
@@ -149,6 +151,17 @@ class ACF
 			case 'term':
 				$value = new Term( $id );
 				break;
+
+			case 'objects':
+
+				if( function_exists('get_field_objects') )
+					$this->raw_objects = get_field_objects($id);
+				else
+					$this->raw_objects = [];
+
+				$value = $this->clean( $this->raw_objects);
+
+				break;
 		}
 
 		ACF::$CACHE[$type][$id] = $value;
@@ -157,15 +170,12 @@ class ACF
 	}
 
 
-	public function clean($raw_objects, $check_depth=true)
+	public function clean($raw_objects)
 	{
 		$objects = [];
 
-		if( !$raw_objects or !is_array($raw_objects) or ( $check_depth and  ACF::$DEPTH > ACF::$MAX_DEPTH ) )
+		if( !$raw_objects or !is_array($raw_objects) )
 			return $objects;
-
-		if( $check_depth )
-			++ACF::$DEPTH;
 
 		// Start analyzing
 
@@ -355,7 +365,7 @@ class ACF
 
 					$layout = $this->layoutAsKeyValue($object['sub_fields']);
 					$value = $this->bindLayoutFields($object['value'], $layout);
-					$objects[$object['name']] = $this->clean($value, false);
+					$objects[$object['name']] = $this->clean($value);
 
 					break;
 
@@ -365,9 +375,6 @@ class ACF
 					break;
 			}
 		}
-
-		if (ACF::$DEPTH > 0 and $check_depth)
-			--ACF::$DEPTH;
 
 		return $objects;
 	}
