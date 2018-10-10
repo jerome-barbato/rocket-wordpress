@@ -80,7 +80,8 @@ class Theme extends Site
             'is_child_theme'   => is_child_theme(),
             'base_url'         => get_bloginfo('url'),
             'maintenance_mode' => wp_maintenance_mode(),
-            'ajax_url'         => admin_url( 'admin-ajax.php' )
+            'ajax_url'         => admin_url( 'admin-ajax.php' ),
+            'index'            => empty($_REQUEST)
         ]);
 
         $menus = get_registered_nav_menus();
