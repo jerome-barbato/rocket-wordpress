@@ -65,6 +65,9 @@ class Theme extends Site
         else
             $languages = [];
 
+        if( isset($_REQUEST['q']) )
+        	unset($_REQUEST['q']);
+
         $context = array_merge($context, [
 
             'project' => [
