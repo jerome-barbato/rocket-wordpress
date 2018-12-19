@@ -1,0 +1,50 @@
+domain_name: rocket
+
+
+remove_menu_page:
+  edit-comments.php
+
+
+define:
+  wp_remote: false
+
+
+options:
+  gmap_api_key:
+
+
+image_sizes:
+  full-hd: 1920 1080 1
+
+
+post_types:
+  partner:
+    menu_icon: businessman
+    public: true
+    has_archive: false
+    capability_type: post
+    supports:
+      - title
+      - editor
+      - thumbnail
+    rewrite: true
+    exclude_from_search: true
+    query_var: true
+
+
+taxonomies:
+  expertise:
+    hierarchical: true
+    show_ui: true
+    show_admin_column: false
+    query_var: false
+    object_type:
+      - partner
+
+menus:
+  footer: Footer
+  header: Header
+
+
+options_page:
+  - Options
