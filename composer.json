@@ -3,10 +3,14 @@
   "license": "AGPL-3.0",
   "version": "1.2.35",
   "description": "Wordpress Scaffolder using Rocket Framework",
+  "repositories": [
+    {"type": "git", "url": "https://github.com/wearemetabolism/rocket-installer"},
+    {"type": "git", "url": "https://github.com/wearemetabolism/rocket-kernel"}
+  ],
   "require": {
     "php" : ">=5.6.0",
-    "metabolism/rocket-installer": "1.1.*",
-    "metabolism/rocket-kernel": "1.2.*",
+    "metabolism/rocket-installer": "master-master",
+    "metabolism/rocket-kernel": "master-master",
     "johnpbloch/wordpress-core": "4.9.*",
     "mustangostang/spyc": "0.6.*",
     "symfony/routing":"3.2.*",
