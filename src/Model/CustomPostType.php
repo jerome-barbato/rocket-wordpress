@@ -50,7 +50,7 @@ class CustomPostType {
             'labels' => ['name'=>$this->name]
         );
 
-	    $this->slug = $slug;
+        $this->slug = $slug;
     }
 
 
@@ -607,12 +607,35 @@ class CustomPostType {
 	    $this->has_archive($data_post_type->get('has_archive', false));
         $this->capability_type($data_post_type->get('capability_type', 'page'));
         $this->supports( $data_post_type->get('supports', ['title', 'editor', 'thumbnail']));
-        $this->rewrite($data_post_type->get('rewrite', true));
         $this->exclude_from_search($data_post_type->get('exclude_from_search', false));
         $this->query_var($data_post_type->get('query_var', true));
 	    $this->taxonomies($data_post_type->get('taxonomies', []));
 
         $this->show_in_menu($data_post_type->get('show_in_menu', true));
         $this->show_in_nav_menus($data_post_type->get('show_in_nav_menus', true));
+
+        if( $data_post_type->get('rewrite', true) ){
+
+	        $slug = get_option( $this->slug. '_rewrite_slug' );
+
+	        if( !is_null($slug) && !empty($slug) )
+		        $this->rewrite(['slug'=>$slug]);
+        }
+        else{
+
+	        $this->rewrite(false);
+        }
+
+	    if( $data_post_type->get('has_archive', false) ){
+
+		    $slug = get_option( $this->slug. '_rewrite_archive' );
+
+		    if( !is_null($slug) && !empty($slug) )
+			    $this->has_archive($slug);
+	    }
+	    else{
+
+		    $this->has_archive(false);
+	    }
     }
 }

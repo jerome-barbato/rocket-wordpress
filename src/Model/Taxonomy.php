@@ -30,10 +30,8 @@ class Taxonomy
             'public' => true,
             'labels' => ['name'=>$this->name]
         );
-
-	    $rewrite_slug = get_option( $slug. '_rewrite_slug', $slug);
-
-	    $this->slug = $rewrite_slug;
+        
+        $this->slug = $slug;
     }
 
     /**
@@ -529,6 +527,16 @@ class Taxonomy
         if( $data->get('default_term', 'default') )
 	        $this->set_default_term($data->get('default_term', 'default'));
 
-        $this->rewrite($data->get('rewrite', true));
+        if( $data->get('rewrite', true) )
+        {
+	        $slug = get_option( $this->slug. '_rewrite_slug' );
+
+	        if( !is_null($slug) && !empty($slug) )
+		        $this->rewrite(['slug'=>$slug]);
+        }
+        else{
+        	
+	        $this->rewrite(false);
+        }
     }
 }
